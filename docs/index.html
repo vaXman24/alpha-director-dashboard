@@ -2584,7 +2584,9 @@ function buildActionCenter() {
 // vs linear where the ratio is only 5×0.7 factors = too compressed after normalization
 function _allocScore(p) {
   const riskW   = {LOW:1.0, MEDIUM:0.72, HIGH:0.45, 'VERY HIGH':0.25};
-  const upside  = Math.max(2, p.upside_pct || 0);
+  // Upside clamped to 100: beyond that, ^1.5 lets a single (often stale/split-
+  // skewed) analyst target dominate the entire allocation (KLAC 2026-06-12).
+  const upside  = Math.max(2, Math.min(100, p.upside_pct || 0));
   const riskMul = riskW[p.risk] || 0.55;
   const confW   = p.confidence != null ? (p.confidence / 10) : 0.65;
   const rsiPen  = !p.rsi ? 1.0 : p.rsi > 85 ? 0.55 : p.rsi > 75 ? 0.80 : p.rsi > 65 ? 0.95 : 1.1;
@@ -2615,16 +2617,23 @@ function buildAllocTable() {
   const outside    = D.outside_opps || [];
   const portSet    = new Set(positions.map(p => (p.ticker||'').toUpperCase()));
 
+  // Data-error quarantine: upside > 200% means the analyst target and the
+  // price are almost certainly from different vintages (e.g. a stock split —
+  // KLAC 10:1 on 2026-06-12 showed +690%). Never allocate against it.
+  const saneUpside = p => (p.upside_pct||0) <= 200;
+
   // Portfolio BUY/STRONG BUY with real upside
   const portCands = positions
-    .filter(p => ['STRONG BUY','BUY'].includes(p.action) && (p.upside_pct||0) > 0)
+    .filter(p => ['STRONG BUY','BUY'].includes(p.action) && (p.upside_pct||0) > 0
+              && saneUpside(p))
     .map(p => ({...p, _type:'add'}));
 
   // Outside opps not in portfolio, with meaningful upside ≥ 8%
   const watchCands = outside
     .filter(p => !portSet.has((p.ticker||'').toUpperCase())
               && ['STRONG BUY','BUY'].includes(p.action||'')
-              && (p.upside_pct||0) >= 8)
+              && (p.upside_pct||0) >= 8
+              && saneUpside(p))
     .map(p => ({...p, _type:'new'}));
 
   const candidates = [...portCands, ...watchCands];
@@ -2652,17 +2661,35 @@ function buildAllocTable() {
     || 10000;
 
   const totalScore = scored.reduce((s,p) => s + p._score, 0) || 1;
-  const smartAllocs = scored.map(p => {
-    const rawPct = (p._score / totalScore) * 100;
-    const cappedPct = Math.min(35, Math.max(5, rawPct));
-    return {...p, _smartPct: cappedPct};
-  });
-  // Re-normalize after capping
-  const pctSum = smartAllocs.reduce((s,p) => s + p._smartPct, 0) || 1;
-  const final  = smartAllocs.map(p => ({
+  // Cap 35% / floor 5% that actually HOLD. The old cap-then-renormalize undid
+  // the cap whenever one score dominated (KLAC 2026-06-12: 35/(35+5+5) → 77.8%).
+  // Now: cap excess is redistributed only to uncapped picks; if everything is
+  // capped, the remainder of the budget stays UNALLOCATED (held back) — no pick
+  // can ever exceed 35% of the monthly budget.
+  const CAP = 35, FLOOR = 5;
+  let pcts = scored.map(p => (p._score / totalScore) * 100);
+  for (let iter = 0; iter < 6; iter++) {
+    let excess = 0;
+    pcts = pcts.map(v => { if (v > CAP) { excess += v - CAP; return CAP; } return v; });
+    if (excess < 1e-9) break;
+    const under = pcts.map((v,i) => i).filter(i => pcts[i] < CAP - 1e-9);
+    const underSum = under.reduce((s,i) => s + pcts[i], 0);
+    if (!under.length || underSum <= 0) break;
+    under.forEach(i => { pcts[i] += excess * (pcts[i] / underSum); });
+  }
+  // Floor: lift tiny picks to 5%, paying from the largest pick (stays ≤ CAP).
+  for (let i = 0; i < pcts.length; i++) {
+    if (pcts[i] > 0 && pcts[i] < FLOOR) {
+      const need = FLOOR - pcts[i];
+      const big = pcts.indexOf(Math.max(...pcts));
+      if (big !== i && pcts[big] - need >= FLOOR) { pcts[big] -= need; pcts[i] = FLOOR; }
+    }
+  }
+  pcts = pcts.map(v => Math.min(CAP, v));  // invariant, belt-and-suspenders
+  const final = scored.map((p, i) => ({
     ...p,
-    _finalPct: +(p._smartPct / pctSum * 100).toFixed(1),
-    _finalUsd: Math.round(p._smartPct / pctSum * totalBudget),
+    _finalPct: +pcts[i].toFixed(1),
+    _finalUsd: Math.round(pcts[i] / 100 * totalBudget),
   }));
 
   const totalDeploy = final.reduce((s,p) => s + p._finalUsd, 0);
