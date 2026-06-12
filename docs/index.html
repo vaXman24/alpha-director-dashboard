@@ -536,6 +536,13 @@ body.ticker-page .sm-cat-btn,body.ticker-page .sm-open-tv{
 /* ── Macro alert banner ── */
 .macro-banner{background:var(--a2);border:1px solid rgba(255,215,64,.2);border-radius:8px;padding:8px 14px;font-size:11px;font-weight:700;color:var(--a);margin-bottom:16px;display:flex;align-items:center;gap:6px}
 
+/* ── Bear Warning banner (regime_info-driven, display-only) ── */
+.bear-banner{border-radius:8px;padding:10px 14px;font-size:11px;margin-bottom:16px;line-height:1.6}
+.bear-banner .bb-head{font-weight:800;font-size:12px;letter-spacing:.3px}
+.bear-banner .bb-stats{opacity:.85;font-weight:600;margin-top:2px}
+.bear-caution{background:var(--a2);border:1px solid rgba(255,215,64,.3);color:var(--a)}
+.bear-off{background:var(--r2);border:1px solid rgba(255,61,113,.35);color:var(--r)}
+
 /* ── Footer ── */
 .footer{text-align:center;color:var(--t3);font-size:10px;padding:20px;border-top:1px solid var(--border);margin-top:8px}
 
@@ -769,6 +776,9 @@ body.ticker-page .sm-cat-btn,body.ticker-page .sm-open-tv{
 </div>
 
 <div class="main">
+
+<!-- Bear Warning banner (shows when regime detector is not RISK-ON) -->
+<div id="bear-banner" style="display:none" class="bear-banner"></div>
 
 <!-- Macro alert banner -->
 <div id="macro-banner" style="display:none" class="macro-banner"></div>
@@ -1433,6 +1443,38 @@ function buildRegime() {
     const mwText = typeof mw === 'object' ? (mw.risk_level || JSON.stringify(mw)) : mw;
     b.innerHTML = '📅 ' + mwText;
   }
+
+  buildBearBanner();
+}
+
+// ── Bear Warning banner — display-only, driven by the VPS regime detector
+// (D.regime_info). Historical stats from research/core_gate_dryrun.py
+// (2021-2026, n=6.6k/8.7k dip-buy days): dips bought while QQQ>200SMA & VIX<30
+// returned +10.2% vs baseline over the next 60d; dips in bear regime −4.9%.
+function buildBearBanner() {
+  const el = $('bear-banner');
+  if (!el) return;
+  const ri = D.regime_info || {};
+  const regime = (ri.regime || '').toUpperCase().replace('-', '_');
+  if (!regime || regime === 'RISK_ON') { el.style.display = 'none'; return; }
+
+  const isOff = regime === 'RISK_OFF';
+  el.className = 'bear-banner ' + (isOff ? 'bear-off' : 'bear-caution');
+  const icon = isOff ? '🔴' : '🟡';
+  const stress = ri.stress_score != null ? ` (stress ${ri.stress_score}/6)` : '';
+  const sizing = ri.sizing_mult != null ? ` — suggested sizing ×${ri.sizing_mult.toFixed(2).replace(/0$/,'')}` : '';
+  const blocked = (ri.blocked_buckets && ri.blocked_buckets.length)
+    ? ' · ' + ri.blocked_buckets.join('/') + ' entries blocked' : '';
+  const reasons = (ri.reasons || []).join(' · ');
+  const stats = isOff
+    ? '📊 Historical: dip-buys in this regime returned −4.9% vs market over the next 60d — consider queueing DCA cash until the regime clears.'
+    : '📊 Historical: dip-buys in healthy regime +10.2% vs market (60d); in bear regime −4.9% — watch this banner before deploying monthly cash.';
+
+  el.innerHTML =
+    '<div class="bb-head">' + icon + ' MARKET REGIME: ' + regime.replace('_', '-') + stress + sizing + blocked + '</div>' +
+    (reasons ? '<div>' + reasons + '</div>' : '') +
+    '<div class="bb-stats">' + stats + '</div>';
+  el.style.display = 'block';
 }
 
 // ── Market Pulse (VIX + DXY + F&G + SPY + Regime visual strip) ────────────
