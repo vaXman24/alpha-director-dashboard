@@ -1,20 +1,8 @@
 {
-  "generated_at": "2026-06-14T17:36:16.683459+00:00",
+  "generated_at": "2026-06-14T17:44:33.793742+00:00",
   "regime": "RISK-ON",
   "macro_warn": "",
-  "dca_new_picks": [
-    {
-      "ticker": "NVDA",
-      "price": 205.19,
-      "upside_pct": 45.7,
-      "action": "BUY",
-      "rsi": 42.3,
-      "above_200": true,
-      "above_50": false,
-      "theme": "AI GPU / Data Centers",
-      "allocation_pct": 100.0
-    }
-  ],
+  "dca_new_picks": [],
   "market": {
     "spy": {
       "price": 741.75,
@@ -119,13 +107,13 @@
       "t10y": null
     },
     "btc_regime": {
-      "btc_price": 63911,
-      "btc_chg_24h": -0.24,
+      "btc_price": 63811,
+      "btc_chg_24h": -0.41,
       "btc_dominance": 56.5,
-      "eth_price": 1665.0,
-      "eth_chg_24h": -0.7,
+      "eth_price": 1663.0,
+      "eth_chg_24h": -0.8,
       "eth_dominance": 8.9,
-      "eth_btc_ratio": 0.02605,
+      "eth_btc_ratio": 0.02606,
       "dom_signal": "BALANCED"
     }
   },
@@ -236,7 +224,7 @@
         "earnings_day": null,
         "_discovery": false,
         "_tier": null,
-        "weight_pct": 28.52,
+        "weight_pct": 28.53,
         "allocation_pct": 0.0
       },
       {
@@ -465,7 +453,7 @@
         "_discovery": false,
         "_tier": null,
         "weight_pct": 1.9,
-        "allocation_pct": 33.96
+        "allocation_pct": 34.91
       },
       {
         "ticker": "AVGO",
@@ -504,7 +492,7 @@
         "_discovery": false,
         "_tier": null,
         "weight_pct": 1.3,
-        "allocation_pct": 43.55
+        "allocation_pct": 35.0
       },
       {
         "ticker": "TSM",
@@ -699,7 +687,7 @@
         "_discovery": false,
         "_tier": null,
         "weight_pct": 2.17,
-        "allocation_pct": 10.25
+        "allocation_pct": 10.54
       },
       {
         "ticker": "PANW",
@@ -1095,7 +1083,7 @@
         "_discovery": false,
         "_tier": null,
         "weight_pct": 0.41,
-        "allocation_pct": 0.0
+        "allocation_pct": 6.96
       },
       {
         "ticker": "BMNR",
@@ -1329,7 +1317,7 @@
         "_discovery": false,
         "_tier": null,
         "weight_pct": 1.03,
-        "allocation_pct": 12.25
+        "allocation_pct": 12.59
       },
       {
         "ticker": "TEM",
@@ -1547,29 +1535,6 @@
   ],
   "outside_opps": [
     {
-      "ticker": "NVDA",
-      "theme": "AI GPU / Data Centers",
-      "price": 205.19,
-      "chg_1d": 0.16,
-      "above_20": false,
-      "above_50": false,
-      "above_200": true,
-      "action": "BUY",
-      "reason": "Dominant AI GPU supplier; data center demand remains strong",
-      "target": 298.93,
-      "upside_pct": 45.7,
-      "stop_loss": 189.04,
-      "entry_zone": [
-        206.7,
-        205.19
-      ],
-      "rsi": 42.3,
-      "sma20": 214.46,
-      "sma50": 206.7,
-      "sma200": 189.04,
-      "allocation_pct": 100.0
-    },
-    {
       "ticker": "AAPL",
       "theme": "Consumer Tech / Services",
       "price": 291.13,
@@ -1589,8 +1554,7 @@
       "rsi": 34.2,
       "sma20": 303.88,
       "sma50": 285.36,
-      "sma200": 266.46,
-      "allocation_pct": 0.0
+      "sma200": 266.46
     },
     {
       "ticker": "ARM",
@@ -1612,8 +1576,7 @@
       "rsi": 60.9,
       "sma20": 324.14,
       "sma50": 243.0,
-      "sma200": 162.27,
-      "allocation_pct": 0.0
+      "sma200": 162.27
     },
     {
       "ticker": "SPY",
@@ -1644,8 +1607,7 @@
       "trade_type": "LONG on addition announcement",
       "exit_trigger": "Effective date open",
       "lead_days": 7,
-      "confidence": 8,
-      "allocation_pct": 0.0
+      "confidence": 8
     },
     {
       "ticker": "IVV",
@@ -1676,8 +1638,7 @@
       "trade_type": "LONG on addition announcement",
       "exit_trigger": "Effective date open",
       "lead_days": 7,
-      "confidence": 8,
-      "allocation_pct": 0.0
+      "confidence": 8
     },
     {
       "ticker": "JPM",
@@ -1708,8 +1669,7 @@
       "trade_type": "LONG bank basket pre-announcement",
       "exit_trigger": "4 weeks post-results OR any major fail",
       "lead_days": 14,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "GS",
@@ -1740,8 +1700,7 @@
       "trade_type": "LONG bank basket pre-announcement",
       "exit_trigger": "4 weeks post-results OR any major fail",
       "lead_days": 14,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "MS",
@@ -1772,8 +1731,7 @@
       "trade_type": "LONG bank basket pre-announcement",
       "exit_trigger": "4 weeks post-results OR any major fail",
       "lead_days": 14,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "C",
@@ -1804,8 +1762,7 @@
       "trade_type": "LONG bank basket pre-announcement",
       "exit_trigger": "4 weeks post-results OR any major fail",
       "lead_days": 14,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "KRE",
@@ -1836,8 +1793,7 @@
       "trade_type": "LONG bank basket pre-announcement",
       "exit_trigger": "4 weeks post-results OR any major fail",
       "lead_days": 14,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "FBTC",
@@ -1865,8 +1821,7 @@
       "trade_type": "Mean reversion to max pain",
       "exit_trigger": "Expiry day OR max pain price achieved",
       "lead_days": 7,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "MSTR",
@@ -1894,8 +1849,7 @@
       "trade_type": "Mean reversion to max pain",
       "exit_trigger": "Expiry day OR max pain price achieved",
       "lead_days": 7,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "SOXX",
@@ -1926,8 +1880,7 @@
       "trade_type": "Cycle LONG",
       "exit_trigger": "Lead times contract 3 consecutive months",
       "lead_days": 30,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "SMH",
@@ -1958,8 +1911,7 @@
       "trade_type": "Cycle LONG",
       "exit_trigger": "Lead times contract 3 consecutive months",
       "lead_days": 30,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "AMAT",
@@ -1990,8 +1942,7 @@
       "trade_type": "Cycle LONG",
       "exit_trigger": "Lead times contract 3 consecutive months",
       "lead_days": 30,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "KLAC",
@@ -2022,8 +1973,7 @@
       "trade_type": "Cycle LONG",
       "exit_trigger": "Lead times contract 3 consecutive months",
       "lead_days": 30,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "ASML",
@@ -2054,8 +2004,7 @@
       "trade_type": "Cycle LONG",
       "exit_trigger": "Lead times contract 3 consecutive months",
       "lead_days": 30,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "USO",
@@ -2086,8 +2035,7 @@
       "trade_type": "Long volatility on storm formations",
       "exit_trigger": "Landfall +48h OR storm dissipates",
       "lead_days": 14,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "UNG",
@@ -2115,8 +2063,7 @@
       "trade_type": "Long volatility on storm formations",
       "exit_trigger": "Landfall +48h OR storm dissipates",
       "lead_days": 14,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "RIG",
@@ -2147,8 +2094,7 @@
       "trade_type": "Long volatility on storm formations",
       "exit_trigger": "Landfall +48h OR storm dissipates",
       "lead_days": 14,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "HAL",
@@ -2179,8 +2125,7 @@
       "trade_type": "Long volatility on storm formations",
       "exit_trigger": "Landfall +48h OR storm dissipates",
       "lead_days": 14,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "VLO",
@@ -2211,8 +2156,7 @@
       "trade_type": "Long volatility on storm formations",
       "exit_trigger": "Landfall +48h OR storm dissipates",
       "lead_days": 14,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "IPO",
@@ -2243,8 +2187,7 @@
       "trade_type": "SHORT 14 days pre-expiry",
       "exit_trigger": "Expiry +5 days OR \u22125% stop",
       "lead_days": 14,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "IPOS",
@@ -2275,8 +2218,7 @@
       "trade_type": "SHORT 14 days pre-expiry",
       "exit_trigger": "Expiry +5 days OR \u22125% stop",
       "lead_days": 14,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "FPX",
@@ -2307,8 +2249,7 @@
       "trade_type": "SHORT 14 days pre-expiry",
       "exit_trigger": "Expiry +5 days OR \u22125% stop",
       "lead_days": 14,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "TTWO",
@@ -2336,8 +2277,7 @@
       "trade_type": "LONG 3mo pre-launch, EXIT on launch",
       "exit_trigger": "Launch day OR pre-orders miss expectations",
       "lead_days": 90,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "EA",
@@ -2368,8 +2308,7 @@
       "trade_type": "LONG 3mo pre-launch, EXIT on launch",
       "exit_trigger": "Launch day OR pre-orders miss expectations",
       "lead_days": 90,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "RBLX",
@@ -2397,8 +2336,7 @@
       "trade_type": "LONG 3mo pre-launch, EXIT on launch",
       "exit_trigger": "Launch day OR pre-orders miss expectations",
       "lead_days": 90,
-      "confidence": 7,
-      "allocation_pct": 0.0
+      "confidence": 7
     },
     {
       "ticker": "XBI",
@@ -2429,8 +2367,7 @@
       "trade_type": "Options straddle (long volatility)",
       "exit_trigger": "FDA decision day + 1",
       "lead_days": 30,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "IBB",
@@ -2461,8 +2398,7 @@
       "trade_type": "Options straddle (long volatility)",
       "exit_trigger": "FDA decision day + 1",
       "lead_days": 30,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "LABU",
@@ -2493,8 +2429,7 @@
       "trade_type": "Options straddle (long volatility)",
       "exit_trigger": "FDA decision day + 1",
       "lead_days": 30,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "COPX",
@@ -2525,8 +2460,7 @@
       "trade_type": "Trend-following LONG",
       "exit_trigger": "Copper 3-month low OR USD breakout",
       "lead_days": 0,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "FCX",
@@ -2557,8 +2491,7 @@
       "trade_type": "Trend-following LONG",
       "exit_trigger": "Copper 3-month low OR USD breakout",
       "lead_days": 0,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "SCCO",
@@ -2589,8 +2522,7 @@
       "trade_type": "Trend-following LONG",
       "exit_trigger": "Copper 3-month low OR USD breakout",
       "lead_days": 0,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "BHP",
@@ -2621,8 +2553,7 @@
       "trade_type": "Trend-following LONG",
       "exit_trigger": "Copper 3-month low OR USD breakout",
       "lead_days": 0,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "TECK",
@@ -2653,8 +2584,7 @@
       "trade_type": "Trend-following LONG",
       "exit_trigger": "Copper 3-month low OR USD breakout",
       "lead_days": 0,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "ZIM",
@@ -2685,8 +2615,7 @@
       "trade_type": "SHORT retailers on spike / LONG on normalize",
       "exit_trigger": "SCFI reverses 20%+ from peak",
       "lead_days": 0,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "MATX",
@@ -2717,8 +2646,7 @@
       "trade_type": "SHORT retailers on spike / LONG on normalize",
       "exit_trigger": "SCFI reverses 20%+ from peak",
       "lead_days": 0,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "SBLK",
@@ -2749,8 +2677,7 @@
       "trade_type": "SHORT retailers on spike / LONG on normalize",
       "exit_trigger": "SCFI reverses 20%+ from peak",
       "lead_days": 0,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "XRT",
@@ -2781,8 +2708,7 @@
       "trade_type": "SHORT retailers on spike / LONG on normalize",
       "exit_trigger": "SCFI reverses 20%+ from peak",
       "lead_days": 0,
-      "confidence": 6,
-      "allocation_pct": 0.0
+      "confidence": 6
     },
     {
       "ticker": "LMT",
@@ -2813,8 +2739,7 @@
       "trade_type": "Event-driven, short holding period",
       "exit_trigger": "5 trading days OR \u22124% stop",
       "lead_days": 0,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "RTX",
@@ -2845,8 +2770,7 @@
       "trade_type": "Event-driven, short holding period",
       "exit_trigger": "5 trading days OR \u22124% stop",
       "lead_days": 0,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "NOC",
@@ -2874,8 +2798,7 @@
       "trade_type": "Event-driven, short holding period",
       "exit_trigger": "5 trading days OR \u22124% stop",
       "lead_days": 0,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "GLD",
@@ -2903,8 +2826,7 @@
       "trade_type": "Event-driven, short holding period",
       "exit_trigger": "5 trading days OR \u22124% stop",
       "lead_days": 0,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "ITA",
@@ -2935,8 +2857,7 @@
       "trade_type": "Event-driven, short holding period",
       "exit_trigger": "5 trading days OR \u22124% stop",
       "lead_days": 0,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "XLF",
@@ -2967,8 +2888,7 @@
       "trade_type": "Mean reversion LONG",
       "exit_trigger": "Settlement announced OR +20% gain",
       "lead_days": 0,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "XLK",
@@ -2999,8 +2919,7 @@
       "trade_type": "Mean reversion LONG",
       "exit_trigger": "Settlement announced OR +20% gain",
       "lead_days": 0,
-      "confidence": 5,
-      "allocation_pct": 0.0
+      "confidence": 5
     },
     {
       "ticker": "AMD",
@@ -3031,8 +2950,7 @@
       "trade_type": "Thematic LONG 60\u201390 days",
       "exit_trigger": "CAPEX guidance lowered OR AI narrative reverses",
       "lead_days": 30,
-      "confidence": 8,
-      "allocation_pct": 0.0
+      "confidence": 8
     },
     {
       "ticker": "SMCI",
@@ -3060,8 +2978,7 @@
       "trade_type": "Thematic LONG 60\u201390 days",
       "exit_trigger": "CAPEX guidance lowered OR AI narrative reverses",
       "lead_days": 30,
-      "confidence": 8,
-      "allocation_pct": 0.0
+      "confidence": 8
     },
     {
       "ticker": "ANET",
@@ -3092,8 +3009,7 @@
       "trade_type": "Thematic LONG 60\u201390 days",
       "exit_trigger": "CAPEX guidance lowered OR AI narrative reverses",
       "lead_days": 30,
-      "confidence": 8,
-      "allocation_pct": 0.0
+      "confidence": 8
     },
     {
       "ticker": "VST",
@@ -3121,8 +3037,7 @@
       "trade_type": "Thematic LONG 60\u201390 days",
       "exit_trigger": "CAPEX guidance lowered OR AI narrative reverses",
       "lead_days": 30,
-      "confidence": 8,
-      "allocation_pct": 0.0
+      "confidence": 8
     },
     {
       "ticker": "NRG",
@@ -3150,8 +3065,7 @@
       "trade_type": "Thematic LONG 60\u201390 days",
       "exit_trigger": "CAPEX guidance lowered OR AI narrative reverses",
       "lead_days": 30,
-      "confidence": 8,
-      "allocation_pct": 0.0
+      "confidence": 8
     }
   ],
   "top_movers": {
@@ -3205,15 +3119,15 @@
       {
         "symbol": "SOL",
         "theme": "L1 / DeFi",
-        "price": 67.59,
-        "chg_24h": -0.84,
-        "market_cap": 39189500673,
-        "vol_24h": 1410503917,
+        "price": 67.56,
+        "chg_24h": -0.88,
+        "market_cap": 39152691490,
+        "vol_24h": 1409995547,
         "pnl_pct": -63.8,
         "pnl_label": "-63.8%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 54.072,
+        "stop_loss": 54.048,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3224,9 +3138,9 @@
         "symbol": "XRP",
         "theme": "Payments / Ripple",
         "price": 1.14,
-        "chg_24h": -0.95,
-        "market_cap": 70540804858,
-        "vol_24h": 823807729,
+        "chg_24h": -0.99,
+        "market_cap": 70490269065,
+        "vol_24h": 817779256,
         "pnl_pct": -10.9,
         "pnl_label": "-10.9%",
         "action": "WAIT",
@@ -3238,15 +3152,15 @@
       {
         "symbol": "LINK",
         "theme": "Oracles",
-        "price": 7.84,
-        "chg_24h": -2.15,
-        "market_cap": 5700119112,
-        "vol_24h": 131029188,
+        "price": 7.83,
+        "chg_24h": -2.28,
+        "market_cap": 5694149510,
+        "vol_24h": 131098077,
         "pnl_pct": -47.6,
         "pnl_label": "-47.6%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 6.272,
+        "stop_loss": 6.264,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3256,15 +3170,15 @@
       {
         "symbol": "DOT",
         "theme": "Interoperability",
-        "price": 0.9551,
-        "chg_24h": -3.13,
-        "market_cap": 1612700998,
-        "vol_24h": 67152558,
-        "pnl_pct": -82.2,
-        "pnl_label": "-82.2%",
+        "price": 0.9541,
+        "chg_24h": -3.22,
+        "market_cap": 1611341897,
+        "vol_24h": 67749493,
+        "pnl_pct": -82.3,
+        "pnl_label": "-82.3%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.764051,
+        "stop_loss": 0.763288,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3274,15 +3188,15 @@
       {
         "symbol": "ALGO",
         "theme": "L1 / Payments",
-        "price": 0.0902,
-        "chg_24h": 2.32,
-        "market_cap": 804862190,
-        "vol_24h": 46629578,
-        "pnl_pct": -63.0,
-        "pnl_label": "-63.0%",
+        "price": 0.0898,
+        "chg_24h": 1.85,
+        "market_cap": 801697360,
+        "vol_24h": 46672829,
+        "pnl_pct": -63.2,
+        "pnl_label": "-63.2%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.072154,
+        "stop_loss": 0.071839,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3292,15 +3206,15 @@
       {
         "symbol": "AAVE",
         "theme": "DeFi Lending",
-        "price": 65.64,
-        "chg_24h": -1.2,
-        "market_cap": 996488164,
-        "vol_24h": 94065039,
+        "price": 65.51,
+        "chg_24h": -1.4,
+        "market_cap": 994442406,
+        "vol_24h": 94122824,
         "pnl_pct": -76.6,
         "pnl_label": "-76.6%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 52.512,
+        "stop_loss": 52.408,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3310,15 +3224,15 @@
       {
         "symbol": "ONDO",
         "theme": "RWA Tokenization",
-        "price": 0.3486,
-        "chg_24h": -5.39,
-        "market_cap": 1697441499,
-        "vol_24h": 84216880,
-        "pnl_pct": -68.6,
-        "pnl_label": "-68.6%",
+        "price": 0.347,
+        "chg_24h": -5.81,
+        "market_cap": 1690699167,
+        "vol_24h": 96907517,
+        "pnl_pct": -68.7,
+        "pnl_label": "-68.7%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.27886,
+        "stop_loss": 0.277614,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3328,30 +3242,30 @@
       {
         "symbol": "NEAR",
         "theme": "L1 / AI",
-        "price": 2.09,
-        "chg_24h": -2.64,
-        "market_cap": 2709804593,
-        "vol_24h": 245932011,
-        "pnl_pct": -33.7,
-        "pnl_label": "-33.7%",
+        "price": 2.08,
+        "chg_24h": -2.65,
+        "market_cap": 2705216345,
+        "vol_24h": 245738807,
+        "pnl_pct": -34.0,
+        "pnl_label": "-34.0%",
         "action": "WAIT",
         "risk": "VERY HIGH",
-        "stop_loss": 1.672,
+        "stop_loss": 1.664,
         "alert": null,
         "weight_pct": 0.15
       },
       {
         "symbol": "AVAX",
         "theme": "L1 / DeFi",
-        "price": 6.51,
-        "chg_24h": -3.11,
-        "market_cap": 2810961791,
-        "vol_24h": 93046448,
+        "price": 6.5,
+        "chg_24h": -3.31,
+        "market_cap": 2805806668,
+        "vol_24h": 100341244,
         "pnl_pct": -82.9,
         "pnl_label": "-82.9%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 5.208,
+        "stop_loss": 5.2,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3361,15 +3275,15 @@
       {
         "symbol": "KAS",
         "theme": "PoW / Fast",
-        "price": 0.0317,
-        "chg_24h": 0.55,
-        "market_cap": 871034135,
-        "vol_24h": 6101257,
-        "pnl_pct": -75.6,
-        "pnl_label": "-75.6%",
+        "price": 0.0316,
+        "chg_24h": 0.23,
+        "market_cap": 867331996,
+        "vol_24h": 8601075,
+        "pnl_pct": -75.7,
+        "pnl_label": "-75.7%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.025343,
+        "stop_loss": 0.025264,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3379,15 +3293,15 @@
       {
         "symbol": "HBAR",
         "theme": "Enterprise DLT",
-        "price": 0.0773,
-        "chg_24h": -1.29,
-        "market_cap": 3353900999,
-        "vol_24h": 49175428,
-        "pnl_pct": -67.1,
-        "pnl_label": "-67.1%",
+        "price": 0.0771,
+        "chg_24h": -1.46,
+        "market_cap": 3346599459,
+        "vol_24h": 48162811,
+        "pnl_pct": -67.2,
+        "pnl_label": "-67.2%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.061861,
+        "stop_loss": 0.061717,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3398,14 +3312,14 @@
         "symbol": "DOGE",
         "theme": "Meme / Payments",
         "price": 0.0864,
-        "chg_24h": -1.46,
-        "market_cap": 13365050827,
-        "vol_24h": 498652483,
+        "chg_24h": -1.49,
+        "market_cap": 13361220405,
+        "vol_24h": 496254597,
         "pnl_pct": -77.5,
         "pnl_label": "-77.5%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.069137,
+        "stop_loss": 0.069115,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3419,19 +3333,19 @@
       "label": "Extreme Fear"
     },
     "btc_context": {
-      "btc_price": 63911,
-      "btc_chg_24h": -0.24,
+      "btc_price": 63811,
+      "btc_chg_24h": -0.41,
       "btc_dominance": 56.5,
-      "eth_price": 1665.0,
-      "eth_chg_24h": -0.7,
+      "eth_price": 1663.0,
+      "eth_chg_24h": -0.8,
       "eth_dominance": 8.9,
-      "eth_btc_ratio": 0.02605,
+      "eth_btc_ratio": 0.02606,
       "dom_signal": "BALANCED"
     },
-    "btc_price": 63911,
-    "btc_chg": -0.24,
-    "eth_price": 1665.0,
-    "eth_chg": -0.7
+    "btc_price": 63811,
+    "btc_chg": -0.41,
+    "eth_price": 1663.0,
+    "eth_chg": -0.8
   },
   "fear_greed": {
     "score": 34,
@@ -3539,13 +3453,13 @@
         "event_id": "548274",
         "event_title": "What price will Bitcoin hit in June?",
         "question": "Will Bitcoin reach $90,000 in June?",
-        "yes_prob": 0.3,
+        "yes_prob": 0.4,
         "outcomes": [
           "Yes",
           "No"
         ],
         "prices": [
-          0.3,
+          0.4,
           99.7
         ],
         "volume": 15086083,
@@ -3605,14 +3519,14 @@
         "event_id": "548274",
         "event_title": "What price will Bitcoin hit in June?",
         "question": "Will Bitcoin dip to $57,500 in June?",
-        "yes_prob": 23.7,
+        "yes_prob": 23.9,
         "outcomes": [
           "Yes",
           "No"
         ],
         "prices": [
-          23.7,
-          76.3
+          23.9,
+          76.1
         ],
         "volume": 15086083,
         "liquidity": 1285707,
@@ -3803,7 +3717,7 @@
     "fed_cut_prob": null,
     "recession_prob": null,
     "btc_up_prob": null,
-    "fetched_at": "17:36Z"
+    "fetched_at": "17:44Z"
   },
   "trend_ticker_data": {},
   "regime_info": {
@@ -3899,7 +3813,7 @@
         "status_icon": "\ud83d\udfe1",
         "volume_7d": 0,
         "baseline_volume_per_week": 120,
-        "last_successful_poll": "2026-06-14T17:07:12.968546+00:00",
+        "last_successful_poll": "2026-06-14T17:39:27.883195+00:00",
         "consecutive_red_days": 0,
         "phase_method": "shadow forward"
       },
@@ -3929,10 +3843,10 @@
       "phase_spent_usd": 0,
       "phase_budget_usd": 350,
       "ytd_total_usd": 0,
-      "last_updated": "2026-06-14T17:36:36.183354+00:00"
+      "last_updated": "2026-06-14T17:45:16.921337+00:00"
     },
     "warming_up": true,
-    "generated_at": "2026-06-14T17:36:36.183368+00:00"
+    "generated_at": "2026-06-14T17:45:16.921350+00:00"
   },
   "monthly_deployed_pct": 0.0
 }
