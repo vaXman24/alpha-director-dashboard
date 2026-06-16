@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-16T20:08:54.132433+00:00",
+  "generated_at": "2026-06-16T20:18:18.115666+00:00",
   "regime": "RISK-ON",
   "macro_warn": "",
   "dca_new_picks": [
@@ -17,14 +17,14 @@
   ],
   "market": {
     "spy": {
-      "price": 750.35,
-      "chg_1d": -0.59,
+      "price": 750.33,
+      "chg_1d": -0.6,
       "above_20": true,
       "above_50": true,
       "above_200": true,
-      "sma20": 746.4425,
-      "sma50": 726.6098,
-      "sma200": 685.1752,
+      "sma20": 746.4415,
+      "sma50": 726.6094,
+      "sma200": 685.1751,
       "rsi": 49.9,
       "rsi_30d_p25": 54.4,
       "rsi_30d_p75": 72.0,
@@ -32,7 +32,7 @@
       "ma50_dist": 3.3,
       "ma50_dist_p25": 4.6,
       "ma50_dist_p75": 7.5,
-      "vol_ratio": 0.85
+      "vol_ratio": 1.13
     },
     "qqq": {
       "price": 729.86,
@@ -53,23 +53,23 @@
       "vol_ratio": 0.87
     },
     "vix": {
-      "price": 16.22,
-      "chg_1d": 0.12,
+      "price": 16.31,
+      "chg_1d": 0.68,
       "above_20": false,
       "above_50": false,
       "above_200": false,
-      "sma20": 17.3595,
-      "sma50": 17.9002,
-      "sma200": 18.5522,
-      "rsi": 49.8,
+      "sma20": 17.364,
+      "sma50": 17.902,
+      "sma200": 18.5527,
+      "rsi": 50.0,
       "rsi_30d_p25": 41.4,
-      "rsi_30d_p75": 51.6,
-      "atr_14": 2.2871,
-      "ma50_dist": -9.4,
+      "rsi_30d_p75": 51.7,
+      "atr_14": 2.2907,
+      "ma50_dist": -8.9,
       "ma50_dist_p25": -19.8,
       "ma50_dist_p75": -11.6,
       "vol_ratio": null,
-      "level": 16.22,
+      "level": 16.31,
       "signal": "Normal"
     },
     "dxy": {
@@ -78,14 +78,14 @@
       "price": 99.71
     },
     "gold": {
-      "price": 4354.3999,
-      "chg_1d": 0.61,
+      "price": 4353.6001,
+      "chg_1d": 0.59,
       "above_20": false,
       "above_50": false,
       "above_200": false,
-      "sma20": 4400.59,
-      "sma50": 4575.246,
-      "sma200": 4428.737,
+      "sma20": 4400.55,
+      "sma50": 4575.23,
+      "sma200": 4428.733,
       "rsi": 45.1,
       "rsi_30d_p25": 32.3,
       "rsi_30d_p75": 44.9,
@@ -93,39 +93,39 @@
       "ma50_dist": -4.8,
       "ma50_dist_p25": -5.2,
       "ma50_dist_p75": -2.6,
-      "vol_ratio": 14.65,
-      "chg": 0.61
+      "vol_ratio": 14.71,
+      "chg": 0.59
     },
     "oil": {
-      "price": 76.13,
-      "chg_1d": -5.72,
+      "price": 75.85,
+      "chg_1d": -6.07,
       "above_20": false,
       "above_50": false,
       "above_200": true,
-      "sma20": 91.1165,
-      "sma50": 95.3996,
-      "sma200": 73.5505,
-      "rsi": 32.3,
+      "sma20": 91.1025,
+      "sma50": 95.394,
+      "sma200": 73.5491,
+      "rsi": 32.1,
       "rsi_30d_p25": 37.2,
       "rsi_30d_p75": 56.7,
       "atr_14": 4.9821,
-      "ma50_dist": -20.2,
+      "ma50_dist": -20.5,
       "ma50_dist_p25": -8.9,
       "ma50_dist_p75": 2.8,
-      "vol_ratio": 0.81,
-      "chg": -5.72
+      "vol_ratio": 0.82,
+      "chg": -6.07
     },
     "t10y": {
       "t10y": null
     },
     "btc_regime": {
-      "btc_price": 65563,
-      "btc_chg_24h": -1.5,
-      "btc_dominance": 56.2,
-      "eth_price": 1790.0,
-      "eth_chg_24h": -1.86,
+      "btc_price": 65705,
+      "btc_chg_24h": -1.2,
+      "btc_dominance": 56.3,
+      "eth_price": 1794.0,
+      "eth_chg_24h": -1.5,
       "eth_dominance": 9.3,
-      "eth_btc_ratio": 0.0273,
+      "eth_btc_ratio": 0.02731,
       "dom_signal": "BALANCED"
     }
   },
@@ -135,8 +135,8 @@
         "ticker": "VOO",
         "theme": "S&P 500",
         "class": "core",
-        "price": 689.91,
-        "chg_1d": -0.56,
+        "price": 689.75,
+        "chg_1d": -0.59,
         "above_20": true,
         "above_50": true,
         "above_200": true,
@@ -145,19 +145,19 @@
         "alert": null,
         "target": null,
         "upside_pct": null,
-        "stop_loss": 661.57,
+        "stop_loss": 661.41,
         "entry_zone": null,
-        "sma20": 686.26,
+        "sma20": 686.25,
         "sma50": 667.98,
-        "sma200": 629.83,
+        "sma200": 629.82,
         "atr_14": 9.445,
         "rsi_30d_p25": 54.5,
         "rsi_30d_p75": 72.1,
         "ma50_dist": 3.3,
         "ma50_dist_p25": 4.6,
         "ma50_dist_p75": 7.5,
-        "rsi": 50.0,
-        "vol_ratio": 0.62,
+        "rsi": 49.9,
+        "vol_ratio": 1.49,
         "risk": "LOW",
         "verdict": "YES",
         "reason": "Monitoring \u2014 no clear signal yet",
@@ -340,7 +340,7 @@
         "ma50_dist_p25": 2.6,
         "ma50_dist_p75": 18.7,
         "rsi": 41.7,
-        "vol_ratio": 0.66,
+        "vol_ratio": 0.69,
         "risk": "LOW",
         "verdict": "YES",
         "reason": "P&L target reached \u2014 take profits",
@@ -379,7 +379,7 @@
         "ma50_dist_p25": 1.8,
         "ma50_dist_p75": 5.3,
         "rsi": 43.0,
-        "vol_ratio": 0.78,
+        "vol_ratio": 0.82,
         "risk": "MEDIUM",
         "verdict": "NO",
         "reason": "Monitoring \u2014 no clear signal yet",
@@ -465,7 +465,7 @@
         "_discovery": false,
         "_tier": null,
         "weight_pct": 1.92,
-        "allocation_pct": 31.93
+        "allocation_pct": 31.9
       },
       {
         "ticker": "AVGO",
@@ -504,14 +504,14 @@
         "_discovery": false,
         "_tier": null,
         "weight_pct": 1.26,
-        "allocation_pct": 47.83
+        "allocation_pct": 47.81
       },
       {
         "ticker": "TSM",
         "theme": "Semis",
         "class": "core",
-        "price": 425.89,
-        "chg_1d": -3.51,
+        "price": 425.83,
+        "chg_1d": -3.53,
         "above_20": true,
         "above_50": true,
         "above_200": true,
@@ -519,8 +519,8 @@
         "action": "WAIT",
         "alert": null,
         "target": 467.84,
-        "upside_pct": 9.8,
-        "stop_loss": 368.4,
+        "upside_pct": 9.9,
+        "stop_loss": 368.34,
         "entry_zone": null,
         "sma20": 421.17,
         "sma50": 401.09,
@@ -531,7 +531,7 @@
         "ma50_dist": 6.2,
         "ma50_dist_p25": 8.4,
         "ma50_dist_p75": 13.0,
-        "rsi": 51.3,
+        "rsi": 51.2,
         "vol_ratio": 0.67,
         "risk": "LOW",
         "verdict": "YES",
@@ -546,8 +546,8 @@
         "ticker": "ORCL",
         "theme": "Cloud DB / AI",
         "class": "core",
-        "price": 188.37,
-        "chg_1d": -2.22,
+        "price": 188.375,
+        "chg_1d": -2.21,
         "above_20": false,
         "above_50": true,
         "above_200": false,
@@ -571,7 +571,7 @@
         "ma50_dist_p25": 13.4,
         "ma50_dist_p75": 22.2,
         "rsi": 49.1,
-        "vol_ratio": 0.55,
+        "vol_ratio": 0.64,
         "risk": "MEDIUM",
         "verdict": "NO",
         "reason": "Below 200D but above 50D \u2014 recovery in progress, hold",
@@ -585,8 +585,8 @@
         "ticker": "BAC",
         "theme": "Financials",
         "class": "core",
-        "price": 56.85,
-        "chg_1d": 1.75,
+        "price": 56.84,
+        "chg_1d": 1.74,
         "above_20": true,
         "above_50": true,
         "above_200": true,
@@ -595,10 +595,10 @@
         "alert": null,
         "target": 63.16,
         "upside_pct": 11.1,
-        "stop_loss": 53.37,
+        "stop_loss": 53.36,
         "entry_zone": [
-          55.14,
-          56.85
+          55.13,
+          56.84
         ],
         "sma20": 52.93,
         "sma50": 52.41,
@@ -606,7 +606,7 @@
         "atr_14": 1.16,
         "rsi_30d_p25": 36.8,
         "rsi_30d_p75": 74.2,
-        "ma50_dist": 8.5,
+        "ma50_dist": 8.4,
         "ma50_dist_p25": 0.3,
         "ma50_dist_p75": 5.1,
         "rsi": 88.4,
@@ -730,7 +730,7 @@
         "ma50_dist_p25": 26.4,
         "ma50_dist_p75": 38.5,
         "rsi": 63.0,
-        "vol_ratio": 0.48,
+        "vol_ratio": 0.52,
         "risk": "MEDIUM",
         "verdict": "YES",
         "reason": "Above 200D or recovering 50D \u2014 consider adding",
@@ -825,8 +825,8 @@
         "ticker": "HIMS",
         "theme": "Health / GLP-1",
         "class": "swing",
-        "price": 31.45,
-        "chg_1d": 4.24,
+        "price": 31.47,
+        "chg_1d": 4.31,
         "above_20": true,
         "above_50": true,
         "above_200": false,
@@ -838,7 +838,7 @@
         ],
         "target": 26.61,
         "upside_pct": -15.4,
-        "stop_loss": 26.76,
+        "stop_loss": 26.78,
         "entry_zone": null,
         "sma20": 26.6,
         "sma50": 26.07,
@@ -846,7 +846,7 @@
         "atr_14": 2.3449,
         "rsi_30d_p25": 39.6,
         "rsi_30d_p75": 65.6,
-        "ma50_dist": 20.6,
+        "ma50_dist": 20.7,
         "ma50_dist_p25": 1.9,
         "ma50_dist_p75": 13.7,
         "rsi": 68.5,
@@ -864,8 +864,8 @@
         "ticker": "URA",
         "theme": "Uranium",
         "class": "swing",
-        "price": 47.86,
-        "chg_1d": -0.42,
+        "price": 47.87,
+        "chg_1d": -0.4,
         "above_20": false,
         "above_50": false,
         "above_200": false,
@@ -877,7 +877,7 @@
         ],
         "target": null,
         "upside_pct": null,
-        "stop_loss": 42.71,
+        "stop_loss": 42.72,
         "entry_zone": null,
         "sma20": 48.21,
         "sma50": 51.73,
@@ -888,8 +888,8 @@
         "ma50_dist": -7.5,
         "ma50_dist_p25": -7.4,
         "ma50_dist_p75": 2.1,
-        "rsi": 44.7,
-        "vol_ratio": 0.57,
+        "rsi": 44.8,
+        "vol_ratio": 0.6,
         "risk": "HIGH",
         "verdict": "NO",
         "reason": "Monitoring \u2014 no clear signal yet",
@@ -1059,23 +1059,23 @@
         "ticker": "IONQ",
         "theme": "Quantum Computing",
         "class": "spec",
-        "price": 56.09,
-        "chg_1d": -8.32,
+        "price": 56.06,
+        "chg_1d": -8.37,
         "above_20": false,
         "above_50": true,
         "above_200": true,
-        "pnl_pct": 35.7,
+        "pnl_pct": 35.6,
         "action": "BUY",
         "alert": null,
         "target": 67.64,
-        "upside_pct": 20.6,
+        "upside_pct": 20.7,
         "stop_loss": 49.16,
         "entry_zone": [
-          54.41,
-          56.09
+          54.38,
+          56.06
         ],
         "sma20": 61.76,
-        "sma50": 51.36,
+        "sma50": 51.35,
         "sma200": 49.16,
         "atr_14": 6.0837,
         "rsi_30d_p25": 55.7,
@@ -1083,7 +1083,7 @@
         "ma50_dist": 9.2,
         "ma50_dist_p25": 23.4,
         "ma50_dist_p75": 50.8,
-        "rsi": 40.4,
+        "rsi": 40.3,
         "vol_ratio": 0.61,
         "risk": "HIGH",
         "verdict": "YES",
@@ -1092,14 +1092,14 @@
         "_discovery": false,
         "_tier": null,
         "weight_pct": 0.39,
-        "allocation_pct": 10.54
+        "allocation_pct": 10.6
       },
       {
         "ticker": "BMNR",
         "theme": "TBD",
         "class": "spec",
-        "price": 16.205,
-        "chg_1d": -5.29,
+        "price": 16.21,
+        "chg_1d": -5.26,
         "above_20": false,
         "above_50": false,
         "above_200": false,
@@ -1110,7 +1110,7 @@
           "DEEP LOSS"
         ],
         "target": 37.33,
-        "upside_pct": 130.4,
+        "upside_pct": 130.3,
         "stop_loss": 14.2,
         "entry_zone": null,
         "sma20": 17.76,
@@ -1240,14 +1240,14 @@
         "ma50_dist_p25": -12.3,
         "ma50_dist_p75": 7.7,
         "rsi": 31.5,
-        "vol_ratio": 0.51,
+        "vol_ratio": 0.52,
         "risk": "VERY HIGH",
         "verdict": "NO",
         "reason": "Below 200D & deep loss, no recovery signal \u2014 exit",
         "earnings_day": null,
         "_discovery": false,
         "_tier": null,
-        "weight_pct": 7.41,
+        "weight_pct": 7.4,
         "allocation_pct": 0.0
       },
       {
@@ -1326,7 +1326,7 @@
         "_discovery": false,
         "_tier": null,
         "weight_pct": 1.06,
-        "allocation_pct": 9.7
+        "allocation_pct": 9.69
       },
       {
         "ticker": "TEM",
@@ -1411,13 +1411,13 @@
       }
     ],
     "total_pnl": 17.6,
-    "daily_pnl": -0.79
+    "daily_pnl": -0.8
   },
   "sectors": [
     {
       "ticker": "XLK",
       "name": "Technology",
-      "price": 186.43,
+      "price": 186.44,
       "chg_1d": -2.79,
       "chg_ytd": null,
       "above_50": true,
@@ -1427,8 +1427,8 @@
     {
       "ticker": "XLF",
       "name": "Financials",
-      "price": 54.355,
-      "chg_1d": 1.48,
+      "price": 54.35,
+      "chg_1d": 1.47,
       "chg_ytd": null,
       "above_50": true,
       "above_200": true,
@@ -1437,7 +1437,7 @@
     {
       "ticker": "XLV",
       "name": "Health Care",
-      "price": 152.93,
+      "price": 152.94,
       "chg_1d": 0.03,
       "chg_ytd": null,
       "above_50": true,
@@ -1447,8 +1447,8 @@
     {
       "ticker": "XLY",
       "name": "Consumer Disc",
-      "price": 118.49,
-      "chg_1d": -0.07,
+      "price": 118.46,
+      "chg_1d": -0.09,
       "chg_ytd": null,
       "above_50": true,
       "above_200": true,
@@ -1457,8 +1457,8 @@
     {
       "ticker": "XLI",
       "name": "Industrials",
-      "price": 179.88,
-      "chg_1d": 0.67,
+      "price": 179.85,
+      "chg_1d": 0.65,
       "chg_ytd": null,
       "above_50": true,
       "above_200": true,
@@ -1467,8 +1467,8 @@
     {
       "ticker": "XLE",
       "name": "Energy",
-      "price": 55.37,
-      "chg_1d": -0.32,
+      "price": 55.36,
+      "chg_1d": -0.34,
       "chg_ytd": null,
       "above_50": false,
       "above_200": true,
@@ -1477,7 +1477,7 @@
     {
       "ticker": "XLC",
       "name": "Comm. Services",
-      "price": 112.33,
+      "price": 112.32,
       "chg_1d": 0.12,
       "chg_ytd": null,
       "above_50": false,
@@ -1497,8 +1497,8 @@
     {
       "ticker": "XLRE",
       "name": "Real Estate",
-      "price": 45.08,
-      "chg_1d": 0.2,
+      "price": 45.1,
+      "chg_1d": 0.24,
       "chg_ytd": null,
       "above_50": true,
       "above_200": true,
@@ -1507,8 +1507,8 @@
     {
       "ticker": "XLB",
       "name": "Materials",
-      "price": 52.73,
-      "chg_1d": 0.44,
+      "price": 52.72,
+      "chg_1d": 0.42,
       "chg_ytd": null,
       "above_50": true,
       "above_200": true,
@@ -1517,8 +1517,8 @@
     {
       "ticker": "XLP",
       "name": "Consumer Staples",
-      "price": 85.61,
-      "chg_1d": 0.15,
+      "price": 85.59,
+      "chg_1d": 0.13,
       "chg_ytd": null,
       "above_50": true,
       "above_200": true,
@@ -1618,8 +1618,8 @@
     {
       "ticker": "SPY",
       "theme": "Corporate",
-      "price": 750.35,
-      "chg_1d": -0.59,
+      "price": 750.33,
+      "chg_1d": -0.6,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -1629,8 +1629,8 @@
       "upside_pct": null,
       "stop_loss": 685.18,
       "entry_zone": [
-        727.84,
-        750.35
+        727.82,
+        750.33
       ],
       "rsi": 49.9,
       "sma20": 746.44,
@@ -1650,8 +1650,8 @@
     {
       "ticker": "IVV",
       "theme": "Corporate",
-      "price": 751.98,
-      "chg_1d": -0.58,
+      "price": 752.01,
+      "chg_1d": -0.57,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -1661,8 +1661,8 @@
       "upside_pct": null,
       "stop_loss": 686.41,
       "entry_zone": [
-        729.42,
-        751.98
+        729.45,
+        752.01
       ],
       "rsi": 49.9,
       "sma20": 747.93,
@@ -1714,7 +1714,7 @@
     {
       "ticker": "GS",
       "theme": "Macro",
-      "price": 1090.7,
+      "price": 1090.67,
       "chg_1d": 1.35,
       "above_20": true,
       "above_50": true,
@@ -1725,8 +1725,8 @@
       "upside_pct": -12.8,
       "stop_loss": 865.49,
       "entry_zone": [
-        1057.98,
-        1090.7
+        1057.95,
+        1090.67
       ],
       "rsi": 64.5,
       "sma20": 1025.75,
@@ -1746,8 +1746,8 @@
     {
       "ticker": "MS",
       "theme": "Macro",
-      "price": 220.88,
-      "chg_1d": 1.33,
+      "price": 220.83,
+      "chg_1d": 1.31,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -1757,10 +1757,10 @@
       "upside_pct": -7.8,
       "stop_loss": 173.36,
       "entry_zone": [
-        214.25,
-        220.88
+        214.21,
+        220.83
       ],
-      "rsi": 68.3,
+      "rsi": 68.2,
       "sma20": 208.25,
       "sma50": 195.75,
       "sma200": 173.36,
@@ -1810,8 +1810,8 @@
     {
       "ticker": "KRE",
       "theme": "Macro",
-      "price": 72.51,
-      "chg_1d": 0.39,
+      "price": 72.49,
+      "chg_1d": 0.36,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -1821,10 +1821,10 @@
       "upside_pct": null,
       "stop_loss": 65.78,
       "entry_zone": [
-        70.33,
-        72.51
+        70.32,
+        72.49
       ],
-      "rsi": 63.0,
+      "rsi": 62.9,
       "sma20": 70.2,
       "sma50": 69.58,
       "sma200": 65.78,
@@ -1842,8 +1842,8 @@
     {
       "ticker": "FBTC",
       "theme": "Bonus",
-      "price": 57.11,
-      "chg_1d": -1.47,
+      "price": 57.13,
+      "chg_1d": -1.43,
       "above_20": false,
       "above_50": false,
       "above_200": false,
@@ -1851,7 +1851,7 @@
       "reason": "Monthly/quarterly BTC options expiry on Deribit moves $5\u201315B notional. Price gravitates toward max pain strike (where most options expire worthless) in the week before expiry.",
       "target": null,
       "upside_pct": null,
-      "stop_loss": 52.54,
+      "stop_loss": 52.56,
       "entry_zone": null,
       "rsi": 31.4,
       "sma20": 60.05,
@@ -2060,7 +2060,7 @@
     {
       "ticker": "USO",
       "theme": "Seasonal",
-      "price": 115.46,
+      "price": 115.47,
       "chg_1d": -4.74,
       "above_20": false,
       "above_50": false,
@@ -2072,7 +2072,7 @@
       "stop_loss": 93.48,
       "entry_zone": [
         134.71,
-        115.46
+        115.47
       ],
       "rsi": 34.2,
       "sma20": 134.18,
@@ -2092,8 +2092,8 @@
     {
       "ticker": "UNG",
       "theme": "Seasonal",
-      "price": 11.75,
-      "chg_1d": 2.8,
+      "price": 11.76,
+      "chg_1d": 2.89,
       "above_20": true,
       "above_50": true,
       "above_200": false,
@@ -2103,7 +2103,7 @@
       "upside_pct": null,
       "stop_loss": 10.53,
       "entry_zone": null,
-      "rsi": 57.6,
+      "rsi": 57.7,
       "sma20": 11.5,
       "sma50": 11.08,
       "sma200": 12.42,
@@ -2185,8 +2185,8 @@
     {
       "ticker": "VLO",
       "theme": "Seasonal",
-      "price": 244.185,
-      "chg_1d": -1.2,
+      "price": 244.13,
+      "chg_1d": -1.23,
       "above_20": false,
       "above_50": false,
       "above_200": true,
@@ -2197,10 +2197,10 @@
       "stop_loss": 198.36,
       "entry_zone": [
         245.01,
-        244.19
+        244.13
       ],
       "rsi": 53.3,
-      "sma20": 251.81,
+      "sma20": 251.8,
       "sma50": 245.01,
       "sma200": 198.36,
       "catalyst": "Hurricane Season (Energy Volatility)",
@@ -2281,8 +2281,8 @@
     {
       "ticker": "FPX",
       "theme": "Corporate",
-      "price": 196.48,
-      "chg_1d": -1.4,
+      "price": 196.93,
+      "chg_1d": -1.17,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2290,15 +2290,15 @@
       "reason": "Insiders locked out 180 days from IPO. Expiry floods market with supply. Stock historically drops 5\u201315% in the two weeks surrounding expiry.",
       "target": null,
       "upside_pct": null,
-      "stop_loss": 168.46,
+      "stop_loss": 168.47,
       "entry_zone": [
-        190.59,
-        196.48
+        191.02,
+        196.93
       ],
-      "rsi": 53.9,
-      "sma20": 190.58,
-      "sma50": 184.09,
-      "sma200": 168.46,
+      "rsi": 54.6,
+      "sma20": 190.6,
+      "sma50": 184.1,
+      "sma200": 168.47,
       "catalyst": "IPO Lock-up Expirations",
       "catalyst_days": 0,
       "catalyst_status": "imminent",
@@ -2374,8 +2374,8 @@
     {
       "ticker": "RBLX",
       "theme": "Industry",
-      "price": 49.345,
-      "chg_1d": 8.07,
+      "price": 49.35,
+      "chg_1d": 8.08,
       "above_20": true,
       "above_50": true,
       "above_200": false,
@@ -2403,8 +2403,8 @@
     {
       "ticker": "XBI",
       "theme": "Industry",
-      "price": 135.39,
-      "chg_1d": -0.74,
+      "price": 135.34,
+      "chg_1d": -0.78,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2415,10 +2415,10 @@
       "stop_loss": 120.28,
       "entry_zone": [
         132.98,
-        135.39
+        135.34
       ],
-      "rsi": 51.3,
-      "sma20": 132.19,
+      "rsi": 51.2,
+      "sma20": 132.18,
       "sma50": 132.98,
       "sma200": 120.28,
       "catalyst": "FDA PDUFA Drug Approval Dates",
@@ -2467,8 +2467,8 @@
     {
       "ticker": "LABU",
       "theme": "Industry",
-      "price": 184.45,
-      "chg_1d": -2.16,
+      "price": 184.63,
+      "chg_1d": -2.07,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2476,15 +2476,15 @@
       "reason": "PDUFA is FDA deadline for approval/rejection. Average binary move: +40\u201360% (approval) or \u221250\u201370% (rejection). IV collapses after \u2014 options decay sharply post-decision.",
       "target": null,
       "upside_pct": null,
-      "stop_loss": 150.85,
+      "stop_loss": 150.86,
       "entry_zone": [
         182.29,
-        184.45
+        184.63
       ],
-      "rsi": 49.4,
-      "sma20": 175.07,
+      "rsi": 49.5,
+      "sma20": 175.08,
       "sma50": 182.29,
-      "sma200": 150.85,
+      "sma200": 150.86,
       "catalyst": "FDA PDUFA Drug Approval Dates",
       "catalyst_days": 0,
       "catalyst_status": "imminent",
@@ -2499,8 +2499,8 @@
     {
       "ticker": "COPX",
       "theme": "Industry",
-      "price": 89.78,
-      "chg_1d": -0.03,
+      "price": 89.79,
+      "chg_1d": -0.02,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2510,10 +2510,10 @@
       "upside_pct": null,
       "stop_loss": 73.28,
       "entry_zone": [
-        87.09,
-        89.78
+        87.1,
+        89.79
       ],
-      "rsi": 54.8,
+      "rsi": 54.9,
       "sma20": 85.53,
       "sma50": 84.22,
       "sma200": 73.28,
@@ -2563,8 +2563,8 @@
     {
       "ticker": "SCCO",
       "theme": "Industry",
-      "price": 194.56,
-      "chg_1d": 0.69,
+      "price": 194.53,
+      "chg_1d": 0.68,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2574,10 +2574,10 @@
       "upside_pct": null,
       "stop_loss": 156.8,
       "entry_zone": [
-        188.72,
-        194.56
+        188.69,
+        194.53
       ],
-      "rsi": 53.8,
+      "rsi": 53.7,
       "sma20": 184.92,
       "sma50": 182.14,
       "sma200": 156.8,
@@ -2595,8 +2595,8 @@
     {
       "ticker": "BHP",
       "theme": "Industry",
-      "price": 92.55,
-      "chg_1d": 0.46,
+      "price": 92.51,
+      "chg_1d": 0.41,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2606,12 +2606,12 @@
       "upside_pct": null,
       "stop_loss": 66.91,
       "entry_zone": [
-        89.77,
-        92.55
+        89.73,
+        92.51
       ],
-      "rsi": 58.1,
+      "rsi": 58.0,
       "sma20": 87.38,
-      "sma50": 83.45,
+      "sma50": 83.44,
       "sma200": 66.91,
       "catalyst": "Copper Price Momentum",
       "catalyst_days": 0,
@@ -2627,8 +2627,8 @@
     {
       "ticker": "TECK",
       "theme": "Industry",
-      "price": 67.0,
-      "chg_1d": 1.27,
+      "price": 66.99,
+      "chg_1d": 1.25,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2638,8 +2638,8 @@
       "upside_pct": null,
       "stop_loss": 50.5,
       "entry_zone": [
-        64.99,
-        67.0
+        64.98,
+        66.99
       ],
       "rsi": 53.8,
       "sma20": 64.37,
@@ -2659,8 +2659,8 @@
     {
       "ticker": "ZIM",
       "theme": "Industry",
-      "price": 24.455,
-      "chg_1d": -1.87,
+      "price": 24.46,
+      "chg_1d": -1.85,
       "above_20": false,
       "above_50": false,
       "above_200": true,
@@ -2671,7 +2671,7 @@
       "stop_loss": 20.92,
       "entry_zone": [
         25.87,
-        24.45
+        24.46
       ],
       "rsi": 46.0,
       "sma20": 25.11,
@@ -2755,8 +2755,8 @@
     {
       "ticker": "XRT",
       "theme": "Industry",
-      "price": 87.07,
-      "chg_1d": -0.42,
+      "price": 87.08,
+      "chg_1d": -0.41,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2764,10 +2764,10 @@
       "reason": "Shanghai Containerized Freight Index predicts retail gross margins 2\u20133 months ahead. Spiking rates \u2192 inventory build \u2192 margin compression \u2192 retailer earnings misses.",
       "target": null,
       "upside_pct": null,
-      "stop_loss": 82.72,
+      "stop_loss": 82.73,
       "entry_zone": [
-        84.46,
-        87.07
+        84.47,
+        87.08
       ],
       "rsi": 63.6,
       "sma20": 84.05,
@@ -2787,8 +2787,8 @@
     {
       "ticker": "LMT",
       "theme": "Macro",
-      "price": 536.155,
-      "chg_1d": 1.09,
+      "price": 535.95,
+      "chg_1d": 1.05,
       "above_20": true,
       "above_50": false,
       "above_200": true,
@@ -2796,13 +2796,13 @@
       "reason": "Conflict escalation \u2192 oil spike + defense surge + gold safe-haven. Ceasefire \u2192 oil dump + defense pullback. Mean reversion on ceasefires is fast (1\u20135 days).",
       "target": null,
       "upside_pct": null,
-      "stop_loss": 509.35,
+      "stop_loss": 509.15,
       "entry_zone": [
         538.99,
-        536.15
+        535.95
       ],
-      "rsi": 54.0,
-      "sma20": 526.25,
+      "rsi": 53.9,
+      "sma20": 526.24,
       "sma50": 538.99,
       "sma200": 531.63,
       "catalyst": "War / Ceasefire Alerts",
@@ -2819,8 +2819,8 @@
     {
       "ticker": "RTX",
       "theme": "Macro",
-      "price": 186.85,
-      "chg_1d": 1.75,
+      "price": 186.77,
+      "chg_1d": 1.7,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2828,12 +2828,12 @@
       "reason": "Conflict escalation \u2192 oil spike + defense surge + gold safe-haven. Ceasefire \u2192 oil dump + defense pullback. Mean reversion on ceasefires is fast (1\u20135 days).",
       "target": null,
       "upside_pct": null,
-      "stop_loss": 177.51,
+      "stop_loss": 177.43,
       "entry_zone": [
         181.46,
-        186.85
+        186.77
       ],
-      "rsi": 63.2,
+      "rsi": 63.1,
       "sma20": 178.59,
       "sma50": 181.46,
       "sma200": 180.9,
@@ -2851,8 +2851,8 @@
     {
       "ticker": "NOC",
       "theme": "Macro",
-      "price": 550.94,
-      "chg_1d": 1.14,
+      "price": 551.21,
+      "chg_1d": 1.19,
       "above_20": true,
       "above_50": false,
       "above_200": false,
@@ -2860,11 +2860,11 @@
       "reason": "Conflict escalation \u2192 oil spike + defense surge + gold safe-haven. Ceasefire \u2192 oil dump + defense pullback. Mean reversion on ceasefires is fast (1\u20135 days).",
       "target": null,
       "upside_pct": null,
-      "stop_loss": 506.86,
+      "stop_loss": 507.11,
       "entry_zone": null,
-      "rsi": 50.9,
-      "sma20": 547.44,
-      "sma50": 579.36,
+      "rsi": 51.0,
+      "sma20": 547.46,
+      "sma50": 579.37,
       "sma200": 612.0,
       "catalyst": "War / Ceasefire Alerts",
       "catalyst_days": 0,
@@ -2909,8 +2909,8 @@
     {
       "ticker": "ITA",
       "theme": "Macro",
-      "price": 239.72,
-      "chg_1d": 0.98,
+      "price": 239.52,
+      "chg_1d": 0.89,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2920,11 +2920,11 @@
       "upside_pct": null,
       "stop_loss": 220.08,
       "entry_zone": [
-        232.53,
-        239.72
+        232.33,
+        239.52
       ],
-      "rsi": 58.5,
-      "sma20": 229.59,
+      "rsi": 58.4,
+      "sma20": 229.58,
       "sma50": 225.89,
       "sma200": 220.08,
       "catalyst": "War / Ceasefire Alerts",
@@ -2941,8 +2941,8 @@
     {
       "ticker": "XLF",
       "theme": "Macro",
-      "price": 54.355,
-      "chg_1d": 1.48,
+      "price": 54.35,
+      "chg_1d": 1.47,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -2950,14 +2950,14 @@
       "reason": "Initial regulatory news causes 10\u201330% selloff. 73% of cases end in settlement, not prosecution. Settlement is often below fear-implied penalty \u2014 mean reversion opportunity.",
       "target": null,
       "upside_pct": null,
-      "stop_loss": 51.64,
+      "stop_loss": 51.63,
       "entry_zone": [
         52.72,
         54.35
       ],
       "rsi": 75.1,
       "sma20": 52.07,
-      "sma50": 51.81,
+      "sma50": 51.8,
       "sma200": 52.27,
       "catalyst": "Regulatory Fines / Investigations",
       "catalyst_days": 0,
@@ -2973,7 +2973,7 @@
     {
       "ticker": "XLK",
       "theme": "Macro",
-      "price": 186.43,
+      "price": 186.44,
       "chg_1d": -2.79,
       "above_20": true,
       "above_50": true,
@@ -2984,8 +2984,8 @@
       "upside_pct": null,
       "stop_loss": 148.51,
       "entry_zone": [
-        180.84,
-        186.43
+        180.85,
+        186.44
       ],
       "rsi": 51.6,
       "sma20": 185.41,
@@ -3066,8 +3066,8 @@
     {
       "ticker": "ANET",
       "theme": "Bonus",
-      "price": 168.045,
-      "chg_1d": -0.62,
+      "price": 168.01,
+      "chg_1d": -0.64,
       "above_20": true,
       "above_50": true,
       "above_200": true,
@@ -3077,11 +3077,11 @@
       "upside_pct": null,
       "stop_loss": 141.86,
       "entry_zone": [
-        163.0,
-        168.04
+        162.97,
+        168.01
       ],
       "rsi": 60.2,
-      "sma20": 158.48,
+      "sma20": 158.47,
       "sma50": 157.42,
       "sma200": 141.86,
       "catalyst": "AI Compute Capacity Milestones",
@@ -3098,8 +3098,8 @@
     {
       "ticker": "VST",
       "theme": "Bonus",
-      "price": 158.625,
-      "chg_1d": 3.33,
+      "price": 158.61,
+      "chg_1d": 3.32,
       "above_20": true,
       "above_50": true,
       "above_200": false,
@@ -3127,8 +3127,8 @@
     {
       "ticker": "NRG",
       "theme": "Bonus",
-      "price": 132.115,
-      "chg_1d": 1.32,
+      "price": 132.1,
+      "chg_1d": 1.3,
       "above_20": true,
       "above_50": false,
       "above_200": false,
@@ -3136,7 +3136,7 @@
       "reason": "Hyperscaler CAPEX guidance and new cluster deployment announcements move the entire AI supply chain. 2026 trend: power infrastructure is the bottleneck \u2014 alpha shifts from chips to utilities and networking.",
       "target": null,
       "upside_pct": null,
-      "stop_loss": 121.55,
+      "stop_loss": 121.53,
       "entry_zone": null,
       "rsi": 43.0,
       "sma20": 131.58,
@@ -3158,7 +3158,7 @@
     "gainers": [
       {
         "ticker": "RBLX",
-        "chg_1d": 8.07
+        "chg_1d": 8.08
       },
       {
         "ticker": "TTWO",
@@ -3166,7 +3166,7 @@
       },
       {
         "ticker": "HIMS",
-        "chg_1d": 4.24
+        "chg_1d": 4.31
       },
       {
         "ticker": "JPM",
@@ -3184,7 +3184,7 @@
       },
       {
         "ticker": "IONQ",
-        "chg_1d": -8.32
+        "chg_1d": -8.37
       },
       {
         "ticker": "KLAC",
@@ -3205,28 +3205,28 @@
       {
         "symbol": "SOL",
         "theme": "L1 / DeFi",
-        "price": 73.68,
-        "chg_24h": -2.05,
-        "market_cap": 42749814571,
-        "vol_24h": 2544803121,
-        "pnl_pct": -60.5,
-        "pnl_label": "-60.5%",
+        "price": 73.97,
+        "chg_24h": -1.67,
+        "market_cap": 42903747412,
+        "vol_24h": 2532708877,
+        "pnl_pct": -60.3,
+        "pnl_label": "-60.3%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 58.944,
+        "stop_loss": 59.176,
         "alert": [
           "danger",
           "DEEP LOSS"
         ],
-        "weight_pct": 0.95
+        "weight_pct": 0.96
       },
       {
         "symbol": "XRP",
         "theme": "Payments / Ripple",
         "price": 1.22,
-        "chg_24h": -4.58,
-        "market_cap": 75496940516,
-        "vol_24h": 2172424791,
+        "chg_24h": -4.26,
+        "market_cap": 75708121497,
+        "vol_24h": 2233332010,
         "pnl_pct": -4.7,
         "pnl_label": "-4.7%",
         "action": "WAIT",
@@ -3238,15 +3238,15 @@
       {
         "symbol": "LINK",
         "theme": "Oracles",
-        "price": 8.24,
-        "chg_24h": -2.05,
-        "market_cap": 5993141556,
-        "vol_24h": 218961855,
-        "pnl_pct": -44.9,
-        "pnl_label": "-44.9%",
+        "price": 8.28,
+        "chg_24h": -1.46,
+        "market_cap": 6010824391,
+        "vol_24h": 219303079,
+        "pnl_pct": -44.6,
+        "pnl_label": "-44.6%",
         "action": "WAIT",
         "risk": "VERY HIGH",
-        "stop_loss": 6.592,
+        "stop_loss": 6.624,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3256,15 +3256,15 @@
       {
         "symbol": "DOT",
         "theme": "Interoperability",
-        "price": 1.009,
-        "chg_24h": -1.33,
-        "market_cap": 1703377003,
-        "vol_24h": 99834233,
+        "price": 1.014,
+        "chg_24h": -0.94,
+        "market_cap": 1711626882,
+        "vol_24h": 99595583,
         "pnl_pct": -81.2,
         "pnl_label": "-81.2%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.8072,
+        "stop_loss": 0.8112,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3274,15 +3274,15 @@
       {
         "symbol": "ALGO",
         "theme": "L1 / Payments",
-        "price": 0.0942,
-        "chg_24h": -1.4,
-        "market_cap": 840061064,
-        "vol_24h": 30865852,
-        "pnl_pct": -61.4,
-        "pnl_label": "-61.4%",
+        "price": 0.0947,
+        "chg_24h": -0.96,
+        "market_cap": 845048151,
+        "vol_24h": 31939411,
+        "pnl_pct": -61.2,
+        "pnl_label": "-61.2%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.075345,
+        "stop_loss": 0.075768,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3292,15 +3292,15 @@
       {
         "symbol": "AAVE",
         "theme": "DeFi Lending",
-        "price": 75.9,
-        "chg_24h": 1.92,
-        "market_cap": 1151644720,
-        "vol_24h": 182308052,
-        "pnl_pct": -72.9,
-        "pnl_label": "-72.9%",
+        "price": 76.21,
+        "chg_24h": 2.35,
+        "market_cap": 1156882516,
+        "vol_24h": 182329154,
+        "pnl_pct": -72.8,
+        "pnl_label": "-72.8%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 60.72,
+        "stop_loss": 60.968,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3310,15 +3310,15 @@
       {
         "symbol": "ONDO",
         "theme": "RWA Tokenization",
-        "price": 0.3665,
-        "chg_24h": -2.56,
-        "market_cap": 1784552484,
-        "vol_24h": 165892060,
-        "pnl_pct": -67.0,
-        "pnl_label": "-67.0%",
+        "price": 0.3692,
+        "chg_24h": -1.9,
+        "market_cap": 1793050618,
+        "vol_24h": 166775418,
+        "pnl_pct": -66.7,
+        "pnl_label": "-66.7%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.293182,
+        "stop_loss": 0.295363,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3328,30 +3328,30 @@
       {
         "symbol": "NEAR",
         "theme": "L1 / AI",
-        "price": 2.31,
-        "chg_24h": -6.51,
-        "market_cap": 2993505094,
-        "vol_24h": 520968143,
-        "pnl_pct": -26.7,
-        "pnl_label": "-26.7%",
+        "price": 2.34,
+        "chg_24h": -5.76,
+        "market_cap": 3033704723,
+        "vol_24h": 522193212,
+        "pnl_pct": -25.7,
+        "pnl_label": "-25.7%",
         "action": "WAIT",
         "risk": "VERY HIGH",
-        "stop_loss": 1.848,
+        "stop_loss": 1.872,
         "alert": null,
         "weight_pct": 0.16
       },
       {
         "symbol": "AVAX",
         "theme": "L1 / DeFi",
-        "price": 6.85,
-        "chg_24h": -0.73,
-        "market_cap": 2957605151,
-        "vol_24h": 200833187,
-        "pnl_pct": -82.0,
-        "pnl_label": "-82.0%",
+        "price": 6.87,
+        "chg_24h": -0.55,
+        "market_cap": 2967560620,
+        "vol_24h": 205760074,
+        "pnl_pct": -81.9,
+        "pnl_label": "-81.9%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 5.48,
+        "stop_loss": 5.496,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3362,14 +3362,14 @@
         "symbol": "KAS",
         "theme": "PoW / Fast",
         "price": 0.0328,
-        "chg_24h": -1.25,
-        "market_cap": 900152677,
-        "vol_24h": 10778511,
-        "pnl_pct": -74.8,
-        "pnl_label": "-74.8%",
+        "chg_24h": -1.05,
+        "market_cap": 901502385,
+        "vol_24h": 10859288,
+        "pnl_pct": -74.7,
+        "pnl_label": "-74.7%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.026201,
+        "stop_loss": 0.026271,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3379,15 +3379,15 @@
       {
         "symbol": "HBAR",
         "theme": "Enterprise DLT",
-        "price": 0.0809,
-        "chg_24h": -2.48,
-        "market_cap": 3517159957,
-        "vol_24h": 78738830,
-        "pnl_pct": -65.6,
-        "pnl_label": "-65.6%",
+        "price": 0.0812,
+        "chg_24h": -2.16,
+        "market_cap": 3530340763,
+        "vol_24h": 82745790,
+        "pnl_pct": -65.4,
+        "pnl_label": "-65.4%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.064735,
+        "stop_loss": 0.064992,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3397,15 +3397,15 @@
       {
         "symbol": "DOGE",
         "theme": "Meme / Payments",
-        "price": 0.0871,
-        "chg_24h": -2.29,
-        "market_cap": 13474256545,
-        "vol_24h": 801935306,
-        "pnl_pct": -77.3,
-        "pnl_label": "-77.3%",
+        "price": 0.0874,
+        "chg_24h": -1.9,
+        "market_cap": 13509895841,
+        "vol_24h": 779537074,
+        "pnl_pct": -77.2,
+        "pnl_label": "-77.2%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.069668,
+        "stop_loss": 0.069923,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -3413,25 +3413,25 @@
         "weight_pct": 0.01
       }
     ],
-    "btc_dominance": 56.2,
+    "btc_dominance": 56.3,
     "fear_greed": {
       "score": 23,
       "label": "Extreme Fear"
     },
     "btc_context": {
-      "btc_price": 65563,
-      "btc_chg_24h": -1.5,
-      "btc_dominance": 56.2,
-      "eth_price": 1790.0,
-      "eth_chg_24h": -1.86,
+      "btc_price": 65705,
+      "btc_chg_24h": -1.2,
+      "btc_dominance": 56.3,
+      "eth_price": 1794.0,
+      "eth_chg_24h": -1.5,
       "eth_dominance": 9.3,
-      "eth_btc_ratio": 0.0273,
+      "eth_btc_ratio": 0.02731,
       "dom_signal": "BALANCED"
     },
-    "btc_price": 65563,
-    "btc_chg": -1.5,
-    "eth_price": 1790.0,
-    "eth_chg": -1.86
+    "btc_price": 65705,
+    "btc_chg": -1.2,
+    "eth_price": 1794.0,
+    "eth_chg": -1.5
   },
   "fear_greed": {
     "score": 39,
@@ -3548,8 +3548,8 @@
           0.4,
           99.6
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3570,8 +3570,8 @@
           1.1,
           98.9
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3583,17 +3583,17 @@
         "event_id": "548274",
         "event_title": "What price will Bitcoin hit in June?",
         "question": "Will Bitcoin reach $77,500 in June?",
-        "yes_prob": 3.5,
+        "yes_prob": 3.8,
         "outcomes": [
           "Yes",
           "No"
         ],
         "prices": [
-          3.5,
-          96.5
+          3.8,
+          96.2
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3605,17 +3605,17 @@
         "event_id": "548274",
         "event_title": "What price will Bitcoin hit in June?",
         "question": "Will Bitcoin dip to $57,500 in June?",
-        "yes_prob": 11.0,
+        "yes_prob": 11.1,
         "outcomes": [
           "Yes",
           "No"
         ],
         "prices": [
-          11.0,
-          89.0
+          11.1,
+          88.9
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3636,8 +3636,8 @@
           5.0,
           95.0
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3658,8 +3658,8 @@
           31.5,
           68.5
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3680,8 +3680,8 @@
           0.2,
           99.8
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3702,8 +3702,8 @@
           0.4,
           99.6
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3724,8 +3724,8 @@
           100.0,
           0.0
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3746,8 +3746,8 @@
           100.0,
           0.0
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3759,17 +3759,17 @@
         "event_id": "548274",
         "event_title": "What price will Bitcoin hit in June?",
         "question": "Will Bitcoin dip to $52,500 in June?",
-        "yes_prob": 2.9,
+        "yes_prob": 3.0,
         "outcomes": [
           "Yes",
           "No"
         ],
         "prices": [
-          2.9,
+          3.0,
           97.0
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3781,17 +3781,17 @@
         "event_id": "548274",
         "event_title": "What price will Bitcoin hit in June?",
         "question": "Will Bitcoin dip to $50,000 in June?",
-        "yes_prob": 1.9,
+        "yes_prob": 2.1,
         "outcomes": [
           "Yes",
           "No"
         ],
         "prices": [
-          1.9,
+          2.1,
           98.0
         ],
-        "volume": 17504126,
-        "liquidity": 1466208,
+        "volume": 17510058,
+        "liquidity": 1472696,
         "end_date": "2026-07-01",
         "days_out": 14,
         "relevance": 7,
@@ -3803,7 +3803,7 @@
     "fed_cut_prob": null,
     "recession_prob": null,
     "btc_up_prob": null,
-    "fetched_at": "20:09Z"
+    "fetched_at": "20:18Z"
   },
   "trend_ticker_data": {},
   "regime_info": {
@@ -3871,7 +3871,7 @@
         "status_icon": "\ud83d\udfe1",
         "volume_7d": 0,
         "baseline_volume_per_week": 8,
-        "last_successful_poll": "2026-06-16T08:16:43.233535+00:00",
+        "last_successful_poll": "2026-06-16T20:17:18.105015+00:00",
         "consecutive_red_days": 0,
         "phase_method": "retro+shadow"
       },
@@ -3929,10 +3929,10 @@
       "phase_spent_usd": 0,
       "phase_budget_usd": 350,
       "ytd_total_usd": 0,
-      "last_updated": "2026-06-16T20:09:30.249489+00:00"
+      "last_updated": "2026-06-16T20:18:39.019790+00:00"
     },
     "warming_up": true,
-    "generated_at": "2026-06-16T20:09:30.249506+00:00"
+    "generated_at": "2026-06-16T20:18:39.019808+00:00"
   },
   "monthly_deployed_pct": 0.0
 }
