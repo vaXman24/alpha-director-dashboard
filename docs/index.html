@@ -6123,7 +6123,11 @@ window._openCryptoModal = function(symbol) {
           });
         }
         if (!pos) continue;
-        if ((Number(pos.shares) || 0) <= 0){
+        // Only split out entries we KNOW are zero-share (shares present & <= 0).
+        // The PUBLIC data.json strips `shares`, so missing shares must NOT be
+        // treated as 0 — otherwise real holdings get misfiled as "Research" and
+        // the Portfolio grid empties to just locally-traded names (bug 2026-07-10).
+        if (typeof pos.shares === 'number' && pos.shares <= 0){
           researchGrid.appendChild(card); // moves it (DOM nodes are unique parents)
           moved++;
         }
