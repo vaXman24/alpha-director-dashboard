@@ -33,12 +33,12 @@
       "effective_action": "WAIT",
       "confidence_pct": 60,
       "chart_rec": "hold",
-      "chart_read": "**Price** at $814 is +7.2% from the 30-week MA ($759) \u2014 **Above fair value (hold)**. you're paying around fair value \u2014 wait for a real discount before adding more. **RSI 70** is bullish-leaning but with room to run \u2014 momentum is positive without being stretched. **Volume** is volume 0.0\u00d7 average (light) \u2014 calm conditions; no panic, no rush. **MA stack**: price is above 200D / above 50D \u2014 both long-term and medium-term trends are intact, the dip is a pullback within an uptrend.",
+      "chart_read": "**Price** at $814 is +7.3% from the 30-week MA ($759) \u2014 **Above fair value (hold)**. you're paying around fair value \u2014 wait for a real discount before adding more. **RSI 70** is bullish-leaning but with room to run \u2014 momentum is positive without being stretched. **Volume** is volume 1.2\u00d7 average \u2014 normal participation; no special signal in either direction. **MA stack**: price is above 200D / above 50D \u2014 both long-term and medium-term trends are intact, the dip is a pullback within an uptrend.",
       "add_zones": "Tier 1 ($721\u2013$759, ~25-35% of monthly DCA) \u00b7 Tier 2 ($683\u2013$721, ~50-65%) \u00b7 Tier 3 (below $683, max DCA).",
       "trim_zones": "Stretched / no-add: above $835 (10% above MA150). Trim if you're up >50% from your avg ($567) or RSI stays >75 for several days.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
       "fundamentals": "S&P 500 (LSE/USD) \u00b7 above 200D \u00b7 above 50D \u00b7 risk: LOW",
-      "best_play": "**WHAT**: Wait (60%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: Hold your existing position; do not add. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot. **STOP-LOSS**: $750 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
+      "best_play": "**WHAT**: Wait (60%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: Hold your existing position; do not add. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot. **STOP-LOSS**: $791 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
     }
   },
   "CNDX.L": {
@@ -741,18 +741,438 @@
       "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
     }
   },
+  "IPO": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "STRONG BUY",
+      "confidence_pct": 95,
+      "chart_rec": "buy",
+      "chart_read": "**Price** $54.75 \u2014 **Pullback in uptrend (buy zone)**. **Trend**: 20D MA $57.37 vs 50D MA $54.73 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 0% of range \u2014 tagging the LOWER Bollinger band \u2014 price is at the cheap end of its volatility range; in an uptrend, this is the highest-confluence entry. **RSI 43** is weakening but not capitulation \u2014 careful here. **Volume** is volume 0.5\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $54.73\u2013$57.37 (between 20D and 50D), ideally with price tagging the lower BB ($54.74). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($60.01) once you're in. Stop-loss below 50D MA ($53.09).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Corporate \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: High-confidence buy (95%). Both the chart geometry and the brain are pointing at the same setup. **SIZE**: Start a new position at 50-75% of your normal full size \u2014 this is the rare alignment where you can be aggressive. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 even high-confidence setups can get whipsawed by macro shocks. Split your buy in HALVES: deploy 50% now, 50% after the event settles. If the event drops price into a deeper tier, that's a gift \u2014 deploy the second half there."
+    }
+  },
+  "IPOS": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "STRONG BUY",
+      "confidence_pct": 95,
+      "chart_rec": "buy",
+      "chart_read": "**Price** $23.86 \u2014 **Pullback in uptrend (buy zone)**. **Trend**: 20D MA $24.79 vs 50D MA $23.33 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 17% of range \u2014 tagging the LOWER Bollinger band \u2014 price is at the cheap end of its volatility range; in an uptrend, this is the highest-confluence entry. **RSI 43** is weakening but not capitulation \u2014 careful here. **Volume** is volume 0.3\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $23.33\u2013$24.79 (between 20D and 50D), ideally with price tagging the lower BB ($23.36). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($26.22) once you're in. Stop-loss below 50D MA ($22.63).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Corporate \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: High-confidence buy (95%). Both the chart geometry and the brain are pointing at the same setup. **SIZE**: Start a new position at 50-75% of your normal full size \u2014 this is the rare alignment where you can be aggressive. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 even high-confidence setups can get whipsawed by macro shocks. Split your buy in HALVES: deploy 50% now, 50% after the event settles. If the event drops price into a deeper tier, that's a gift \u2014 deploy the second half there."
+    }
+  },
+  "FPX": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 90,
+      "chart_rec": "buy",
+      "chart_read": "**Price** $189 \u2014 **Pullback in uptrend (buy zone)**. **Trend**: 20D MA $196 vs 50D MA $192 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 9% of range \u2014 tagging the LOWER Bollinger band \u2014 price is at the cheap end of its volatility range; in an uptrend, this is the highest-confluence entry. **RSI 45** is weakening but not capitulation \u2014 careful here. **Volume** is volume 0.8\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $192\u2013$196 (between 20D and 50D), ideally with price tagging the lower BB ($187). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($206) once you're in. Stop-loss below 50D MA ($186).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Corporate \u00b7 above 200D \u00b7 below 50D",
+      "best_play": "**WHAT**: Standard buy (90%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "JPM": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $347 \u2014 **Stretched in uptrend (don't chase)**. **Trend**: 20D MA $334 vs 50D MA $317 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 113% of range \u2014 tagging the UPPER Bollinger band \u2014 price is stretched; mean-reversion (a pullback) is statistically the next move, not a continuation. **RSI 63** is bullish momentum but not stretched. **Volume** is volume 1.0\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "Buy zone: pullback into $317\u2013$334 (between 20D and 50D), ideally with price tagging the lower BB ($324). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($344) once you're in. Stop-loss below 50D MA ($307).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Corporate \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "TTWO": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $244 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $244 vs 50D MA $232 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 50% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 58** is balanced \u2014 neither side has the edge. **Volume** is volume 0.5\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $232\u2013$244 (between 20D and 50D), ideally with price tagging the lower BB ($227). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($261) once you're in. Stop-loss below 50D MA ($225).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "EA": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $207 \u2014 **Stretched in uptrend (don't chase)**. **Trend**: 20D MA $205 vs 50D MA $203 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 92% of range \u2014 tagging the UPPER Bollinger band \u2014 price is stretched; mean-reversion (a pullback) is statistically the next move, not a continuation. **RSI 77** is overbought \u2014 too late to chase, wait for a cool-off. **Volume** is volume 2.0\u00d7 average \u2014 heavy participation, the move has conviction.",
+      "add_zones": "Buy zone: pullback into $203\u2013$205 (between 20D and 50D), ideally with price tagging the lower BB ($202). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($208) once you're in. Stop-loss below 50D MA ($197).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "RBLX": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WAIT",
+      "confidence_pct": 60,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $57.07 \u2014 **Stretched in uptrend (don't chase)**. **Trend**: 20D MA $52.72 vs 50D MA $47.70 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 77% of range \u2014 in the upper half of the range \u2014 momentum is intact but you're paying a premium versus recent prices. **RSI 68** is bullish momentum but not stretched. **Volume** is volume 0.6\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $47.70\u2013$52.72 (between 20D and 50D), ideally with price tagging the lower BB ($44.59). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($60.85) once you're in. Stop-loss below 50D MA ($46.27).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 below 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Wait (60%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
+    }
+  },
+  "XBI": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $156 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $154 vs 50D MA $141 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 57% of range \u2014 in the upper half of the range \u2014 momentum is intact but you're paying a premium versus recent prices. **RSI 61** is bullish momentum but not stretched. **Volume** is volume 0.5\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $141\u2013$154 (between 20D and 50D), ideally with price tagging the lower BB ($137). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($171) once you're in. Stop-loss below 50D MA ($137).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "IBB": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $190 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $187 vs 50D MA $176 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 59% of range \u2014 in the upper half of the range \u2014 momentum is intact but you're paying a premium versus recent prices. **RSI 64** is bullish momentum but not stretched. **Volume** is volume 0.7\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $176\u2013$187 (between 20D and 50D), ideally with price tagging the lower BB ($170). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($204) once you're in. Stop-loss below 50D MA ($171).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "LABU": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $278 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $270 vs 50D MA $215 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 55% of range \u2014 in the upper half of the range \u2014 momentum is intact but you're paying a premium versus recent prices. **RSI 59** is balanced \u2014 neither side has the edge. **Volume** is volume 0.6\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $215\u2013$270 (between 20D and 50D), ideally with price tagging the lower BB ($188). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($351) once you're in. Stop-loss below 50D MA ($209).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "COPX": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WAIT",
+      "confidence_pct": 35,
+      "chart_rec": "skip",
+      "chart_read": "**Price** $77.26 \u2014 **Trend broken (momentum against you)**. **Trend**: 20D MA $78.39 vs 50D MA $82.41 \u2192 the trend is broken \u2014 20-day MA is BELOW 50-day MA. Until that flips back (20 > 50 with price holding above), every dip is a falling knife. Wait for the cross. **Bollinger**: position 44% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 53** is balanced \u2014 neither side has the edge. **Volume** is volume 0.5\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "No add today \u2014 trend is broken. Re-enter only when 20D crosses BACK above 50D (currently $78.39 vs $82.41) and price holds there for several days.",
+      "trim_zones": "Trim near upper BB ($87.61) once you're in. Stop-loss below 50D MA ($79.93).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 below 50D",
+      "best_play": "**WHAT**: Wait (35%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
+    }
+  },
+  "FCX": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WAIT",
+      "confidence_pct": 35,
+      "chart_rec": "skip",
+      "chart_read": "**Price** $60.97 \u2014 **Trend broken (momentum against you)**. **Trend**: 20D MA $62.87 vs 50D MA $63.64 \u2192 the trend is broken \u2014 20-day MA is BELOW 50-day MA. Until that flips back (20 > 50 with price holding above), every dip is a falling knife. Wait for the cross. **Bollinger**: position 37% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 48** is balanced \u2014 neither side has the edge. **Volume** is volume 0.9\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "No add today \u2014 trend is broken. Re-enter only when 20D crosses BACK above 50D (currently $62.87 vs $63.64) and price holds there for several days.",
+      "trim_zones": "Trim near upper BB ($70.04) once you're in. Stop-loss below 50D MA ($61.73).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 below 50D",
+      "best_play": "**WHAT**: Wait (35%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
+    }
+  },
+  "SCCO": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WATCH",
+      "confidence_pct": 45,
+      "chart_rec": "skip",
+      "chart_read": "**Price** $182 \u2014 **Trend broken (momentum against you)**. **Trend**: 20D MA $177 vs 50D MA $181 \u2192 the trend is broken \u2014 20-day MA is BELOW 50-day MA. Until that flips back (20 > 50 with price holding above), every dip is a falling knife. Wait for the cross. **Bollinger**: position 62% of range \u2014 in the upper half of the range \u2014 momentum is intact but you're paying a premium versus recent prices. **RSI 60** is balanced \u2014 neither side has the edge. **Volume** is volume 1.1\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "No add today \u2014 trend is broken. Re-enter only when 20D crosses BACK above 50D (currently $177 vs $181) and price holds there for several days.",
+      "trim_zones": "Trim near upper BB ($195) once you're in. Stop-loss below 50D MA ($175).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Mixed signals (45%) \u2014 the chart and brain don't fully agree. Brain may see fundamental/regime strength the chart hasn't priced yet, OR the chart is showing a real warning the brain is missing. **SIZE**: No starter position today. Why the caution \u2014 at this confidence level, the cost of being early is typically larger than the cost of being right but late. Patience pays. **TIMING**: Two paths to upgrade: (a) chart catches up to brain \u2014 trend reclaims the moving averages, or (b) brain catches up to chart \u2014 fundamental signals deteriorate enough that brain downgrades. Whichever happens, the integrated signal will move toward the edges and become actionable."
+    }
+  },
+  "BHP": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WATCH",
+      "confidence_pct": 45,
+      "chart_rec": "skip",
+      "chart_read": "**Price** $85.48 \u2014 **Trend broken (momentum against you)**. **Trend**: 20D MA $83.36 vs 50D MA $85.10 \u2192 the trend is broken \u2014 20-day MA is BELOW 50-day MA. Until that flips back (20 > 50 with price holding above), every dip is a falling knife. Wait for the cross. **Bollinger**: position 65% of range \u2014 in the upper half of the range \u2014 momentum is intact but you're paying a premium versus recent prices. **RSI 63** is bullish momentum but not stretched. **Volume** is volume 1.2\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "No add today \u2014 trend is broken. Re-enter only when 20D crosses BACK above 50D (currently $83.36 vs $85.10) and price holds there for several days.",
+      "trim_zones": "Trim near upper BB ($90.48) once you're in. Stop-loss below 50D MA ($82.55).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Mixed signals (45%) \u2014 the chart and brain don't fully agree. Brain may see fundamental/regime strength the chart hasn't priced yet, OR the chart is showing a real warning the brain is missing. **SIZE**: No starter position today. Why the caution \u2014 at this confidence level, the cost of being early is typically larger than the cost of being right but late. Patience pays. **TIMING**: Two paths to upgrade: (a) chart catches up to brain \u2014 trend reclaims the moving averages, or (b) brain catches up to chart \u2014 fundamental signals deteriorate enough that brain downgrades. Whichever happens, the integrated signal will move toward the edges and become actionable."
+    }
+  },
+  "TECK": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WAIT",
+      "confidence_pct": 35,
+      "chart_rec": "skip",
+      "chart_read": "**Price** $57.95 \u2014 **Trend broken (momentum against you)**. **Trend**: 20D MA $60.19 vs 50D MA $62.26 \u2192 the trend is broken \u2014 20-day MA is BELOW 50-day MA. Until that flips back (20 > 50 with price holding above), every dip is a falling knife. Wait for the cross. **Bollinger**: position 30% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 51** is balanced \u2014 neither side has the edge. **Volume** is volume 1.4\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "No add today \u2014 trend is broken. Re-enter only when 20D crosses BACK above 50D (currently $60.19 vs $62.26) and price holds there for several days.",
+      "trim_zones": "Trim near upper BB ($65.87) once you're in. Stop-loss below 50D MA ($60.39).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 below 50D",
+      "best_play": "**WHAT**: Wait (35%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
+    }
+  },
+  "ZIM": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WAIT",
+      "confidence_pct": 35,
+      "chart_rec": "skip",
+      "chart_read": "**Price** $24.80 \u2014 **Trend broken (momentum against you)**. **Trend**: 20D MA $24.82 vs 50D MA $25.28 \u2192 the trend is broken \u2014 20-day MA is BELOW 50-day MA. Until that flips back (20 > 50 with price holding above), every dip is a falling knife. Wait for the cross. **Bollinger**: position 49% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 44** is weakening but not capitulation \u2014 careful here. **Volume** is volume 1.0\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "No add today \u2014 trend is broken. Re-enter only when 20D crosses BACK above 50D (currently $24.82 vs $25.28) and price holds there for several days.",
+      "trim_zones": "Trim near upper BB ($26.38) once you're in. Stop-loss below 50D MA ($24.53).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 below 50D",
+      "best_play": "**WHAT**: Wait (35%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
+    }
+  },
+  "MATX": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $209 \u2014 **Stretched in uptrend (don't chase)**. **Trend**: 20D MA $200 vs 50D MA $191 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 88% of range \u2014 tagging the UPPER Bollinger band \u2014 price is stretched; mean-reversion (a pullback) is statistically the next move, not a continuation. **RSI 66** is bullish momentum but not stretched. **Volume** is volume 0.9\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "Buy zone: pullback into $191\u2013$200 (between 20D and 50D), ideally with price tagging the lower BB ($188). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($212) once you're in. Stop-loss below 50D MA ($186).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "SBLK": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WATCH",
+      "confidence_pct": 45,
+      "chart_rec": "skip",
+      "chart_read": "**Price** $26.35 \u2014 **Trend broken (momentum against you)**. **Trend**: 20D MA $25.91 vs 50D MA $26.50 \u2192 the trend is broken \u2014 20-day MA is BELOW 50-day MA. Until that flips back (20 > 50 with price holding above), every dip is a falling knife. Wait for the cross. **Bollinger**: position 64% of range \u2014 in the upper half of the range \u2014 momentum is intact but you're paying a premium versus recent prices. **RSI 57** is balanced \u2014 neither side has the edge. **Volume** is volume 0.7\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "No add today \u2014 trend is broken. Re-enter only when 20D crosses BACK above 50D (currently $25.91 vs $26.50) and price holds there for several days.",
+      "trim_zones": "Trim near upper BB ($27.45) once you're in. Stop-loss below 50D MA ($25.70).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Mixed signals (45%) \u2014 the chart and brain don't fully agree. Brain may see fundamental/regime strength the chart hasn't priced yet, OR the chart is showing a real warning the brain is missing. **SIZE**: No starter position today. Why the caution \u2014 at this confidence level, the cost of being early is typically larger than the cost of being right but late. Patience pays. **TIMING**: Two paths to upgrade: (a) chart catches up to brain \u2014 trend reclaims the moving averages, or (b) brain catches up to chart \u2014 fundamental signals deteriorate enough that brain downgrades. Whichever happens, the integrated signal will move toward the edges and become actionable."
+    }
+  },
+  "XRT": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $89.10 \u2014 **Stretched in uptrend (don't chase)**. **Trend**: 20D MA $87.28 vs 50D MA $84.86 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 90% of range \u2014 tagging the UPPER Bollinger band \u2014 price is stretched; mean-reversion (a pullback) is statistically the next move, not a continuation. **RSI 55** is balanced \u2014 neither side has the edge. **Volume** is volume 1.1\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "Buy zone: pullback into $84.86\u2013$87.28 (between 20D and 50D), ideally with price tagging the lower BB ($85.01). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($89.54) once you're in. Stop-loss below 50D MA ($82.31).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Industry \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "LMT": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WAIT",
+      "confidence_pct": 70,
+      "chart_rec": "skip",
+      "chart_read": "**Price** $514 \u2014 **Trend broken (momentum against you)**. **Trend**: 20D MA $518 vs 50D MA $521 \u2192 the trend is broken \u2014 20-day MA is BELOW 50-day MA. Until that flips back (20 > 50 with price holding above), every dip is a falling knife. Wait for the cross. **Bollinger**: position 45% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 61** is bullish momentum but not stretched. **Volume** is volume 0.6\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "No add today \u2014 trend is broken. Re-enter only when 20D crosses BACK above 50D (currently $518 vs $521) and price holds there for several days.",
+      "trim_zones": "Trim near upper BB ($548) once you're in. Stop-loss below 50D MA ($505).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Macro \u00b7 below 200D \u00b7 below 50D",
+      "best_play": "**WHAT**: Wait (70%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
+    }
+  },
+  "RTX": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $196 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $192 vs 50D MA $183 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 68% of range \u2014 in the upper half of the range \u2014 momentum is intact but you're paying a premium versus recent prices. **RSI 67** is bullish momentum but not stretched. **Volume** is volume 0.7\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $183\u2013$192 (between 20D and 50D), ideally with price tagging the lower BB ($180). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($203) once you're in. Stop-loss below 50D MA ($178).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Macro \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "NOC": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WAIT",
+      "confidence_pct": 70,
+      "chart_rec": "skip",
+      "chart_read": "**Price** $525 \u2014 **Trend broken (momentum against you)**. **Trend**: 20D MA $526 vs 50D MA $541 \u2192 the trend is broken \u2014 20-day MA is BELOW 50-day MA. Until that flips back (20 > 50 with price holding above), every dip is a falling knife. Wait for the cross. **Bollinger**: position 48% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 60** is bullish momentum but not stretched. **Volume** is volume 0.8\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "No add today \u2014 trend is broken. Re-enter only when 20D crosses BACK above 50D (currently $526 vs $541) and price holds there for several days.",
+      "trim_zones": "Trim near upper BB ($566) once you're in. Stop-loss below 50D MA ($524).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Macro \u00b7 below 200D \u00b7 below 50D",
+      "best_play": "**WHAT**: Wait (70%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
+    }
+  },
+  "ITA": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $236 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $240 vs 50D MA $232 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 30% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 50** is balanced \u2014 neither side has the edge. **Volume** is volume 0.8\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $232\u2013$240 (between 20D and 50D), ideally with price tagging the lower BB ($231). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($249) once you're in. Stop-loss below 50D MA ($225).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Macro \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "XLF": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $56.56 \u2014 **Stretched in uptrend (don't chase)**. **Trend**: 20D MA $54.76 vs 50D MA $52.96 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 90% of range \u2014 tagging the UPPER Bollinger band \u2014 price is stretched; mean-reversion (a pullback) is statistically the next move, not a continuation. **RSI 74** is bullish momentum but not stretched. **Volume** is volume 1.4\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "Buy zone: pullback into $52.96\u2013$54.76 (between 20D and 50D), ideally with price tagging the lower BB ($52.54). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($56.98) once you're in. Stop-loss below 50D MA ($51.37).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Macro \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "XLK": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WATCH",
+      "confidence_pct": 55,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $182 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $185 vs 50D MA $182 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 29% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 48** is balanced \u2014 neither side has the edge. **Volume** is volume 0.8\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "Buy zone: pullback into $182\u2013$185 (between 20D and 50D), ideally with price tagging the lower BB ($178). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($192) once you're in. Stop-loss below 50D MA ($177).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Macro \u00b7 above 200D \u00b7 below 50D",
+      "best_play": "**WHAT**: Mixed signals (55%) \u2014 the chart and brain don't fully agree. Brain may see fundamental/regime strength the chart hasn't priced yet, OR the chart is showing a real warning the brain is missing. **SIZE**: No starter position today. Why the caution \u2014 at this confidence level, the cost of being early is typically larger than the cost of being right but late. Patience pays. **TIMING**: Two paths to upgrade: (a) chart catches up to brain \u2014 trend reclaims the moving averages, or (b) brain catches up to chart \u2014 fundamental signals deteriorate enough that brain downgrades. Whichever happens, the integrated signal will move toward the edges and become actionable."
+    }
+  },
+  "AMD": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $529 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $534 vs 50D MA $493 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 43% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 51** is balanced \u2014 neither side has the edge. **Volume** is volume 1.0\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "Buy zone: pullback into $493\u2013$534 (between 20D and 50D), ideally with price tagging the lower BB ($497). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($571) once you're in. Stop-loss below 50D MA ($478).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Bonus \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "SMCI": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WAIT",
+      "confidence_pct": 70,
+      "chart_rec": "skip",
+      "chart_read": "**Price** $26.89 \u2014 **Trend broken (momentum against you)**. **Trend**: 20D MA $29.20 vs 50D MA $33.45 \u2192 the trend is broken \u2014 20-day MA is BELOW 50-day MA. Until that flips back (20 > 50 with price holding above), every dip is a falling knife. Wait for the cross. **Bollinger**: position 26% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 27** is deeply oversold \u2014 bounce odds high IF trend filter says so. **Volume** is volume 0.5\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "No add today \u2014 trend is broken. Re-enter only when 20D crosses BACK above 50D (currently $29.20 vs $33.45) and price holds there for several days.",
+      "trim_zones": "Trim near upper BB ($34.05) once you're in. Stop-loss below 50D MA ($32.45).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Bonus \u00b7 below 200D \u00b7 below 50D",
+      "best_play": "**WHAT**: Wait (70%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
+    }
+  },
+  "ANET": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "BUY",
+      "confidence_pct": 65,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $172 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $171 vs 50D MA $161 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 54% of range \u2014 in the upper half of the range \u2014 momentum is intact but you're paying a premium versus recent prices. **RSI 56** is balanced \u2014 neither side has the edge. **Volume** is volume 0.9\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "Buy zone: pullback into $161\u2013$171 (between 20D and 50D), ideally with price tagging the lower BB ($153). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($188) once you're in. Stop-loss below 50D MA ($156).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Bonus \u00b7 above 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Standard buy (65%). The chart and brain agree directionally; confidence is solid but not maximum. **SIZE**: Start with 25-50% of your normal full position size. Why this size \u2014 at this confidence level, the goal is to build a position progressively as the setup confirms, not to go all-in. **TIMING**: \u26a0\ufe0f FOMC + CPI this week \u2014 keep half powder dry until the event passes. If the reaction is bullish, follow through. If it drops price to a deeper add tier, that's the better entry."
+    }
+  },
+  "VST": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WAIT",
+      "confidence_pct": 60,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $160 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $160 vs 50D MA $154 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 54% of range \u2014 in the upper half of the range \u2014 momentum is intact but you're paying a premium versus recent prices. **RSI 46** is balanced \u2014 neither side has the edge. **Volume** is volume 1.3\u00d7 average \u2014 normal, no special signal.",
+      "add_zones": "Buy zone: pullback into $154\u2013$160 (between 20D and 50D), ideally with price tagging the lower BB ($151). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($168) once you're in. Stop-loss below 50D MA ($150).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Bonus \u00b7 below 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Wait (60%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
+    }
+  },
+  "NRG": {
+    "bucket": "swing",
+    "analysis": {
+      "effective_action": "WAIT",
+      "confidence_pct": 60,
+      "chart_rec": "wait",
+      "chart_read": "**Price** $138 \u2014 **Mid-range pullback (wait for setup)**. **Trend**: 20D MA $140 vs 50D MA $137 \u2192 the trend is up \u2014 20-day MA is above 50-day MA. This is the only regime where swing-buying makes sense; in a downtrend you're fighting the tape. **Bollinger**: position 39% of range \u2014 in the lower half of the Bollinger range \u2014 pullback territory; entry possible if trend cooperates. **RSI 44** is weakening but not capitulation \u2014 careful here. **Volume** is volume 0.7\u00d7 average (light) \u2014 drifting, not a high-conviction move yet.",
+      "add_zones": "Buy zone: pullback into $137\u2013$140 (between 20D and 50D), ideally with price tagging the lower BB ($130). Standard size on confirmation.",
+      "trim_zones": "Trim near upper BB ($150) once you're in. Stop-loss below 50D MA ($133).",
+      "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
+      "fundamentals": "Bonus \u00b7 below 200D \u00b7 above 50D",
+      "best_play": "**WHAT**: Wait (60%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
+    }
+  },
   "SOL": {
     "bucket": "spec",
     "analysis": {
       "effective_action": "EXIT",
       "confidence_pct": 85,
       "chart_rec": "wait",
-      "chart_read": "**Price** $77.28 sits -0.1\u03c3 from the 20-day MA ($77.55) \u2014 **Balanced near MA20**. near the short-term mean \u2014 balanced; the next directional move depends on which way volatility expands. Watch volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 38** is selling pressure but not capitulation. **Volume**: volume 0.8\u00d7 average \u2014 normal participation.",
-      "add_zones": "Capitulation buy zone: $72.49\u2013$75.02 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
+      "chart_read": "**Price** $77.22 sits -0.1\u03c3 from the 20-day MA ($77.54) \u2014 **Balanced near MA20**. near the short-term mean \u2014 balanced; the next directional move depends on which way volatility expands. Watch volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 38** is selling pressure but not capitulation. **Volume**: volume 0.8\u00d7 average \u2014 normal participation.",
+      "add_zones": "Capitulation buy zone: $72.48\u2013$75.01 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
       "trim_zones": "Overextended / trim zone: above $81.34 (+1.5\u00d7 ATR above MA20). Avg cost $186; trim 20-30% on volatile spikes if you're up >25% from cost.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
       "fundamentals": "L1 / DeFi \u00b7 risk: VERY HIGH",
-      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $61.83 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
+      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $61.80 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
     }
   },
   "XRP": {
@@ -761,7 +1181,7 @@
       "effective_action": "WAIT",
       "confidence_pct": 80,
       "chart_rec": "wait",
-      "chart_read": "**Price** $1.11 sits +0.5\u03c3 from the 20-day MA ($1.10) \u2014 **Within normal range (+0.5\u03c3 from MA20)**. modestly above average \u2014 momentum is positive but not extreme. Wait for either a pullback or a clean breakout with volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 56** is balanced \u2014 no edge. **Volume**: volume 0.9\u00d7 average \u2014 normal participation.",
+      "chart_read": "**Price** $1.11 sits +0.5\u03c3 from the 20-day MA ($1.10) \u2014 **Balanced near MA20**. near the short-term mean \u2014 balanced; the next directional move depends on which way volatility expands. Watch volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 55** is balanced \u2014 no edge. **Volume**: volume 0.9\u00d7 average \u2014 normal participation.",
       "add_zones": "Capitulation buy zone: $1.02\u2013$1.06 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
       "trim_zones": "Overextended / trim zone: above $1.15 (+1.5\u00d7 ATR above MA20). Avg cost $1.28; trim 20-30% on volatile spikes if you're up >25% from cost.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
@@ -775,7 +1195,7 @@
       "effective_action": "WAIT",
       "confidence_pct": 90,
       "chart_rec": "skip",
-      "chart_read": "**Price** $8.52 sits +2.5\u03c3 from the 20-day MA ($7.83) \u2014 **Overextended (+2.5\u03c3 above MA20)**. way above average \u2014 high-beta names mean-revert harder than they trend; this is the no-add zone. If you own it, this is a trim window. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 70** is bullish momentum, not yet exhausted. **Volume**: volume 1.3\u00d7 average \u2014 normal participation.",
+      "chart_read": "**Price** $8.53 sits +2.5\u03c3 from the 20-day MA ($7.83) \u2014 **Overextended (+2.5\u03c3 above MA20)**. way above average \u2014 high-beta names mean-revert harder than they trend; this is the no-add zone. If you own it, this is a trim window. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 70** is bullish momentum, not yet exhausted. **Volume**: volume 1.3\u00d7 average \u2014 normal participation.",
       "add_zones": "Capitulation buy zone: $7.27\u2013$7.55 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
       "trim_zones": "Overextended / trim zone: above $8.25 (+1.5\u00d7 ATR above MA20). Avg cost $14.95; trim 20-30% on volatile spikes if you're up >25% from cost.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
@@ -789,12 +1209,12 @@
       "effective_action": "EXIT",
       "confidence_pct": 85,
       "chart_rec": "wait",
-      "chart_read": "**Price** $0.8410 sits -0.1\u03c3 from the 20-day MA ($0.8458) \u2014 **Balanced near MA20**. near the short-term mean \u2014 balanced; the next directional move depends on which way volatility expands. Watch volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 50** is balanced \u2014 no edge. **Volume**: volume 1.1\u00d7 average \u2014 normal participation.",
-      "add_zones": "Capitulation buy zone: $0.7787\u2013$0.8122 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
-      "trim_zones": "Overextended / trim zone: above $0.8961 (+1.5\u00d7 ATR above MA20). Avg cost $5.38; trim 20-30% on volatile spikes if you're up >25% from cost.",
+      "chart_read": "**Price** $0.8390 sits -0.2\u03c3 from the 20-day MA ($0.8457) \u2014 **Balanced near MA20**. near the short-term mean \u2014 balanced; the next directional move depends on which way volatility expands. Watch volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 50** is balanced \u2014 no edge. **Volume**: volume 1.1\u00d7 average \u2014 normal participation.",
+      "add_zones": "Capitulation buy zone: $0.7786\u2013$0.8121 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
+      "trim_zones": "Overextended / trim zone: above $0.8960 (+1.5\u00d7 ATR above MA20). Avg cost $5.38; trim 20-30% on volatile spikes if you're up >25% from cost.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
       "fundamentals": "Interoperability \u00b7 risk: VERY HIGH",
-      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $0.6722 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
+      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $0.6721 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
     }
   },
   "ALGO": {
@@ -803,12 +1223,12 @@
       "effective_action": "EXIT",
       "confidence_pct": 85,
       "chart_rec": "wait",
-      "chart_read": "**Price** $0.0840 sits -0.7\u03c3 from the 20-day MA ($0.0859) \u2014 **Within normal range (-0.7\u03c3 from MA20)**. below average \u2014 discount territory but not capitulation. Wait for a stronger signal or a deeper drop with volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 43** is selling pressure but not capitulation. **Volume**: volume 0.9\u00d7 average \u2014 normal participation.",
-      "add_zones": "Capitulation buy zone: $0.0803\u2013$0.0831 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
+      "chart_read": "**Price** $0.0837 sits -0.8\u03c3 from the 20-day MA ($0.0859) \u2014 **Within normal range (-0.8\u03c3 from MA20)**. below average \u2014 discount territory but not capitulation. Wait for a stronger signal or a deeper drop with volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 42** is selling pressure but not capitulation. **Volume**: volume 0.9\u00d7 average \u2014 normal participation.",
+      "add_zones": "Capitulation buy zone: $0.0802\u2013$0.0830 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
       "trim_zones": "Overextended / trim zone: above $0.0901 (+1.5\u00d7 ATR above MA20). Avg cost $0.2439; trim 20-30% on volatile spikes if you're up >25% from cost.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
       "fundamentals": "L1 / Payments \u00b7 risk: VERY HIGH",
-      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $0.0672 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
+      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $0.0669 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
     }
   },
   "AAVE": {
@@ -817,12 +1237,12 @@
       "effective_action": "EXIT",
       "confidence_pct": 85,
       "chart_rec": "wait",
-      "chart_read": "**Price** $95.68 sits +0.8\u03c3 from the 20-day MA ($91.74) \u2014 **Within normal range (+0.8\u03c3 from MA20)**. modestly above average \u2014 momentum is positive but not extreme. Wait for either a pullback or a clean breakout with volume. **Volatility** (steady): volatility is steady \u2014 normal range-bound action; band tags (\u00b12\u00d7 ATR) are the actionable signals. **RSI 63** is bullish momentum, not yet exhausted. **Volume**: volume 0.8\u00d7 average \u2014 normal participation.",
-      "add_zones": "Capitulation buy zone: $82.04\u2013$86.89 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
+      "chart_read": "**Price** $95.54 sits +0.8\u03c3 from the 20-day MA ($91.73) \u2014 **Within normal range (+0.8\u03c3 from MA20)**. modestly above average \u2014 momentum is positive but not extreme. Wait for either a pullback or a clean breakout with volume. **Volatility** (steady): volatility is steady \u2014 normal range-bound action; band tags (\u00b12\u00d7 ATR) are the actionable signals. **RSI 63** is bullish momentum, not yet exhausted. **Volume**: volume 0.8\u00d7 average \u2014 normal participation.",
+      "add_zones": "Capitulation buy zone: $82.03\u2013$86.88 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
       "trim_zones": "Overextended / trim zone: above $99.01 (+1.5\u00d7 ATR above MA20). Avg cost $280; trim 20-30% on volatile spikes if you're up >25% from cost.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
       "fundamentals": "DeFi Lending \u00b7 risk: VERY HIGH",
-      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $76.44 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
+      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $76.45 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
     }
   },
   "ONDO": {
@@ -831,12 +1251,12 @@
       "effective_action": "EXIT",
       "confidence_pct": 85,
       "chart_rec": "skip",
-      "chart_read": "**Price** $0.3734 sits +2.7\u03c3 from the 20-day MA ($0.3266) \u2014 **Overextended (+2.7\u03c3 above MA20)**. way above average \u2014 high-beta names mean-revert harder than they trend; this is the no-add zone. If you own it, this is a trim window. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 68** is bullish momentum, not yet exhausted. **Volume**: volume 3.2\u00d7 average \u2014 VERY heavy participation; in spec names this often marks a reversal point.",
-      "add_zones": "Capitulation buy zone: $0.2923\u2013$0.3095 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
+      "chart_read": "**Price** $0.3742 sits +2.8\u03c3 from the 20-day MA ($0.3266) \u2014 **Overextended (+2.8\u03c3 above MA20)**. way above average \u2014 high-beta names mean-revert harder than they trend; this is the no-add zone. If you own it, this is a trim window. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 68** is bullish momentum, not yet exhausted. **Volume**: volume 3.2\u00d7 average \u2014 VERY heavy participation; in spec names this often marks a reversal point.",
+      "add_zones": "Capitulation buy zone: $0.2924\u2013$0.3095 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
       "trim_zones": "Overextended / trim zone: above $0.3523 (+1.5\u00d7 ATR above MA20). Avg cost $1.11; trim 20-30% on volatile spikes if you're up >25% from cost.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
       "fundamentals": "RWA Tokenization \u00b7 risk: VERY HIGH",
-      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $0.2978 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
+      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $0.2985 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
     }
   },
   "NEAR": {
@@ -873,12 +1293,12 @@
       "effective_action": "EXIT",
       "confidence_pct": 85,
       "chart_rec": "wait",
-      "chart_read": "**Price** $0.0289 sits -0.7\u03c3 from the 20-day MA ($0.0296) \u2014 **Within normal range (-0.7\u03c3 from MA20)**. below average \u2014 discount territory but not capitulation. Wait for a stronger signal or a deeper drop with volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 32** is selling pressure but not capitulation. **Volume**: volume 0.8\u00d7 average (light) \u2014 no urgency, drift mode.",
+      "chart_read": "**Price** $0.0289 sits -0.8\u03c3 from the 20-day MA ($0.0296) \u2014 **Within normal range (-0.8\u03c3 from MA20)**. below average \u2014 discount territory but not capitulation. Wait for a stronger signal or a deeper drop with volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 31** is selling pressure but not capitulation. **Volume**: volume 0.8\u00d7 average (light) \u2014 no urgency, drift mode.",
       "add_zones": "Capitulation buy zone: $0.0279\u2013$0.0287 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
       "trim_zones": "Overextended / trim zone: above $0.0308 (+1.5\u00d7 ATR above MA20). Avg cost $0.1300; trim 20-30% on volatile spikes if you're up >25% from cost.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
       "fundamentals": "PoW / Fast \u00b7 risk: VERY HIGH",
-      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $0.0231 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
+      "best_play": "**WHAT**: Get out (85%). Sell to flat. Don't average down \u2014 that's how -40% becomes -70%. **SIZE**: 100% out. No half-measures here. **REFLECTION**: Re-evaluate WHY you owned this in the first place. What would have to change for you to want it back? Write that down. If those conditions appear later, you can re-enter with fresh perspective; if they don't, the EXIT was the right call. **STOP-LOSS**: $0.0232 \u2014 if price closes below this level, the thesis is broken; exit without averaging down further. The stop is set by the brain based on technical support and ATR-derived volatility \u2014 it's the line where the math says 'we're wrong here'."
     }
   },
   "HBAR": {
@@ -901,7 +1321,7 @@
       "effective_action": "EXIT",
       "confidence_pct": 85,
       "chart_rec": "wait",
-      "chart_read": "**Price** $0.0741 sits -0.0\u03c3 from the 20-day MA ($0.0741) \u2014 **Balanced near MA20**. near the short-term mean \u2014 balanced; the next directional move depends on which way volatility expands. Watch volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 50** is balanced \u2014 no edge. **Volume**: volume 1.1\u00d7 average \u2014 normal participation.",
+      "chart_read": "**Price** $0.0741 sits -0.0\u03c3 from the 20-day MA ($0.0741) \u2014 **Balanced near MA20**. near the short-term mean \u2014 balanced; the next directional move depends on which way volatility expands. Watch volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 50** is balanced \u2014 no edge. **Volume**: volume 1.0\u00d7 average \u2014 normal participation.",
       "add_zones": "Capitulation buy zone: $0.0689\u2013$0.0715 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
       "trim_zones": "Overextended / trim zone: above $0.0780 (+1.5\u00d7 ATR above MA20). Avg cost $0.3840; trim 20-30% on volatile spikes if you're up >25% from cost.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
@@ -915,9 +1335,9 @@
       "effective_action": "WAIT",
       "confidence_pct": 80,
       "chart_rec": "wait",
-      "chart_read": "**Price** $64,710 sits +1.3\u03c3 from the 20-day MA ($62,494) \u2014 **Within normal range (+1.3\u03c3 from MA20)**. modestly above average \u2014 momentum is positive but not extreme. Wait for either a pullback or a clean breakout with volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 65** is bullish momentum, not yet exhausted. **Volume**: volume 1.0\u00d7 average \u2014 normal participation.",
-      "add_zones": "Capitulation buy zone: $59,164\u2013$60,829 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
-      "trim_zones": "Overextended zone: above $64,992 (+1.5\u00d7 ATR above MA20). If you take a position there, expect mean reversion.",
+      "chart_read": "**Price** $64,658 sits +1.3\u03c3 from the 20-day MA ($62,492) \u2014 **Within normal range (+1.3\u03c3 from MA20)**. modestly above average \u2014 momentum is positive but not extreme. Wait for either a pullback or a clean breakout with volume. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 64** is bullish momentum, not yet exhausted. **Volume**: volume 1.0\u00d7 average \u2014 normal participation.",
+      "add_zones": "Capitulation buy zone: $59,161\u2013$60,826 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
+      "trim_zones": "Overextended zone: above $64,990 (+1.5\u00d7 ATR above MA20). If you take a position there, expect mean reversion.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
       "fundamentals": "Bitcoin",
       "best_play": "**WHAT**: Wait (80%). Both the chart and brain are saying 'not yet' \u2014 either the setup isn't ready or one of them sees risk the other agrees with. **SIZE**: No entry today. There is always another setup; chasing this one with no edge is how accounts get drawn down by 1000 cuts. **TRIGGER TO REVISIT**: Watch for either a clean pullback into the chart's add zone (geometric trigger) OR a brain flip to BUY (typically needs trend reclamation + smart-money confirmation). Until then, this name is in the parking lot."
@@ -929,7 +1349,7 @@
       "effective_action": "WAIT",
       "confidence_pct": 90,
       "chart_rec": "skip",
-      "chart_read": "**Price** $1,920 sits +2.6\u03c3 from the 20-day MA ($1,745) \u2014 **Overextended (+2.6\u03c3 above MA20)**. way above average \u2014 high-beta names mean-revert harder than they trend; this is the no-add zone. If you own it, this is a trim window. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 77** is overbought \u2014 distribution / profit-taking likely. **Volume**: volume 1.2\u00d7 average \u2014 normal participation.",
+      "chart_read": "**Price** $1,919 sits +2.6\u03c3 from the 20-day MA ($1,744) \u2014 **Overextended (+2.6\u03c3 above MA20)**. way above average \u2014 high-beta names mean-revert harder than they trend; this is the no-add zone. If you own it, this is a trim window. **Volatility** (settling down): volatility is settling down \u2014 coiling for the next move; the breakout direction matters more than the band edges right now. **RSI 77** is overbought \u2014 distribution / profit-taking likely. **Volume**: volume 1.2\u00d7 average \u2014 normal participation.",
       "add_zones": "Capitulation buy zone: $1,611\u2013$1,678 (1-2\u00d7 ATR below MA20). Best entries come from a big drop into this band WITH a volume spike (>1.5\u00d7 avg). Otherwise wait.",
       "trim_zones": "Overextended zone: above $1,845 (+1.5\u00d7 ATR above MA20). If you take a position there, expect mean reversion.",
       "catalyst": "\ud83c\udfdb\ufe0f **FOMC this week** \u2014 Fed decision can override the chart in either direction. Keep half powder dry until after the announcement settles. \u00b7 \ud83d\udcca **PCE Deflator \u2014 Jul 2026 this week** \u2014 inflation prints reset rate expectations and tend to move tech / financials hard.",
