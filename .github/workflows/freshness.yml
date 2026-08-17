@@ -1,0 +1,71 @@
+name: Dashboard Freshness Watchdog
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  STALE_THRESHOLD_MINUTES: 90
+  LABEL: dashboard-stale
+
+jobs:
+  check-freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check data.json freshness
+        id: check
+        run: |
+          set -euo pipefail
+          GENERATED_AT=$(node -e "console.log(require('./docs/data.json').generated_at)")
+          GEN_EPOCH=$(date -d "$GENERATED_AT" +%s)
+          NOW_EPOCH=$(date -u +%s)
+          AGE_MIN=$(( (NOW_EPOCH - GEN_EPOCH) / 60 ))
+          echo "generated_at=$GENERATED_AT" >> "$GITHUB_OUTPUT"
+          echo "age_minutes=$AGE_MIN" >> "$GITHUB_OUTPUT"
+          if [ "$AGE_MIN" -gt "$STALE_THRESHOLD_MINUTES" ]; then
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Ensure tracking label exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create "$LABEL" --color "B60205" \
+            --description "Dashboard data feed has gone stale" --force
+
+      - name: Open or update stale issue
+        if: steps.check.outputs.stale == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          EXISTING=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty')
+          if [ -z "$EXISTING" ]; then
+            gh issue create \
+              --title "Dashboard data is stale" \
+              --label "$LABEL" \
+              --body "data.json's generated_at (${{ steps.check.outputs.generated_at }}) is ${{ steps.check.outputs.age_minutes }} minutes old, past the ${STALE_THRESHOLD_MINUTES}-minute threshold. The sentinel/publisher on the VPS has likely stopped. This issue closes automatically once fresh data lands."
+          else
+            gh issue comment "$EXISTING" \
+              --body "Still stale: ${{ steps.check.outputs.age_minutes }} minutes old as of $(date -u +'%Y-%m-%dT%H:%M:%SZ')."
+          fi
+
+      - name: Close stale issue if recovered
+        if: steps.check.outputs.stale == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          EXISTING=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" \
+              --body "Recovered: data.json generated_at is now ${{ steps.check.outputs.generated_at }} (${{ steps.check.outputs.age_minutes }} min old)."
+            gh issue close "$EXISTING"
+          fi
