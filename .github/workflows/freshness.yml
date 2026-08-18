@@ -17,7 +17,7 @@ jobs:
   check-freshness:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Check data.json freshness
         id: check
@@ -35,37 +35,67 @@ jobs:
             echo "stale=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Ensure tracking label exists
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh label create "$LABEL" --color "B60205" \
-            --description "Dashboard data feed has gone stale" --force
-
       - name: Open or update stale issue
         if: steps.check.outputs.stale == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          GENERATED_AT: ${{ steps.check.outputs.generated_at }}
+          AGE_MINUTES: ${{ steps.check.outputs.age_minutes }}
         run: |
-          EXISTING=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty')
+          # Retry transient GitHub API/network failures (429, 502).
+          retry() {
+            for attempt in 1 2 3; do
+              "$@" && return 0
+              echo "::warning::'$*' failed (attempt $attempt/3); retrying" >&2
+              sleep $(( attempt * 5 ))
+            done
+            return 1
+          }
+
+          # Housekeeping only: the label already exists and creation is idempotent,
+          # so never fail the watchdog over it.
+          gh label create "$LABEL" --color "B60205" \
+            --description "Dashboard data feed has gone stale" --force || true
+
+          if ! EXISTING=$(retry gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty'); then
+            echo "::error::could not list issues after 3 attempts"
+            exit 1
+          fi
+
           if [ -z "$EXISTING" ]; then
-            gh issue create \
+            retry gh issue create \
               --title "Dashboard data is stale" \
               --label "$LABEL" \
-              --body "data.json's generated_at (${{ steps.check.outputs.generated_at }}) is ${{ steps.check.outputs.age_minutes }} minutes old, past the ${STALE_THRESHOLD_MINUTES}-minute threshold. The sentinel/publisher on the VPS has likely stopped. This issue closes automatically once fresh data lands."
+              --body "data.json's generated_at ($GENERATED_AT) is $AGE_MINUTES minutes old, past the ${STALE_THRESHOLD_MINUTES}-minute threshold. The sentinel/publisher on the VPS has likely stopped. This issue closes automatically once fresh data lands."
           else
-            gh issue comment "$EXISTING" \
-              --body "Still stale: ${{ steps.check.outputs.age_minutes }} minutes old as of $(date -u +'%Y-%m-%dT%H:%M:%SZ')."
+            retry gh issue comment "$EXISTING" \
+              --body "Still stale: $AGE_MINUTES minutes old as of $(date -u +'%Y-%m-%dT%H:%M:%SZ')."
           fi
 
       - name: Close stale issue if recovered
         if: steps.check.outputs.stale == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
+          GENERATED_AT: ${{ steps.check.outputs.generated_at }}
+          AGE_MINUTES: ${{ steps.check.outputs.age_minutes }}
         run: |
-          EXISTING=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty')
+          # Retry transient GitHub API/network failures (429, 502).
+          retry() {
+            for attempt in 1 2 3; do
+              "$@" && return 0
+              echo "::warning::'$*' failed (attempt $attempt/3); retrying" >&2
+              sleep $(( attempt * 5 ))
+            done
+            return 1
+          }
+
+          if ! EXISTING=$(retry gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty'); then
+            echo "::error::could not list issues after 3 attempts"
+            exit 1
+          fi
+
           if [ -n "$EXISTING" ]; then
-            gh issue comment "$EXISTING" \
-              --body "Recovered: data.json generated_at is now ${{ steps.check.outputs.generated_at }} (${{ steps.check.outputs.age_minutes }} min old)."
-            gh issue close "$EXISTING"
+            retry gh issue comment "$EXISTING" \
+              --body "Recovered: data.json generated_at is now $GENERATED_AT ($AGE_MINUTES min old)."
+            retry gh issue close "$EXISTING"
           fi
