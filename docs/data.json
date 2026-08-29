@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-29T02:25:06.200200+00:00",
+  "generated_at": "2026-08-29T02:50:15.174602+00:00",
   "regime": "CAUTION",
   "macro_warn": "",
   "dca_new_picks": [
@@ -133,14 +133,14 @@
       "t10y": 4.72
     },
     "btc_regime": {
-      "btc_price": 77610,
-      "btc_chg_24h": -3.08,
-      "btc_dominance": 59.0,
+      "btc_price": 77637,
+      "btc_chg_24h": -2.86,
+      "btc_dominance": 0,
       "eth_price": 2438.0,
-      "eth_chg_24h": -2.39,
-      "eth_dominance": 11.1,
-      "eth_btc_ratio": 0.03141,
-      "dom_signal": "BTC_SEASON"
+      "eth_chg_24h": -2.16,
+      "eth_dominance": 0,
+      "eth_btc_ratio": 0.0314,
+      "dom_signal": "ALT_SEASON"
     }
   },
   "portfolio": {
@@ -2326,15 +2326,15 @@
       {
         "symbol": "SOL",
         "theme": "L1 / DeFi",
-        "price": 103.91,
-        "chg_24h": -2.93,
-        "market_cap": 60709904615,
-        "vol_24h": 5436146062,
+        "price": 103.82,
+        "chg_24h": -2.65,
+        "market_cap": 60641993536,
+        "vol_24h": 5542328882,
         "pnl_pct": -44.3,
         "pnl_label": "-44.3%",
-        "action": "EXIT",
+        "action": "BUY",
         "risk": "VERY HIGH",
-        "stop_loss": 83.128,
+        "stop_loss": 83.056,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -2345,12 +2345,12 @@
         "symbol": "XRP",
         "theme": "Payments / Ripple",
         "price": 1.38,
-        "chg_24h": -3.5,
-        "market_cap": 86706722523,
-        "vol_24h": 2827942947,
+        "chg_24h": -3.45,
+        "market_cap": 86742858602,
+        "vol_24h": 2784577999,
         "pnl_pct": 7.8,
         "pnl_label": "+7.8%",
-        "action": "WAIT",
+        "action": "BUY",
         "risk": "VERY HIGH",
         "stop_loss": 1.104,
         "alert": null,
@@ -2359,30 +2359,30 @@
       {
         "symbol": "LINK",
         "theme": "Oracles",
-        "price": 11.36,
-        "chg_24h": -3.34,
-        "market_cap": 8501997143,
-        "vol_24h": 361262298,
-        "pnl_pct": -24.0,
-        "pnl_label": "-24.0%",
-        "action": "WAIT",
+        "price": 11.39,
+        "chg_24h": -2.91,
+        "market_cap": 8516667300,
+        "vol_24h": 361849973,
+        "pnl_pct": -23.8,
+        "pnl_label": "-23.8%",
+        "action": "BUY",
         "risk": "VERY HIGH",
-        "stop_loss": 9.088,
+        "stop_loss": 9.112,
         "alert": null,
         "weight_pct": 0.64
       },
       {
         "symbol": "DOT",
         "theme": "Interoperability",
-        "price": 0.8439,
-        "chg_24h": -3.09,
-        "market_cap": 1435196118,
-        "vol_24h": 103665816,
+        "price": 0.8429,
+        "chg_24h": -2.81,
+        "market_cap": 1433057272,
+        "vol_24h": 101799631,
         "pnl_pct": -84.3,
         "pnl_label": "-84.3%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.675118,
+        "stop_loss": 0.674309,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -2392,15 +2392,15 @@
       {
         "symbol": "ALGO",
         "theme": "L1 / Payments",
-        "price": 0.0865,
-        "chg_24h": -3.94,
-        "market_cap": 782125501,
-        "vol_24h": 26005113,
-        "pnl_pct": -64.5,
-        "pnl_label": "-64.5%",
+        "price": 0.0863,
+        "chg_24h": -3.11,
+        "market_cap": 779541091,
+        "vol_24h": 25754501,
+        "pnl_pct": -64.6,
+        "pnl_label": "-64.6%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.069197,
+        "stop_loss": 0.069008,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -2410,15 +2410,15 @@
       {
         "symbol": "AAVE",
         "theme": "DeFi Lending",
-        "price": 121.19,
-        "chg_24h": -4.39,
-        "market_cap": 1869286401,
-        "vol_24h": 256764391,
-        "pnl_pct": -56.7,
-        "pnl_label": "-56.7%",
+        "price": 120.77,
+        "chg_24h": -4.25,
+        "market_cap": 1862807162,
+        "vol_24h": 253655958,
+        "pnl_pct": -56.9,
+        "pnl_label": "-56.9%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 96.952,
+        "stop_loss": 96.616,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -2428,15 +2428,15 @@
       {
         "symbol": "ONDO",
         "theme": "RWA Tokenization",
-        "price": 0.3513,
-        "chg_24h": -6.0,
-        "market_cap": 1711448894,
-        "vol_24h": 98226208,
+        "price": 0.3511,
+        "chg_24h": -5.29,
+        "market_cap": 1709603017,
+        "vol_24h": 96239941,
         "pnl_pct": -68.4,
         "pnl_label": "-68.4%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.281004,
+        "stop_loss": 0.280877,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -2446,15 +2446,15 @@
       {
         "symbol": "NEAR",
         "theme": "L1 / AI",
-        "price": 1.8,
-        "chg_24h": -5.35,
-        "market_cap": 2354375918,
-        "vol_24h": 181621195,
-        "pnl_pct": -42.9,
-        "pnl_label": "-42.9%",
-        "action": "EXIT",
+        "price": 1.81,
+        "chg_24h": -3.98,
+        "market_cap": 2355794857,
+        "vol_24h": 176253231,
+        "pnl_pct": -42.5,
+        "pnl_label": "-42.5%",
+        "action": "BUY",
         "risk": "VERY HIGH",
-        "stop_loss": 1.44,
+        "stop_loss": 1.448,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -2464,15 +2464,15 @@
       {
         "symbol": "AVAX",
         "theme": "L1 / DeFi",
-        "price": 7.27,
-        "chg_24h": -2.37,
-        "market_cap": 3141055326,
-        "vol_24h": 198589445,
+        "price": 7.28,
+        "chg_24h": -2.16,
+        "market_cap": 3141323315,
+        "vol_24h": 190098419,
         "pnl_pct": -80.9,
         "pnl_label": "-80.9%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 5.816,
+        "stop_loss": 5.824,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -2483,14 +2483,14 @@
         "symbol": "KAS",
         "theme": "PoW / Fast",
         "price": 0.0278,
-        "chg_24h": -3.85,
-        "market_cap": 769210250,
-        "vol_24h": 11031670,
+        "chg_24h": -3.64,
+        "market_cap": 769485387,
+        "vol_24h": 10753299,
         "pnl_pct": -78.6,
         "pnl_label": "-78.6%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.022241,
+        "stop_loss": 0.02225,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -2500,15 +2500,15 @@
       {
         "symbol": "HBAR",
         "theme": "Enterprise DLT",
-        "price": 0.0754,
-        "chg_24h": -3.6,
-        "market_cap": 3306659902,
-        "vol_24h": 86674244,
+        "price": 0.0755,
+        "chg_24h": -3.13,
+        "market_cap": 3310731175,
+        "vol_24h": 84482968,
         "pnl_pct": -67.9,
         "pnl_label": "-67.9%",
         "action": "EXIT",
         "risk": "VERY HIGH",
-        "stop_loss": 0.06035,
+        "stop_loss": 0.060418,
         "alert": [
           "danger",
           "DEEP LOSS"
@@ -2519,9 +2519,9 @@
         "symbol": "DOGE",
         "theme": "Meme / Payments",
         "price": 0.0851,
-        "chg_24h": -3.57,
-        "market_cap": 13246012207,
-        "vol_24h": 657257270,
+        "chg_24h": -3.13,
+        "market_cap": 13241569234,
+        "vol_24h": 644121578,
         "pnl_pct": -77.9,
         "pnl_label": "-77.9%",
         "action": "EXIT",
@@ -2534,25 +2534,25 @@
         "weight_pct": 0.01
       }
     ],
-    "btc_dominance": 59.0,
+    "btc_dominance": 0,
     "fear_greed": {
       "score": 68,
       "label": "Greed"
     },
     "btc_context": {
-      "btc_price": 77610,
-      "btc_chg_24h": -3.08,
-      "btc_dominance": 59.0,
+      "btc_price": 77637,
+      "btc_chg_24h": -2.86,
+      "btc_dominance": 0,
       "eth_price": 2438.0,
-      "eth_chg_24h": -2.39,
-      "eth_dominance": 11.1,
-      "eth_btc_ratio": 0.03141,
-      "dom_signal": "BTC_SEASON"
+      "eth_chg_24h": -2.16,
+      "eth_dominance": 0,
+      "eth_btc_ratio": 0.0314,
+      "dom_signal": "ALT_SEASON"
     },
-    "btc_price": 77610,
-    "btc_chg": -3.08,
+    "btc_price": 77637,
+    "btc_chg": -2.86,
     "eth_price": 2438.0,
-    "eth_chg": -2.39
+    "eth_chg": -2.16
   },
   "fear_greed": {
     "score": 54,
@@ -2648,8 +2648,8 @@
           87.9,
           12.0
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2670,8 +2670,8 @@
           8.5,
           91.5
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2692,8 +2692,8 @@
           3.0,
           97.0
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2714,8 +2714,8 @@
           1.1,
           98.9
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2736,8 +2736,8 @@
           0.2,
           99.8
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2758,8 +2758,8 @@
           0.1,
           99.9
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2780,8 +2780,8 @@
           0.1,
           99.9
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2802,8 +2802,8 @@
           0.1,
           99.9
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2824,8 +2824,8 @@
           0.1,
           99.9
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2846,8 +2846,8 @@
           0.1,
           99.9
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2868,8 +2868,8 @@
           0.1,
           100.0
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2890,8 +2890,8 @@
           0.1,
           100.0
         ],
-        "volume": 50040019,
-        "liquidity": 4239154,
+        "volume": 50054229,
+        "liquidity": 4228104,
         "end_date": "2026-12-31",
         "days_out": 123,
         "relevance": 13,
@@ -2903,7 +2903,7 @@
     "fed_cut_prob": 87.9,
     "recession_prob": null,
     "btc_up_prob": null,
-    "fetched_at": "02:25Z"
+    "fetched_at": "02:50Z"
   },
   "trend_ticker_data": {},
   "regime_info": {
@@ -2918,7 +2918,7 @@
       "Fear&Greed=54 neutral",
       "13/33 positions below SMA200 (39%) \u2014 mixed trend"
     ],
-    "generated_at": "2026-08-29T01:39:22.942306+00:00"
+    "generated_at": "2026-08-29T02:40:27.794880+00:00"
   },
   "calibration_status": {
     "schema_version": 1,
@@ -3034,7 +3034,7 @@
         "status_icon": "\ud83d\udfe1",
         "volume_7d": 0,
         "baseline_volume_per_week": 120,
-        "last_successful_poll": "2026-08-29T02:09:45.321173+00:00",
+        "last_successful_poll": "2026-08-29T02:42:42.478024+00:00",
         "consecutive_red_days": 0,
         "phase_method": "shadow forward"
       },
@@ -3065,10 +3065,10 @@
       "phase_spent_usd": 0,
       "phase_budget_usd": 350,
       "ytd_total_usd": 0,
-      "last_updated": "2026-08-29T02:25:47.938987+00:00"
+      "last_updated": "2026-08-29T02:50:35.904651+00:00"
     },
     "warming_up": false,
-    "generated_at": "2026-08-29T02:25:47.939011+00:00"
+    "generated_at": "2026-08-29T02:50:35.904667+00:00"
   },
   "monthly_deployed_pct": 0.0
 }
