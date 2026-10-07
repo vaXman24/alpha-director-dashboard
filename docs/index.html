@@ -700,6 +700,14 @@ body.ticker-page .sm-cat-btn,body.ticker-page .sm-open-tv{
   border:1px solid rgba(68,138,255,.2);margin:2px;transition:all .15s}
 .sm-etf-link:hover{background:rgba(68,138,255,.2);color:#fff}
 </style>
+<link rel="stylesheet" href="decision.css">
+<script src="decision.js"></script>
+<script src="research.js"></script>
+<script src="reviewed-research.js"></script>
+<script src="research-config.js"></script>
+<script src="snapshot.js"></script>
+<script src="chart-assets.js"></script>
+<script src="decision-view.js"></script>
 </head>
 <body class="gated">
 
@@ -1103,6 +1111,11 @@ let D = {
   polymarket: {markets:[], bull_signal:null, fed_cut_prob:null, recession_prob:null, btc_up_prob:null}
 };
 
+const _emptyDecisionSnapshot = JSON.parse(JSON.stringify(D));
+let _rawDecisionData = null;
+let _decisionCharts = null;
+let _decisionChartError = null;
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 const fmt = (v, dec=2) => v == null ? '—' : (+v).toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
@@ -1283,12 +1296,8 @@ function buildSP500Movers() {
 }
 
 // ── DCA diff from yesterday ────────────────────────────────────────────────
-function saveDCASnapshot() {
-  const today = new Date().toISOString().slice(0,10);
-  const snap = {};
-  D.portfolio.positions.forEach(p => { if (p.allocation_usd) snap[p.ticker] = p.allocation_usd; });
-  try { localStorage.setItem(`dca_${today}`, JSON.stringify(snap)); } catch(e) {}
-}
+function saveDCASnapshot() { /* Superseded by in-memory versioned decision comparison. */ }
+
 function getDCAdiff(ticker, todayUsd) {
   const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
   try {
@@ -2170,613 +2179,28 @@ function buildEarnings() {
 
 // ── Action Center ──────────────────────────────────────────────────────────
 function buildActionCenter() {
-  $('action-date').textContent = D.generated_at ? _fmtIL(D.generated_at) : '';
-  const positions = D.portfolio.positions;
-  // Action tiers — WATCH inserted between BUY and TRIM (chart-disagreement
-  // names still surface as actionable but at lower priority than full BUY).
-  const actionOrder = ['STRONG BUY','BUY','WATCH','TRIM','EXIT'];
-  // v4 tier gate: a _discovery position only reaches Action Center after
-  // earning CONFIRMED status (≥3 daily passes + ≥70% BUY-grade actions
-  // yesterday). QUALIFIED/WATCHED entries stay in 🔬 Research only.
-  // EXCEPTION: once user has actually bought (shares > 0), tier no longer
-  // gates visibility — it's a real position now.
-  const _tierAllowed = p => {
-    if (!p || !p._discovery) return true;
-    if ((p.shares || 0) > 0) return true;
-    return p._tier === 'confirmed';
-  };
-  // EXIT/TRIM only make sense for held positions — you can't trim or exit
-  // what you don't own. Without this guard, brain-EXIT signals on shares=0
-  // tickers (recently sold or research entries) keep showing as action items
-  // even after the user has already exited.
-  const _heldOrBuySide = p => {
-    if (['EXIT','TRIM'].includes(p.action)) return (p.shares || 0) > 0;
-    return true;
-  };
-  const portActionable = positions
-    .filter(p => actionOrder.includes(p.action))
-    .filter(_tierAllowed)
-    .filter(_heldOrBuySide);
-  // Merge top-5 DCA new picks (outside_opps) into BUY tier cards
-  const _newPickTickers = new Set((window._dcaNewPicks||[]).map(p => p.ticker));
-  const newPickCards = (window._dcaNewPicks||[]).filter(p => ['STRONG BUY','BUY','WATCH'].includes(p.action||''));
-  const actionable = [...portActionable, ...newPickCards];
-  // Sort: action tier first, then composite score — chart-integrated
-  // confidence (60%), brain confidence (15%), upside (25%).
-  actionable.sort((a,b) => {
-    const tierDiff = actionOrder.indexOf(a.action) - actionOrder.indexOf(b.action);
-    if (tierDiff !== 0) return tierDiff;
-    const cA = (a._confidence != null ? a._confidence/100 : 0.7) * 0.60
-             + (a.confidence||5)/10 * 0.15
-             + Math.min(a.upside_pct||0, 100)/100 * 0.25;
-    const cB = (b._confidence != null ? b._confidence/100 : 0.7) * 0.60
-             + (b.confidence||5)/10 * 0.15
-             + Math.min(b.upside_pct||0, 100)/100 * 0.25;
-    return cB - cA;
-  });
-
-  const riskClass = r => r === 'LOW' ? 'low' : r === 'MEDIUM' ? 'medium' : r === 'VERY HIGH' ? 'very-high' : 'high';
-  const actionCls = a => a === 'STRONG BUY' ? 'strong-buy' : a === 'BUY' ? 'buy' : a === 'WATCH' ? 'watch' : a === 'TRIM' ? 'trim' : 'exit';
-  const actionColor = a => a === 'STRONG BUY' ? 'var(--g)' : a === 'BUY' ? '#00b4d8' : a === 'WATCH' ? '#a78bfa' : a === 'TRIM' ? 'var(--a)' : 'var(--r)';
-
-  // Summary row — also count TRIM alerts and crypto EXITs
-  const nPositions = positions.length;
-  const nBuy = positions.filter(p => ['STRONG BUY','BUY'].includes(p.action)).length + (window._dcaNewPicks||[]).length;
-  const nTrim = positions.filter(p => (p.shares || 0) > 0 && (p.action === 'TRIM' ||
-    (p.alert && Array.isArray(p.alert) && typeof p.alert[1] === 'string' && p.alert[1].toUpperCase().includes('TRIM')))).length;
-  const cryptoPos = (D.crypto && D.crypto.positions) ? D.crypto.positions : [];
-  const nExit = positions.filter(p => p.action === 'EXIT' && (p.shares || 0) > 0).length +
-    cryptoPos.filter(p => p.action === 'EXIT' && (p.qty || p.shares || 0) > 0).length;
-  const totalAlloc = positions.reduce((s,p) => s + (p.allocation_usd||0), 0);
-  const _monthDca  = D.monthly_dca || 10000;
-  const _monthUsed = D.monthly_used != null ? D.monthly_used : 0;
-  const _monthLeft = D.monthly_remaining != null ? D.monthly_remaining : _monthDca;
-  const _deployFigure = totalAlloc || _monthLeft;
-  const _usedTag = _monthUsed > 0
-    ? ` <span style="color:var(--t3);font-weight:400">· used $${Math.round(_monthUsed).toLocaleString()}/$${_monthDca.toLocaleString()}</span>`
-    : '';
-
-  let html = `<div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px;font-size:12px">
-    <span>📦 <b>${nPositions}</b> positions</span>
-    <span style="color:var(--g)">🟢 <b>${nBuy}</b> buy signals</span>
-    <span style="color:var(--a)">✂️ <b>${nTrim}</b> trim</span>
-    <span style="color:var(--r)">🚪 <b>${nExit}</b> exit</span>
-    <span style="color:#00b4d8">💰 ${window.PUBLIC ? `Deploy <b>${Math.max(0, Math.round(100 - (D.monthly_deployed_pct||0)))}%</b> of cycle remaining` : `Deploy <b>$${_deployFigure.toLocaleString()}</b> remaining${_usedTag}`}</span>
-  </div>`;
-
-  if (!actionable.length) {
-    html += '<div style="color:var(--txt2);font-size:13px">No actionable signals today — all positions at WAIT.</div>';
-    $('action-center').innerHTML = html;
-    return;
-  }
-
-  // Horizon by class
-  const horizonMap = {core:'12m+', swing:'1–3m', spec:'1–6m'};
-
-  // Global sequential rank across all actionable items (no per-tier reset)
-  let _globalRank = 0;
-  html += '<div class="action-grid">';
-  for (const p of actionable) {
-    _globalRank++;
-    const _rank = _globalRank;
-    const tgt = p.target ? '$' + fmt(p.target) : '—';
-    const sl  = p.stop_loss ? '$' + fmt(p.stop_loss) : '—';
-    const up  = p.upside_pct != null ? '+' + p.upside_pct + '%' : '—';
-    const dn  = p.downside_pct != null ? '-' + p.downside_pct + '%' : '—';
-    const rr  = (p.upside_pct && p.downside_pct && p.downside_pct > 0) ? (p.upside_pct/p.downside_pct).toFixed(1) + ':1' : '—';
-    const smartA = window._smartAllocMap && window._smartAllocMap[p.ticker];
-    const zone = p.entry_zone ? `$${p.entry_zone[0]}–$${p.entry_zone[1]}` : '—';
-    const isBuy = ['STRONG BUY','BUY'].includes(p.action);
-    const isTrim = p.action === 'TRIM';
-    const isExit = p.action === 'EXIT';
-    const exitDetail = isExit ? `<div style="margin-top:6px;font-size:10px;padding:6px 8px;border-radius:6px;background:var(--r2);color:var(--r);line-height:1.5">🚪 ${p.reason || 'Below 200D MA — exit to protect capital'}${p.pnl_pct != null ? ` &nbsp;·&nbsp; P&L: <b>${p.pnl_pct > 0 ? '+' : ''}${p.pnl_pct}%</b>` : ''}</div>` : '';
-    const holdType = p._isNew
-      ? `<span style="font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(255,215,64,.18);color:var(--a);margin-left:6px;font-weight:800">NEW POSITION</span>`
-      : p.class ? `<span style="font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(255,255,255,.07);margin-left:6px">${p.class.toUpperCase()} · ${horizonMap[p.class]||''}</span>` : '';
-    const trimDetail = isTrim && p.trim_pct ? `<div style="margin-top:6px;font-size:10px;padding:6px 8px;border-radius:6px;background:var(--a2);color:var(--a)">✂️ Trim <b>${p.trim_pct}%</b> — ${p.trim_reason||''}</div>` : '';
-    const conf = p.confidence;
-    const confCol = conf >= 80 ? 'var(--g)' : conf >= 60 ? 'var(--a)' : 'var(--r)';
-    const confLabel = conf >= 80 ? 'HIGH' : conf >= 60 ? 'MODERATE' : 'LOW';
-    const confBadge = conf != null ? `<span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;background:${confCol}22;color:${confCol};border:1px solid ${confCol}44;margin-left:6px">${conf}% ${confLabel}</span>` : '';
-    const _rankCls = _rank === 1 ? 'gold' : _rank === 2 ? 'silver' : _rank === 3 ? 'bronze' : 'normal';
-    const _rankBadge = `<span class="action-rank ${_rankCls}">#${_rank}</span>`;
-    html += `<div class="acard ${actionCls(p.action)}" onclick="window._openStockModal('${p.ticker}')">
-      <div class="acard-action" style="color:${actionColor(p.action)}">${_rankBadge}${p.action}${isBuy ? holdType : ''}${confBadge}</div>
-      <div class="acard-ticker">${p.ticker} ${p.risk ? `<span class="risk-badge ${riskClass(p.risk)}">${p.risk}</span>` : ''}</div>
-      <div class="acard-price">$${p.price ? fmt(p.price) : '—'} · ${p.theme}</div>
-      ${isTrim ? trimDetail : ''}
-      ${isExit ? exitDetail : ''}
-      <div class="acard-row"><span>Target</span><b>${tgt}</b></div>
-      <div class="acard-row"><span>Stop-loss</span><b>${sl}</b></div>
-      ${isBuy ? `<div class="acard-row"><span>Entry zone</span><b>${zone}</b></div>` : ''}
-      ${isBuy && p.upside_pct != null ? `<div style="margin-top:6px;padding:6px 10px;border-radius:6px;background:${p.upside_pct>20?'rgba(0,230,118,.15)':p.upside_pct>10?'rgba(0,180,216,.1)':'rgba(255,215,64,.1)'};display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:10px;color:var(--t2)">Upside to target</span>
-        <span style="font-size:16px;font-weight:900;color:${p.upside_pct>20?'var(--g)':p.upside_pct>10?'#00b4d8':'var(--a)'}">+${p.upside_pct}%</span>
-      </div>` : ''}
-      ${isBuy && smartA ? `<div class="acard-row"><span>Allocate this cycle</span><b style="color:var(--g);font-size:14px">${window.PUBLIC ? `${smartA.pct}% <span style="font-size:11px;opacity:.7">of cycle</span>` : `$${smartA.usd.toLocaleString()} <span style="font-size:11px;opacity:.7">(${smartA.pct}%)</span>`}</b></div>` : ''}
-    </div>`;
-  }
-
-  // Global helper: open catalyst modal by event id
-  window._openCatById = function(eid) {
-    const evs = window.__catEvents__;
-    if (!evs) {
-      // Retry once after a short delay
-      setTimeout(function(){ window._openCatById(eid); }, 1200);
-      return;
-    }
-    const ev = evs.find(function(e){ return e.id === eid; });
-    if (ev && window.openCatModal) { window.openCatModal(ev); }
-    else if (window.openCatModal) {
-      // Try matching by partial id or name
-      const partial = evs.find(function(e){ return e.id && e.id.includes(eid.split('_')[0]); });
-      if (partial) { window.openCatModal(partial); }
-    }
-  };
-
-  // Global helper: open playbook from opp data (when events.json may not have it)
-  window._openOppPlaybook = function(ticker) {
-    ticker = (ticker || '').toUpperCase();
-    const allOpps = D.outside_opps || [];
-    const opp = allOpps.find(function(p){ return (p.ticker||'').toUpperCase() === ticker; });
-    if (!opp) return;
-
-    // Try events.json first
-    const evs = window.__catEvents__ || [];
-    const matchEv = evs.find(function(e){
-      return (e.instruments||[]).some(function(t){ return t.toUpperCase() === ticker; }) ||
-             (opp.event_id && e.id === opp.event_id);
-    });
-    if (matchEv && window.openCatModal) { window.openCatModal(matchEv); return; }
-
-    // Synthetic playbook from opp data
-    if (window.openCatModal) {
-      const synthetic = {
-        id: opp.event_id || ('opp_' + ticker),
-        name: opp.catalyst || (ticker + ' — Catalyst Opportunity'),
-        date: opp.event_date || '',
-        category: opp.theme ? opp.theme.toLowerCase().split('/')[0].trim() : 'corporate',
-        status: opp.catalyst_status || 'upcoming',
-        days_until: opp.catalyst_days || 0,
-        why: opp.reason || 'Catalyst opportunity identified.',
-        action: [
-          opp.entry_zone ? 'Entry zone: $' + opp.entry_zone[0] + '–$' + opp.entry_zone[1] + '.' : '',
-          opp.target ? 'Target: $' + opp.target + ' (+' + opp.upside_pct + '% upside).' : '',
-          opp.stop_loss ? 'Stop-loss: $' + opp.stop_loss + '.' : '',
-          opp.exit_trigger ? 'Exit trigger: ' + opp.exit_trigger : '',
-          opp.trade_type ? 'Trade type: ' + opp.trade_type : '',
-        ].filter(Boolean).join(' '),
-        trade_type: opp.trade_type || '',
-        confidence: opp.confidence || 6,
-        instruments: [ticker],
-        exit_trigger: opp.exit_trigger || '',
-      };
-      window.openCatModal(synthetic);
-    }
-  };
-
-  // Outside-portfolio opportunities
-  const opps = D.outside_opps || [];
-  if (opps.length) {
-    // Populate global store for modal
-    window.__oppData__ = window.__oppData__ || {};
-    opps.forEach(p => { window.__oppData__[p.ticker.toUpperCase()] = p; });
-
-    // Split: regular watchlist vs catalyst-driven
-    const regOpps = opps.filter(p => !p.catalyst);
-    const catOpps = opps.filter(p =>  p.catalyst);
-
-    function renderOppCard(p, cardRank) {
-      const isCat = !!p.catalyst;
-      const oc    = p.action === 'STRONG BUY' ? 'var(--g)' : p.action === 'WATCH' ? 'var(--a)' : '#00b4d8';
-      const isStale = p.upside_pct != null && p.upside_pct < 0;
-      const tgt   = p.target ? (isStale
-        ? `$${fmt(p.target)} <span class="stale-target">⚠ Stale Target</span>`
-        : '$' + fmt(p.target)) : '<span style="color:var(--t3);font-size:9px">TBD</span>';
-      const sl    = p.stop_loss ? '$' + fmt(p.stop_loss) : '—';
-      const up    = p.upside_pct != null ? (p.upside_pct >= 0 ? '+' : '') + p.upside_pct + '%' : '—';
-      const zone  = p.entry_zone ? `$${p.entry_zone[0]}–$${p.entry_zone[1]}` : '—';
-      const ma    = [['above_200','200D'],['above_50','50D']]
-        .map(([key,label]) => `<span style="font-size:9px;padding:1px 5px;border-radius:3px;margin-right:3px;background:${p[key]?'var(--g2)':'var(--r2)'};color:${p[key]?'var(--g)':'var(--r)'}">${label} ${p[key]?'▲':'▼'}</span>`).join('');
-      const rsiNote = p.rsi != null ? `<span style="font-size:9px;color:var(--t2)">RSI ${p.rsi}</span>` : '';
-
-      // Catalyst badge + metadata (compact — full detail in modal)
-      const catStatusColor = {'imminent':'var(--r)','upcoming':'var(--g)','monitor':'var(--b)'};
-      const catCountdown   = _fmtCatDays(p);
-      let catBadge = '';
-      if (isCat) {
-        let evDateStr = '';
-        if (p.event_date) {
-          try { const d = new Date(p.event_date); evDateStr = d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
-          catch(e) { evDateStr = p.event_date; }
-        }
-        let buyWindow = '';
-        if (p.event_date && p.lead_days) {
-          try {
-            const evD = new Date(p.event_date); const buySt = new Date(evD);
-            buySt.setDate(buySt.getDate() - p.lead_days);
-            const fmtD = d => d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-            buyWindow = `${fmtD(buySt)} → ${fmtD(evD)}`;
-          } catch(e) {}
-        }
-        const ttChip = p.trade_type
-          ? `<span style="font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(255,215,64,.12);color:var(--a);font-weight:700">${p.trade_type}</span>` : '';
-        const confDots = p.confidence
-          ? Array.from({length:10},(_,i)=>`<span style="width:5px;height:5px;border-radius:50%;background:${i<p.confidence?'var(--a)':'rgba(255,255,255,.12)'};display:inline-block;margin:0 1px"></span>`).join('') : '';
-        catBadge = `<div style="margin-top:7px;padding:7px 9px;border-radius:7px;background:rgba(255,215,64,.08);border:1px solid rgba(255,215,64,.28);overflow:hidden;min-width:0">
-          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:4px;min-width:0;overflow:hidden">
-            <span style="font-size:9px;font-weight:800;color:var(--a);letter-spacing:1px;flex-shrink:0">⚡ CATALYST</span>
-            <span style="font-size:10px;font-weight:600;flex:1;line-height:1.3;overflow:hidden;word-break:break-word">${p.catalyst}</span>
-            ${catCountdown ? `<span style="font-size:9px;font-weight:700;color:${catStatusColor[p.catalyst_status]||'var(--t2)'};flex-shrink:0">${catCountdown}</span>` : ''}
-          </div>
-          ${evDateStr ? `<div style="font-size:9px;color:var(--t2);margin-bottom:3px">Event: ${evDateStr}</div>` : ''}
-          ${buyWindow  ? `<div style="font-size:9px;color:var(--t3)">Buy window: <b style="color:var(--t1)">${buyWindow}</b></div>` : ''}
-          ${p.trade_type || p.confidence ? `<div style="display:flex;align-items:center;gap:8px;margin-top:5px">${ttChip}${confDots ? `<span style="font-size:9px;color:var(--t3)">Conf</span>${confDots}` : ''}</div>` : ''}
-        </div>`;
-      }
-
-      const exitRow = (isCat && p.exit_trigger)
-        ? `<div class="acard-row"><span>Exit trigger</span><b style="font-size:10px;color:var(--a);text-align:right;max-width:160px;line-height:1.4">${p.exit_trigger}</b></div>`
-        : '';
-
-      const rankBadge = cardRank
-        ? `<span class="cat-rank ${cardRank===1?'r1':cardRank===2?'r2':'rn'}">${cardRank}</span>` : '';
-      const isHighConf = (p.confidence || 0) >= 8;
-      const cardBorder = isHighConf ? 'strong-buy' : 'buy';
-      const hlStyle = isHighConf
-        ? 'border:2px solid rgba(0,230,118,.4);box-shadow:0 0 16px rgba(0,230,118,.12)'
-        : (p.upside_pct > 20 ? 'border:2px solid rgba(0,180,216,.3)' : '');
-
-      // Playbook button — navigates to #/TICKER (hash page) for full stock view
-      const playbookBtn = (isCat && (p.event_id || p.event_date))
-        ? `<button onclick="event.stopPropagation();window._openPage('${p.ticker}')" style="margin-top:6px;width:100%;padding:6px 10px;border-radius:6px;background:rgba(255,215,64,.12);color:var(--a);border:1px solid rgba(255,215,64,.35);font-size:10px;font-weight:800;cursor:pointer;letter-spacing:.3px">📋 Open Full Playbook ↗</button>` : '';
-
-      return `<div class="acard ${cardBorder}" style="${hlStyle}" onclick="window._openStockModal('${p.ticker}')">
-        <div class="acard-action" style="color:${oc}">${rankBadge}${p.action} <span style="font-size:9px;color:var(--t3);font-weight:400">· ${isCat ? 'CATALYST OPP' : 'WATCHLIST'}</span></div>
-        <div class="acard-ticker">${p.ticker} <span style="font-size:11px;font-weight:400;color:var(--t2)">$${fmt(p.price)}</span> <span class="${col(p.chg_1d)}" style="font-size:11px">${pct(p.chg_1d)}</span></div>
-        <div style="margin-top:5px;display:flex;align-items:center;gap:6px">${ma}${rsiNote}</div>
-        ${catBadge}
-        <div class="acard-row"><span>Target</span><b>${tgt}</b></div>
-        <div class="acard-row"><span>Stop-loss</span><b>${sl}</b></div>
-        <div class="acard-row"><span>Entry zone</span><b>${zone}</b></div>
-        ${exitRow}
-        ${p.upside_pct != null && p.upside_pct > 0 ? `<div style="margin-top:6px;padding:6px 10px;border-radius:6px;background:${p.upside_pct>20?'rgba(0,230,118,.15)':p.upside_pct>10?'rgba(0,180,216,.1)':'rgba(255,215,64,.1)'};display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:10px;color:var(--t2)">Upside to target</span>
-          <span style="font-size:16px;font-weight:900;color:${p.upside_pct>20?'var(--g)':p.upside_pct>10?'#00b4d8':'var(--a)'}">${up}</span>
-        </div>` : ''}
-        ${p.reason ? `<div style="margin-top:6px;font-size:10px;color:var(--t2);line-height:1.45;border-top:1px solid var(--border);padding-top:5px">${p.reason}</div>` : ''}
-        ${playbookBtn}
-        <div style="margin-top:5px;font-size:9px;color:var(--t3);text-align:center">Tap for chart + intelligence ↗</div>
-      </div>`;
-    }
-
-    // ⭐ My Favorites — render right above Watchlist Opportunities
-    let _favTickersAC = [];
-    try { _favTickersAC = JSON.parse(localStorage.getItem('ad_favorites_v1') || '[]'); } catch(e) {}
-    _favTickersAC = _favTickersAC.map(t => (t||'').toString().toUpperCase()).filter(Boolean);
-    if (_favTickersAC.length) {
-      html += `<div style="grid-column:1/-1;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--a);padding:8px 0 4px;margin-top:8px;border-top:1px solid rgba(255,215,64,.25)">⭐ My Favorites <span style="font-weight:400;opacity:.6;font-size:9px">· ${_favTickersAC.length} pinned · click ⭐ to remove</span></div>`;
-      _favTickersAC.forEach(T => {
-        const fromPort   = (D.portfolio?.positions || []).find(p => (p.ticker||'').toUpperCase() === T);
-        const fromOpp    = (D.outside_opps || []).find(p => (p.ticker||'').toUpperCase() === T);
-        const fromCrypto = (D.crypto?.positions || []).find(p => (p.symbol||'').toUpperCase() === T);
-        const p = fromPort || fromOpp || (fromCrypto ? {...fromCrypto, ticker: T} : { ticker: T, _missing: true });
-        if (p._missing) {
-          html += `<div class="acard" style="cursor:pointer;position:relative;opacity:.55" onclick="window._openStockModal('${T}')">
-            <span class="ad-fav-star ad-fav-star-on" onclick="event.stopPropagation();window.adToggleFav('${T}')" title="Remove from favorites">⭐</span>
-            <div class="acard-action" style="color:var(--a)">⭐ FAVORITE</div>
-            <div class="acard-ticker">${T}</div>
-            <div class="acard-price" style="font-size:10px;color:var(--t3)">No data — add to portfolio.json on VPS</div>
-          </div>`;
-          return;
-        }
-        const action  = (p.action || 'WATCH').toString().toUpperCase();
-        const aColor  = action === 'STRONG BUY' ? 'var(--g)' : action === 'BUY' ? '#00b4d8' : action === 'TRIM' ? 'var(--a)' : action === 'EXIT' ? 'var(--r)' : action === 'WATCH' ? 'var(--a)' : 'var(--t2)';
-        const cardCls = action === 'STRONG BUY' ? 'strong-buy' : action === 'BUY' ? 'buy' : action === 'TRIM' ? 'trim' : action === 'EXIT' ? 'exit' : '';
-        const tgt     = p.target ? '$' + fmt(p.target) : '';
-        const sl      = p.stop_loss ? '$' + fmt(p.stop_loss) : '';
-        const zone    = p.entry_zone ? `$${p.entry_zone[0]}–$${p.entry_zone[1]}` : '';
-        const conf    = p.confidence;
-        const confBadge = conf != null ? `<span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;background:rgba(255,215,64,.15);color:var(--a);margin-left:6px">${conf}${(typeof conf === 'number' && conf <= 10) ? '/10' : '%'}</span>` : '';
-        html += `<div class="acard ${cardCls}" style="cursor:pointer;position:relative" onclick="window._openStockModal('${T}')">
-          <span class="ad-fav-star ad-fav-star-on" onclick="event.stopPropagation();window.adToggleFav('${T}')" title="Remove from favorites">⭐</span>
-          <div class="acard-action" style="color:${aColor}">${action}${confBadge}</div>
-          <div class="acard-ticker">${T} ${p.risk ? `<span class="risk-badge ${riskClass(p.risk)}">${p.risk}</span>` : ''}</div>
-          <div class="acard-price">$${p.price != null ? fmt(p.price) : '—'} ${p.chg_1d != null ? `<span class="${col(p.chg_1d)}" style="font-size:11px">${pct(p.chg_1d)}</span>` : ''} <span style="font-size:10px;color:var(--t2)">${p.theme ? '· ' + p.theme : ''}</span></div>
-          ${tgt ? `<div class="acard-row"><span>Target</span><b>${tgt}</b></div>` : ''}
-          ${sl  ? `<div class="acard-row"><span>Stop-loss</span><b>${sl}</b></div>` : ''}
-          ${zone ? `<div class="acard-row"><span>Entry zone</span><b>${zone}</b></div>` : ''}
-          ${p.upside_pct != null && p.upside_pct > 0 ? `<div style="margin-top:6px;padding:6px 10px;border-radius:6px;background:rgba(0,180,216,.1);display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:10px;color:var(--t2)">Upside to target</span>
-            <span style="font-size:14px;font-weight:900;color:#00b4d8">+${p.upside_pct}%</span>
-          </div>` : ''}
-        </div>`;
-      });
-    }
-
-    if (regOpps.length) {
-      const regOppsFiltered = regOpps.filter(p => (p.upside_pct||0) >= 8);
-      if (regOppsFiltered.length) {
-        html += `<div style="grid-column:1/-1;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--t3);padding:8px 0 4px;margin-top:8px;border-top:1px solid var(--border)">🧠 Brain Picks <span style="font-weight:400;opacity:.6;font-size:9px;letter-spacing:.4px;text-transform:none">· pure technicals</span></div>`;
-        regOppsFiltered.forEach(p => { html += renderOppCard(p); });
-      }
-    }
-    if (catOpps.length) {
-      html += `<div style="grid-column:1/-1;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--a);padding:8px 0 4px;margin-top:8px;border-top:1px solid rgba(255,215,64,.2);overflow:hidden;word-break:break-word">⚡ Catalyst Plays <span style="font-weight:400;opacity:.6;font-size:9px;letter-spacing:.4px;text-transform:none">· upcoming events</span> <span style="font-size:9px;font-weight:400;color:var(--t3)">(${catOpps.length})</span></div>`;
-
-      // Group by sector category (stored in p.theme from live_collector)
-      const _sectorOrder = ['Macro','Corporate','Industry','Seasonal','Bonus'];
-      const _sectorMeta  = {
-        'Macro':     { label:'🌐 Macro / Regulation',  color:'var(--b)' },
-        'Corporate': { label:'🏢 Corporate Events',    color:'var(--g)' },
-        'Industry':  { label:'⚙️ Industry / Sector',  color:'#00b4d8'  },
-        'Seasonal':  { label:'🌿 Seasonal / Cyclical', color:'#69b578'  },
-        'Bonus':     { label:'⭐ Bonus Catalysts',     color:'var(--a)' },
-      };
-
-      // Build sector → [opps] map
-      const _grouped = {};
-      catOpps.forEach(p => {
-        const key = p.theme || 'Other';
-        (_grouped[key] = _grouped[key] || []).push(p);
-      });
-
-      // Render known sectors first, then any unknown — collapsed by default
-      const _keys = [
-        ..._sectorOrder.filter(k => _grouped[k]),
-        ...Object.keys(_grouped).filter(k => !_sectorOrder.includes(k))
-      ];
-      _keys.forEach((sector, idx) => {
-        // Sort by confidence DESC, then by upside_pct DESC, show max 5 with upside > 5%
-        const rawGrp = _grouped[sector];
-        const grp = rawGrp
-          .filter(p => p.upside_pct != null && p.upside_pct >= 8)
-          .sort((a,b) => {
-            const confDiff = (b.confidence||0) - (a.confidence||0);
-            if (Math.abs(confDiff) > 0.5) return confDiff;
-            return (b.upside_pct||0) - (a.upside_pct||0);
-          })
-          .slice(0, 5);
-        if (!grp.length) return;
-
-        const meta = _sectorMeta[sector] || { label: '📌 ' + sector, color: 'var(--t2)' };
-        const gid  = 'cat-grp-' + idx;
-
-        // Next upcoming opp in this group (soonest catalyst_days or days_until)
-        const _nextOpp = [...grp].sort((a, b) => (_safeCatDays(a) ?? 999) - (_safeCatDays(b) ?? 999))[0];
-        const _nextLabel  = _nextOpp ? _fmtCatDays(_nextOpp) : '';
-        const _nextUpside = _nextOpp?.upside_pct != null ? `+${_nextOpp.upside_pct}%` : '';
-        const _nextTicker = _nextOpp?.ticker || '';
-        const _nextCat    = _nextOpp?.catalyst || _nextOpp?.theme || '';
-
-        // Clickable header — spans full grid width, two-row layout with preview
-        html += `<div style="grid-column:1/-1;margin-top:10px;padding:8px 12px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);cursor:pointer;user-select:none;transition:background .15s;overflow:hidden;min-width:0"
-          onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='rgba(255,255,255,.04)'"
-          onclick="(function(h){var g=document.getElementById('${gid}');var isHidden=g.style.display==='none';g.style.display=isHidden?'block':'none';h.querySelector('.cat-chev').textContent=isHidden?'▼':'▶'})(this)">
-          <div style="display:flex;align-items:center;gap:8px;min-width:0">
-            <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${meta.color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1">${meta.label}</span>
-            <span style="font-size:9px;color:var(--t3);flex-shrink:0">${grp.length} opp${grp.length > 1 ? 's' : ''}</span>
-            <span class="cat-chev" style="font-size:10px;color:var(--t3);flex-shrink:0">▶</span>
-          </div>
-          ${_nextOpp ? `<div style="display:flex;align-items:center;gap:8px;margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.06);min-width:0;overflow:hidden">
-            <span style="font-size:12px;font-weight:800;color:#e0e0e0;flex-shrink:0">${_nextTicker}</span>
-            ${_nextCat ? `<span style="font-size:10px;color:var(--t2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${_nextCat}</span>` : ''}
-            ${_nextLabel ? `<span style="font-size:10px;font-weight:700;color:${_nextLabel==='TODAY'?'var(--r)':_nextLabel==='Tomorrow'?'var(--a)':'var(--g)'};flex-shrink:0">${_nextLabel}</span>` : ''}
-            ${_nextUpside ? `<span style="font-size:11px;font-weight:800;color:var(--g);flex-shrink:0">${_nextUpside}</span>` : ''}
-          </div>` : ''}
-        </div>`;
-
-        // Cards panel — hidden by default, spans full grid width, inner grid for cards
-        html += `<div id="${gid}" style="display:none;grid-column:1/-1">
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;padding-top:8px">`;
-        grp.forEach((p, ri) => { _globalRank++; html += renderOppCard(p, _globalRank); });
-        html += `</div></div>`;
-      });
-    }
-  }
-
-  html += '</div>';
-  $('action-center').innerHTML = html;
+  const d = window._dashboardDecision;
+  if (!d) return;
+  if ($('action-date')) $('action-date').textContent = d.as_of || 'As-of unavailable';
+  ADView.actions($('action-center'), d);
 }
 
-// ── Smart Allocation Score ───────────────────────────────────────────────────
-// upside^1.5 creates natural spread (e.g. 50% upside scores 3.5× a 10% upside stock)
-// vs linear where the ratio is only 5×0.7 factors = too compressed after normalization
-function _allocScore(p) {
-  const riskW   = {LOW:1.0, MEDIUM:0.72, HIGH:0.45, 'VERY HIGH':0.25};
-  // Upside clamped to 100: beyond that, ^1.5 lets a single (often stale/split-
-  // skewed) analyst target dominate the entire allocation (KLAC 2026-06-12).
-  const upside  = Math.max(2, Math.min(100, p.upside_pct || 0));
-  const riskMul = riskW[p.risk] || 0.55;
-  const confW   = p.confidence != null ? (p.confidence / 10) : 0.65;
-  const rsiPen  = !p.rsi ? 1.0 : p.rsi > 85 ? 0.55 : p.rsi > 75 ? 0.80 : p.rsi > 65 ? 0.95 : 1.1;
-  const ma200   = p.above_200 ? 1.20 : 0.75;
-  // Action weight uses the integrated effective_action (already on p.action
-  // after _applyEffectiveActions). STRONG BUY = full weight, BUY = standard,
-  // WATCH = down-weighted because chart and brain don't agree.
-  const actionW = p.action === 'STRONG BUY' ? 1.3
-                : p.action === 'BUY'        ? 1.0
-                : p.action === 'WATCH'      ? 0.55
-                : 0.0;  // WAIT/EXIT/TRIM never get DCA allocation
-  // 10Y yield factor: high rates penalize growth/spec names, reward low-risk positions
-  const yld = D.market?.t10y?.price || 0;
-  const yieldFactor = yld > 5.0 ? (p.risk === 'LOW' ? 1.05 : p.risk === 'MEDIUM' ? 0.90 : 0.78)
-                    : yld > 4.5 ? (p.risk === 'LOW' ? 1.02 : p.risk === 'MEDIUM' ? 0.95 : 0.87)
-                    : yld > 3.5 ? 1.0
-                    : (p.risk === 'HIGH' || p.risk === 'VERY HIGH') ? 1.10 : 1.0;
-  // Chart-integrated confidence (0-1). When sidecar data isn't loaded yet,
-  // _confidence is null → defaults to 0.7 so we don't accidentally zero out
-  // every position before the first sidecar fetch resolves.
-  const chartConfFactor = (p._confidence != null) ? (p._confidence / 100) : 0.7;
-  return Math.pow(upside, 1.5) * riskMul * confW * rsiPen * ma200 * actionW * yieldFactor * chartConfFactor;
-}
 
-// ── Allocation Table ────────────────────────────────────────────────────────
 function buildAllocTable() {
-  const positions  = D.portfolio.positions || [];
-  const outside    = D.outside_opps || [];
-  const portSet    = new Set(positions.map(p => (p.ticker||'').toUpperCase()));
-
-  // Data-error quarantine: upside > 200% means the analyst target and the
-  // price are almost certainly from different vintages (e.g. a stock split —
-  // KLAC 10:1 on 2026-06-12 showed +690%). Never allocate against it.
-  const saneUpside = p => (p.upside_pct||0) <= 200;
-
-  // Portfolio BUY/STRONG BUY with real upside
-  const portCands = positions
-    .filter(p => ['STRONG BUY','BUY'].includes(p.action) && (p.upside_pct||0) > 0
-              && saneUpside(p))
-    .map(p => ({...p, _type:'add'}));
-
-  // Outside opps not in portfolio, with meaningful upside ≥ 8%
-  const watchCands = outside
-    .filter(p => !portSet.has((p.ticker||'').toUpperCase())
-              && ['STRONG BUY','BUY'].includes(p.action||'')
-              && (p.upside_pct||0) >= 8
-              && saneUpside(p))
-    .map(p => ({...p, _type:'new'}));
-
-  const candidates = [...portCands, ...watchCands];
-
-  if (!candidates.length) {
-    $('alloc-table').innerHTML = '<div style="color:var(--t2);font-size:13px;padding:8px 0">No BUY signals — hold cash.</div>';
-    const budgetEl = $('dca-budget-label');
-    if (budgetEl) budgetEl.textContent = '';
-    window._smartAllocMap = {};
-    return;
-  }
-
-  // Score all candidates and pick top 5
-  const scored = candidates.map(p => ({...p, _score: _allocScore(p)}))
-    .sort((a,b) => b._score - a._score)
-    .slice(0, 5);
-
-  // Budget: prefer this month's *remaining* DCA pool (sentinel deducts buys, refunds trims);
-  // fall back to gross monthly_dca, then summed portfolio allocation_usd, then $10K.
-  const monthlyDca   = D.monthly_dca || 10000;
-  const monthlyUsed  = D.monthly_used      != null ? D.monthly_used      : 0;
-  const monthlyLeft  = D.monthly_remaining != null ? D.monthly_remaining : monthlyDca;
-  const totalBudget  = monthlyLeft
-    || positions.reduce((s,p) => s + (p.allocation_usd||0), 0)
-    || 10000;
-
-  const totalScore = scored.reduce((s,p) => s + p._score, 0) || 1;
-  // Cap 35% / floor 5% that actually HOLD. The old cap-then-renormalize undid
-  // the cap whenever one score dominated (KLAC 2026-06-12: 35/(35+5+5) → 77.8%).
-  // Now: cap excess is redistributed only to uncapped picks; if everything is
-  // capped, the remainder of the budget stays UNALLOCATED (held back) — no pick
-  // can ever exceed 35% of the monthly budget.
-  const CAP = 35, FLOOR = 5;
-  let pcts = scored.map(p => (p._score / totalScore) * 100);
-  for (let iter = 0; iter < 6; iter++) {
-    let excess = 0;
-    pcts = pcts.map(v => { if (v > CAP) { excess += v - CAP; return CAP; } return v; });
-    if (excess < 1e-9) break;
-    const under = pcts.map((v,i) => i).filter(i => pcts[i] < CAP - 1e-9);
-    const underSum = under.reduce((s,i) => s + pcts[i], 0);
-    if (!under.length || underSum <= 0) break;
-    under.forEach(i => { pcts[i] += excess * (pcts[i] / underSum); });
-  }
-  // Floor: lift tiny picks to 5%, paying from the largest pick (stays ≤ CAP).
-  for (let i = 0; i < pcts.length; i++) {
-    if (pcts[i] > 0 && pcts[i] < FLOOR) {
-      const need = FLOOR - pcts[i];
-      const big = pcts.indexOf(Math.max(...pcts));
-      if (big !== i && pcts[big] - need >= FLOOR) { pcts[big] -= need; pcts[i] = FLOOR; }
-    }
-  }
-  pcts = pcts.map(v => Math.min(CAP, v));  // invariant, belt-and-suspenders
-  const final = scored.map((p, i) => ({
-    ...p,
-    _finalPct: +pcts[i].toFixed(1),
-    _finalUsd: Math.round(pcts[i] / 100 * totalBudget),
-  }));
-
-  const totalDeploy = final.reduce((s,p) => s + p._finalUsd, 0);
-  const budgetEl = $('dca-budget-label');
-  if (budgetEl) {
-    if (window.PUBLIC) {
-      budgetEl.textContent = '— top 5 picks this cycle';
-    } else {
-      const usedLabel = monthlyUsed > 0
-        ? ` · used $${Math.round(monthlyUsed).toLocaleString()} of $${monthlyDca.toLocaleString()}`
-        : '';
-      budgetEl.textContent = totalDeploy
-        ? `— deploy $${totalDeploy.toLocaleString()} remaining${usedLabel} · top 5 picks`
-        : (monthlyUsed >= monthlyDca
-            ? `— monthly DCA fully deployed ($${Math.round(monthlyUsed).toLocaleString()} of $${monthlyDca.toLocaleString()})`
-            : '');
-    }
-  }
-
-  const riskClass = r => r === 'LOW' ? 'low' : r === 'MEDIUM' ? 'medium' : r === 'VERY HIGH' ? 'very-high' : 'high';
-  const deriveRisk = p => {
-    if (p.risk) return [p.risk, false];
-    if (p.class === 'core' && p.above_200) return ['LOW', true];
-    if (p.class === 'spec' || !p.above_200) return ['HIGH', true];
-    return ['MEDIUM', true];
-  };
-  const classMeta = {
-    core:  {label:'CORE',  hold:'1–3 mo+', color:'#00b4d8', bg:'rgba(0,180,216,.12)'},
-    swing: {label:'SWING', hold:'1–4 wk',  color:'#ffd740', bg:'rgba(255,215,64,.12)'},
-    spec:  {label:'SPEC',  hold:'1–2 wk',  color:'#ff6f91', bg:'rgba(255,111,145,.12)'},
-    watch: {label:'WATCH', hold:'1–4 wk',  color:'#9aa3ad', bg:'rgba(154,163,173,.12)'},
-  };
-  const classCell = p => {
-    const key = (p.class || '').toLowerCase();
-    const m = classMeta[key] || classMeta.watch;
-    return `<span style="font-size:9px;font-weight:800;letter-spacing:.4px;padding:2px 6px;border-radius:4px;background:${m.bg};color:${m.color}">${m.label}</span>
-            <div style="font-size:9px;color:var(--t3);margin-top:2px">${m.hold}</div>`;
-  };
-
-  let html = `
-  <div style="font-size:10px;color:var(--t3);margin-bottom:8px;padding:5px 10px;background:rgba(255,255,255,.03);border-radius:6px;border-left:2px solid var(--a)">
-    Smart allocation weighted by: upside potential · confidence · risk · MA position · momentum
-  </div>
-  <div class="alloc-scroll">
-  <table class="alloc-table"><thead><tr>
-    <th>Rank</th><th>Ticker</th><th>Class</th><th>Action</th><th>Allocation</th>${window.PUBLIC ? '' : '<th>$ Amount</th>'}<th>Price</th><th>Risk</th><th>Target</th>
-  </tr></thead><tbody>`;
-
-  final.forEach((p, i) => {
-    const cls       = p.action === 'STRONG BUY' ? 'var(--g)' : '#00b4d8';
-    const rankMedal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
-    const scoreBar  = `<div style="width:${Math.min(p._finalPct,100)}%;height:3px;background:${cls};border-radius:2px;margin-top:3px;opacity:.7"></div>`;
-    const typeBadge = p._type === 'new'
-      ? `<span style="font-size:8px;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(255,215,64,.15);color:var(--a);margin-left:4px;letter-spacing:.5px">NEW</span>`
-      : `<span style="font-size:8px;padding:1px 4px;border-radius:3px;background:rgba(0,230,118,.1);color:var(--g);margin-left:4px">ADD</span>`;
-    html += `<tr style="${i===0?'background:rgba(255,215,64,.04)':''}">
-      <td style="font-size:13px;text-align:center">${rankMedal}</td>
-      <td onclick="window._openStockModal('${p.ticker}')" style="cursor:pointer">
-        <b style="text-decoration:underline dotted;text-underline-offset:3px">${p.ticker}</b>${typeBadge}<br>
-        <span style="font-size:10px;color:var(--t2)">${p.theme||'—'}</span>
-      </td>
-      <td style="text-align:center">${classCell(p)}</td>
-      <td style="color:${cls};font-weight:700;font-size:11px">${p.action}</td>
-      <td>
-        <div class="alloc-bar-wrap"><div class="alloc-bar ${p.action==='BUY'?'buy':''}" style="width:${p._finalPct}%"></div></div>
-        <b>${p._finalPct}%</b>${scoreBar}
-      </td>
-      ${window.PUBLIC ? '' : `<td><b style="font-size:14px;color:${cls}">$${p._finalUsd.toLocaleString()}</b></td>`}
-      <td style="font-size:12px;font-weight:700">${p.price ? '$'+fmt(p.price) : '<span style="color:var(--t3)">—</span>'}</td>
-      <td>${(function(){ var [r,est]=deriveRisk(p); return `<span class="risk-badge ${riskClass(r)}" style="${est?'opacity:.65':''}">` + (est?'~':'') + r + '</span>'; })()}</td>
-      <td style="color:${p.upside_pct>0?'var(--g)':'var(--r)'}">
-        ${p.target ? '$'+fmt(p.target) : '—'}
-        ${p.upside_pct ? `<div style="font-size:9px;color:var(--g)">+${p.upside_pct}%</div>` : ''}
-      </td>
-    </tr>`;
-  });
-  html += '</tbody></table></div>';
-  $('alloc-table').innerHTML = html;
-  // Share allocations with buildActionCenter
+  const d = window._dashboardDecision;
   window._smartAllocMap = {};
   window._dcaNewPicks = [];
-  final.forEach(p => {
-    window._smartAllocMap[p.ticker] = {pct: p._finalPct, usd: p._finalUsd};
-    if (p._type === 'new') window._dcaNewPicks.push({...p, _isNew: true});
-  });
-  saveDCASnapshot();
+  if (!d) return;
+  for (const r of d.rows) {
+    if (r.selected_rank) {
+      window._smartAllocMap[r.ticker] = {pct:r.allocation_pct, usd:r.allocation_amount, rank:r.selected_rank};
+      if (r.origin === 'outside') window._dcaNewPicks.push({ticker:r.ticker, action:r.effective_action, _isNew:true});
+    }
+  }
+  ADView.alloc($('alloc-table'), d);
+  if ($('dca-budget-label')) $('dca-budget-label').textContent = d.budget.status === 'zero' ? 'Remaining budget is zero' : d.budget.status === 'unknown' ? 'Indicative weights; funding unavailable' : 'Remaining-budget basis';
 }
+
 
 // ── Insiders & Whales ────────────────────────────────────────────────────
 function buildInsiders() {
@@ -3455,34 +2879,9 @@ function buildWatchlist() {
 window._tickerAnalysis = {};
 window._currentModalTicker = null;
 window._sidecarLoaded = false;
-function _loadSidecar(retry) {
-  fetch('charts/analysis.json?v=' + Date.now(), {cache: 'no-store'})
-    .then(function(r){
-      if (!r.ok) throw new Error('sidecar HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function(j){
-      window._tickerAnalysis = j || {};
-      window._sidecarLoaded = true;
-      console.log('[AD] sidecar loaded:', Object.keys(window._tickerAnalysis).length, 'tickers');
-      // Apply integrated effective_action + confidence to all position
-      // records, then trigger a full dashboard re-render so cards / action
-      // cards / smart top 5 / allocation all reflect the integrated decision.
-      try { _applyEffectiveActions(); } catch(e) { console.warn('[AD] applyEffective err:', e); }
-      try { if (typeof _buildAll === 'function') _buildAll(); } catch(e) {}
-      // Re-render any open modal so it picks up the new fields
-      if (window._currentModalTicker && window._openStockModal) {
-        window._openStockModal(window._currentModalTicker);
-      }
-    })
-    .catch(function(e){
-      console.warn('[AD] sidecar fetch failed:', e.message);
-      if (!retry) {
-        setTimeout(function(){ _loadSidecar(true); }, 1500); // retry once
-      }
-    });
-}
-_loadSidecar();
+// Sidecar and main snapshot now share one refresh lifecycle.
+function _loadSidecar() { return _loadLive(); }
+
 
 // ── Init ───────────────────────────────────────────────────────────────────
 function _buildAll() {
@@ -3497,33 +2896,39 @@ function _buildAll() {
 _buildAll();   // render immediately with empty skeleton (shows "Connecting…")
 
 // Single source of truth — live data.json from VPS via GitHub Pages
-function _loadLive() {
-  fetch('data.json?' + Date.now())
-    .then(r => { if (!r.ok) throw 0; return r.json(); })
-    .then(fresh => {
-      D = fresh;
-      // Public read-only mode: the sanitized public data.json carries no absolute
-      // dollars (portfolio.total_value is stripped). When absent, render relative
-      // %/signals only and hide $ figures + the trade simulator. Pointed at the
-      // full private snapshot, total_value is present → full tool, unchanged.
-      window.PUBLIC = !!(D.portfolio && D.portfolio.total_value == null);
-      // Expose owned-ticker set for calendar.js (catalyst calendar marks owned instruments)
-      window._ownedTickers = new Set(
-        ((D.portfolio && D.portfolio.positions) || [])
-          .map(p => (p.ticker || '').toUpperCase())
-          .filter(Boolean)
-      );
-      // Apply chart-integrated effective_action + confidence to all position
-      // records BEFORE rendering — every downstream consumer (cards, action
-      // center, smart top 5, allocation, drawer) reads p.action which now
-      // resolves to the integrated decision instead of raw brain.action.
-      try { _applyEffectiveActions(); } catch(e) { console.warn('[AD] applyEffective err:', e); }
-      _buildAll();
-    })
-    .catch(() => {});
-}
+const _snapshotBase = new URL('.', document.querySelector('script[src="snapshot.js"]').src);
+const _snapshotLoader = ADSnapshot.createLoader(async function(path) {
+  const response = await fetch(new URL(path + '?v=' + Date.now(), _snapshotBase), {cache:'no-store'});
+  if (!response.ok) { const error = new Error('Snapshot HTTP ' + response.status); error.status = response.status; throw error; }
+  return response.json();
+}, function(bundle) {
+  const old = window._dashboardDecision;
+  _rawDecisionData = bundle.data ? ADDecision.freeze(ADDecision.copy(bundle.data)) : null;
+  _decisionCharts = bundle.charts ? ADDecision.freeze(ADDecision.copy(bundle.charts)) : null;
+  _decisionChartError = bundle.chart_error || null;
+  if (old && old.snapshot_id !== bundle.data?.snapshot_id) ADView.setPrior(old);
+  // No cached position objects from earlier snapshots may survive a replacement.
+  window.__portPositions__ = {}; window.__oppData__ = {};
+  _applyEffectiveActions();
+  _buildAll();
+  ADView.refreshResearch();
+  if (window._currentModalTicker && window._openStockModal) window._openStockModal(window._currentModalTicker);
+});
+function _loadLive() { return _snapshotLoader.refresh(); }
+
+
 _loadLive();                    // fetch immediately on page load (~1s round-trip)
 setInterval(_loadLive, 300000); // refresh every 5 min
+// Expiry changes presentation state even while the next network request is pending.
+setInterval(function() {
+  if (!_rawDecisionData) return;
+  const before = window._dashboardDecision;
+  _applyEffectiveActions();
+  const changed = before?.authority !== window._dashboardDecision.authority || before?.chart_status !== window._dashboardDecision.chart_status;
+  if (changed) _buildAll();
+  const researchExpired = ADView.expireResearch(Date.now());
+  if ((changed || researchExpired) && window._currentModalTicker && window._openStockModal) window._openStockModal(window._currentModalTicker);
+}, 30000);
 
 updateMarketStatus();
 setInterval(updateMarketStatus, 30000);
@@ -4102,44 +3507,29 @@ function _smVerdictBadge(v){
 // loaded at boot; falls back to brain.action if sidecar isn't ready
 // yet or doesn't have an entry for this ticker.
 function _effective(ticker, brainAction) {
-  var T = (ticker || '').toUpperCase();
-  var rec = (window._tickerAnalysis || {})[T];
-  if (rec && rec.analysis && rec.analysis.effective_action) {
-    return {
-      action:     rec.analysis.effective_action,
-      confidence: rec.analysis.confidence_pct,
-      from_chart: true,
-    };
+  const r = window._dashboardDecision?.rows.find(p => p.ticker === (ticker || '').toUpperCase());
+  return {action:r?.effective_action || brainAction || '', confidence:r?.chart_confidence.value ?? null, from_chart:!!r?.chart_action};
+}
+function _applyEffectiveActions() {
+  const raw = _rawDecisionData || _emptyDecisionSnapshot;
+  const audience = raw.audience === 'private' || (raw.audience == null && raw.portfolio?.total_value != null && _rawDecisionData) ? 'private' : 'public';
+  const decision = ADDecision.computeDashboardDecision({data:raw, charts:_decisionCharts, chart_error:_decisionChartError, audience});
+  window._dashboardDecision = decision;
+  window.PUBLIC = audience === 'public';
+  D = ADDecision.copy(raw);
+  const index = new Map(decision.rows.map(r => [r.ticker, r]));
+  for (const arr of [D.portfolio?.positions, D.outside_opps, D.crypto?.positions]) {
+    for (const p of arr || []) {
+      const r = index.get((p.ticker || p.symbol || '').toUpperCase());
+      if (!r) continue;
+      p.action = r.effective_action; p._confidence = r.chart_confidence.value;
+    }
   }
-  return { action: brainAction || '', confidence: null, from_chart: false };
+  window._ownedTickers = new Set(decision.rows.filter(r => r.held_status === 'held').map(r => r.ticker));
+  window._tickerAnalysis = decision.chart_status === 'compatible' ? (_decisionCharts.tickers || {}) : {};
+  window._sidecarLoaded = true;
 }
 
-// Mutate every position record in D so .action holds the EFFECTIVE
-// action (chart-integrated) instead of raw brain.action. Original is
-// preserved as ._orig_action; integrated confidence as ._confidence.
-// Idempotent — safe to call after data load and after sidecar load.
-// Effect: every downstream consumer (cards, action center, allocation,
-// smart top 5, drawer) gets the integrated decision automatically.
-function _applyEffectiveActions() {
-  function patch(arr, idKey) {
-    if (!Array.isArray(arr)) return;
-    arr.forEach(function(p) {
-      if (!p || typeof p !== 'object') return;
-      var t = (p[idKey] || '').toUpperCase();
-      if (!t) return;
-      var origAction = p._orig_action != null ? p._orig_action : p.action;
-      var eff = _effective(t, origAction);
-      if (eff.from_chart) {
-        if (p._orig_action == null) p._orig_action = p.action;
-        p.action = eff.action;
-        p._confidence = eff.confidence;
-      }
-    });
-  }
-  try { patch(D && D.portfolio && D.portfolio.positions, 'ticker'); } catch(e){}
-  try { patch(D && D.outside_opps,                       'ticker'); } catch(e){}
-  try { patch(D && D.crypto && D.crypto.positions,       'symbol'); } catch(e){}
-}
 
 // In-page chart lightbox — opens when user clicks the embedded chart.
 // Independent of the per-ticker page modal. Esc handler runs in CAPTURE
@@ -4241,6 +3631,8 @@ function _chartLegendHtml(ticker) {
 }
 
 window._openStockModal = function(ticker) {
+  ticker = ADDecision.ticker(ticker);
+  if (!ticker) return;
   ticker = (ticker || '').toUpperCase();
   // Track current ticker so the sidecar fetcher can re-render this modal
   // if it was opened before _tickerAnalysis finished loading.
@@ -4325,7 +3717,7 @@ window._openStockModal = function(ticker) {
   var _vixCol  = _vixNum != null ? (_vixNum >= 28 ? '#ff3d71' : _vixNum >= 18 ? '#ffd740' : '#00e676') : '#90a4ae';
   var _regCol  = _regime === 'RISK-ON' ? '#00e676' : _regime === 'RISK-OFF' ? '#ff3d71' : '#ffd740';
 
-  var _action   = d.action  || 'WATCH';
+  var _action = window._dashboardDecision?.rows.find(r => r.ticker === ticker)?.effective_action || 'UNAVAILABLE';
   var _acColor  = _smActionColor(_action);
   var _price    = d.price;
   var _chg1d    = d.chg_1d;
@@ -4382,89 +3774,14 @@ window._openStockModal = function(ticker) {
     '<div class="tv-chart-link-arrow">↗</div>' +
     '</a>';
 
-  // ── 2. Alpha Director generated 150D chart (PNG with strategy overlays) ───
-  // Class-aware buy zones: Core = MA150 + tiered DCA bands, Swing = 20/50 +
-  // Bollinger + uptrend pullback zone, Spec = MA20 + ATR bands + capitulation.
-  // Wrapped so image and fallback share the same container — avoids race
-  // conditions where the broken-img alt text shows alongside the fallback.
-  var _chartUrl = 'charts/' + ticker + '.png?v=' + Date.now();
-  var _chartId  = 'sm-chart-' + ticker;
-  var _fbId     = 'sm-chart-fallback-' + ticker;
-  // Click on the chart embed → in-page lightbox (full-screen with X to close).
-  // Inline-quoted JS for onclick uses double-escaped single quotes for the URL string.
-  infoHtml += '<div class="sm-chart-embed" id="' + _chartId + '" ' +
-    'onclick="openChartLightbox(\'' + _chartUrl + '\')" ' +
-    'title="Click to expand the chart">' +
-      '<img src="' + _chartUrl + '" alt="" loading="eager" ' +
-      'onload="document.getElementById(\'' + _fbId + '\').style.display=\'none\'" ' +
-      'onerror="this.style.display=\'none\';var f=document.getElementById(\'' + _fbId + '\');f.textContent=\'150D chart not yet rendered for ' + ticker + ' — will appear on the next sentinel cycle.\'">' +
-    '<div id="' + _fbId + '" class="sm-chart-fallback">Loading 150D chart for ' + ticker + '…</div>' +
-    '</div>' +
-    '<button class="sm-chart-fullbtn" type="button" ' +
-    'onclick="openChartLightbox(\'' + _chartUrl + '\')">↗ Expand chart</button>' +
-    _chartLegendHtml(ticker);
-
-  // ── 3. v4 Integrated Analysis (ALWAYS RENDERS) ───────────────────────────
-  // Single integrated decision (effective_action + confidence%) plus 5
-  // sections under the chart legend. Falls back to brain.action when sidecar
-  // isn't loaded yet; race-fix re-render on _loadSidecar resolution.
-  try {
-    var _v4ana = (window._tickerAnalysis || {})[ticker];
-    _v4ana = (_v4ana && _v4ana.analysis) || {};
-    var _v4ea = (_v4ana.effective_action || _action || 'WAIT').toUpperCase();
-    var _v4pct = _v4ana.confidence_pct;
-    var _v4colors = {
-      'STRONG BUY': '#10b981', 'BUY': '#00b4d8', 'WATCH': '#a78bfa',
-      'TRIM': '#fbbf24', 'EXIT': '#ef4444', 'WAIT': '#94a3b8'
-    };
-    var _v4aColor = _v4colors[_v4ea] || '#94a3b8';
-    var _v4pctColor = _v4pct == null ? '#94a3b8'
-                    : _v4pct >= 80 ? '#10b981'
-                    : _v4pct >= 60 ? '#a78bfa'
-                    : _v4pct >= 40 ? '#fbbf24' : '#ef4444';
-    function _v4md(s) { return (s || '').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
-    function _v4sect(icon, label, body) {
-      if (!body) return '';
-      return '<div class="sm-section"><span class="sm-section-key">' + icon + ' ' + label +
-             '</span><span class="sm-section-val">' + body + '</span></div>';
-    }
-
-    var _v4hasFull = !!(_v4ana.chart_read || _v4ana.add_zones || _v4ana.best_play);
-    var _v4loading = _v4hasFull ? '' :
-      '<div class="sm-section"><span class="sm-section-val" style="color:var(--t2);font-style:italic">Detailed analysis loading from charts/analysis.json…</span></div>';
-
-    var _v4header =
-      '<div class="sm-analysis-header">' +
-        '<span class="sm-action-badge" style="color:' + _v4aColor + ';border-color:' + _v4aColor + '">' + (_v4ea || '—') + '</span>' +
-        (_v4pct != null
-          ? '<span class="sm-confidence" style="color:' + _v4pctColor + ';border-color:' + _v4pctColor + '">' + _v4pct + '% confidence</span>'
-          : '<span class="sm-confidence" style="color:#94a3b8;border-color:#94a3b8">Loading…</span>') +
-      '</div>';
-
-    var _v4block =
-      '<div class="sm-analysis sm-analysis-v2">' +
-        _v4header +
-        _v4loading +
-        _v4sect('📊', 'Chart read',   _v4md(_v4ana.chart_read)) +
-        _v4sect('🎯', 'Add zones',    _v4md(_v4ana.add_zones)) +
-        _v4sect('🎯', 'Trim zones',   _v4md(_v4ana.trim_zones)) +
-        _v4sect('⚡', 'Catalyst',     _v4md(_v4ana.catalyst)) +
-        _v4sect('🏢', 'Fundamentals', _v4md(_v4ana.fundamentals)) +
-        (_v4ana.best_play
-          ? '<div class="sm-section sm-section-play"><span class="sm-section-key">▶️ Best play</span><span class="sm-section-val">' + _v4md(_v4ana.best_play) + '</span></div>'
-          : '') +
-      '</div>';
-
-    infoHtml += _v4block;
-    console.log('[AD] Status v4 OK for', ticker, '·', _v4ea, _v4pct, '%', '· hasFullData:', _v4hasFull);
-  } catch (_v4e) {
-    console.error('[AD] Status v4 render error for', ticker, ':', _v4e);
-    // Always emit at least a placeholder so the user sees something
-    infoHtml += '<div class="sm-analysis sm-analysis-v2"><div class="sm-analysis-header">' +
-      '<span class="sm-action-badge" style="color:#ef4444;border-color:#ef4444">RENDER ERROR</span>' +
-      '<span class="sm-confidence" style="color:#94a3b8">' + (_v4e.message || _v4e) + '</span>' +
-      '</div></div>';
+  infoHtml += ADView.bestPlay(ticker);
+  var chartRecord = (window._tickerAnalysis || {})[ticker];
+  if (ADChartAssets.valid(chartRecord, ticker)) {
+    infoHtml += '<div class="sm-chart-embed" id="ad-verified-chart"></div>';
+  } else {
+    infoHtml += '<p class="ad-muted">Compatible audience-safe chart image unavailable.</p>';
   }
+
 
   // ── 2. Technical signals — dynamic grid (skip nulls) ─────────────────────
   var _ma150v = d.above_150;
@@ -4509,33 +3826,30 @@ window._openStockModal = function(ticker) {
       ['P&L',        _pnlPct != null ? '<span style="color:' + _pnlCol + ';font-weight:800">' + _smFmtP(_pnlPct) + '</span>' : '—'],
       ['Verdict',    pos.verdict ? _smVerdictBadge(pos.verdict) : '—'],
     ];
-    if (pos.allocation_usd) _posCells.push(['DCA / month', '<span style="color:#00e676">$' + Math.round(pos.allocation_usd).toLocaleString() + '</span>']);
+    // Allocation is shown only by the canonical Best Play above.
     if (window.PUBLIC) _posCells = _posCells.filter(function(c){ return ['Avg Cost','Shares','Cost Basis','Mkt Value'].indexOf(c[0]) < 0; });
-    infoHtml += '<div><div class="sm-section-title">📊 Position</div>' +
+    infoHtml += '<div><div class="sm-section-title">📊 ' + (window.PUBLIC ? 'Tracked instrument' : 'Position record') + '</div>' +
       '<div class="sm-data-grid">' +
         _posCells.map(function(c){ return '<div class="sm-data-cell"><span class="sm-data-lbl">' + c[0] + '</span><span class="sm-data-val">' + c[1] + '</span></div>'; }).join('') +
       '</div>';
-    if (pos.reason) infoHtml += '<div style="font-size:10px;color:#444;line-height:1.45;margin-top:9px">' + pos.reason + '</div>';
-    if (pos.alert)  infoHtml += '<div style="margin-top:8px;padding:6px 10px;border-radius:6px;background:' + (pos.alert[0]==='danger'?'rgba(255,61,113,.1)':'rgba(255,215,64,.08)') + ';color:' + (pos.alert[0]==='danger'?'#ff3d71':'#ffd740') + ';font-size:10px;font-weight:700">⚠ ' + pos.alert[1] + '</div>';
     infoHtml += '</div>';
 
   } else if (opp) {
     var _oppCells = [
       ['Action', '<span style="color:' + _acColor + ';font-weight:800">' + _action + '</span>'],
       ['Price',  _price != null ? '$' + _smFmt(_price) : '—'],
-      ['Theme',  opp.theme || '—'],
+      ['Theme',  ADView.escape(opp.theme || 'Unavailable')],
       ['Risk',   opp.risk ? _smRiskBadge(opp.risk) : '—'],
     ];
     infoHtml += '<div><div class="sm-section-title">💡 Opportunity</div>' +
       '<div class="sm-data-grid">' +
         _oppCells.map(function(c){ return '<div class="sm-data-cell"><span class="sm-data-lbl">' + c[0] + '</span><span class="sm-data-val">' + c[1] + '</span></div>'; }).join('') +
       '</div>';
-    if (opp.reason) infoHtml += '<div style="font-size:10px;color:#444;line-height:1.45;margin-top:9px">' + opp.reason + '</div>';
     infoHtml += '</div>';
 
   } else {
     infoHtml += '<div><div class="sm-section-title">📌 ' + ticker + '</div>' +
-      '<div style="font-size:11px;color:#333">Not in portfolio or watchlist.</div></div>';
+      '<div style="font-size:11px;color:#333">No matching dashboard record.</div></div>';
   }
 
   // ── 4. Analyst consensus ──────────────────────────────────────────────────
@@ -4576,7 +3890,7 @@ window._openStockModal = function(ticker) {
     var _ds = pos || opp || {};
     if (_ds.theme || _ds.reason) {
       infoHtml += '<div><div class="sm-section-title">🏢 About</div>' +
-        '<div style="font-size:10px;color:#555;line-height:1.6;margin-bottom:8px">' + (_ds.theme ? '<b style="color:#aaa">' + _ds.theme + '</b><br>' : '') + (_ds.reason || '') + '</div>' +
+        '<div style="font-size:10px;color:#555;line-height:1.6;margin-bottom:8px">' + (_ds.theme ? '<b style="color:#aaa">' + ADView.escape(_ds.theme) + '</b><br>' : '') + '' + '</div>' +
         '<div style="display:flex;gap:5px">' +
           '<a class="sm-etf-link" href="https://finviz.com/quote.ashx?t=' + encodeURIComponent(ticker) + '" target="_blank" rel="noopener">↗ Finviz</a>' +
           '<a class="sm-etf-link" href="https://finance.yahoo.com/quote/' + encodeURIComponent(ticker) + '/profile" target="_blank" rel="noopener">↗ Yahoo</a>' +
@@ -4592,39 +3906,11 @@ window._openStockModal = function(ticker) {
       '</div>';
   }
 
-  // ── 7. Catalyst events ────────────────────────────────────────────────────
-  infoHtml += '<div><div class="sm-section-title">⚡ Catalyst Events' + (cats.length ? ' <span style="color:#333;font-weight:400">(' + cats.length + ')</span>' : '') + '</div>';
-  if (cats.length) {
-    cats.slice(0, 6).forEach(function(ev){
-      var days   = Math.round((new Date(ev.date + 'T00:00:00') - new Date()) / 86400000);
-      var status = days <= 0 ? 'live' : days <= 3 ? 'imminent' : days <= 14 ? 'upcoming' : days <= 60 ? 'monitor' : 'future';
-      var sCol   = _smStatusColor(status);
-      var dLabel = days <= 0 ? 'TODAY' : 'in ' + days + 'd';
-      infoHtml += '<div class="sm-cat-item" style="margin-bottom:6px">' +
-        '<div class="sm-cat-item-name">' + _smCatEmoji(ev.category) + ' ' + ev.name + '</div>' +
-        '<div class="sm-cat-item-meta"><span style="color:' + sCol + ';font-weight:700">' + dLabel + '</span> · ' + _smFmtDate(ev.date) +
-          (ev.trade_type ? ' · ' + ev.trade_type : '') + (ev.confidence ? ' · ' + ev.confidence + '/10' : '') + '</div>' +
-        (ev.why ? '<div style="font-size:10px;color:#444;margin-top:4px;line-height:1.4">' + ev.why.substring(0,160) + (ev.why.length>160?'…':'') + '</div>' : '') +
-        (ev.id  ? '<div class="sm-cat-btn" onclick="window._openCatById(\'' + ev.id + '\')">Open full playbook ↗</div>' : '') +
-        '</div>';
-    });
-  } else {
-    infoHtml += '<div style="font-size:11px;color:#2a2a2a;padding:2px 0">No upcoming catalysts.</div>';
-  }
-  infoHtml += '</div>';
-
-  // ── 8. Rules check ────────────────────────────────────────────────────────
-  var _vixBlk  = _vixNum != null && _vixNum >= 28;
-  var _blw200  = _a200 === false && (_action === 'BUY' || _action === 'STRONG BUY');
-  var _trimSig = _pnlPct != null && _pnlPct >= 50;
-  infoHtml += '<div><div class="sm-section-title">📋 Rules</div><div class="sm-rule-chips">' +
-    '<span class="sm-chip ' + (_vixBlk  ? 'sm-chip-bad'  : 'sm-chip-ok') + '">' + (_vixBlk  ? '⛔ VIX ≥28 — No buys'    : '✓ VIX ' + (_vixNum != null ? _smFmt(_vixNum,1) : '—') + ' OK') + '</span>' +
-    '<span class="sm-chip ' + (_blw200  ? 'sm-chip-bad'  : 'sm-chip-ok') + '">' + (_blw200  ? '⛔ Below 200D — no new buy' : '✓ MA filter OK') + '</span>' +
-    '<span class="sm-chip ' + (_trimSig ? 'sm-chip-warn' : 'sm-chip-ok') + '">' + (_trimSig ? '⚠ P&L ≥50% — trim 25%'    : '✓ Position size OK') + '</span>' +
-    (_a200 === false ? '<span class="sm-chip sm-chip-bad">⛔ Below 200D — no avg down on SPEC</span>' : '') +
-    '</div></div>';
+  // Dated catalysts and policy discrepancies are shown by the canonical Best Play.
+  // Legacy calendar prose and independent trim/size directives are deliberately not repeated.
 
   infoEl.innerHTML = infoHtml;
+  ADChartAssets.render(infoEl.querySelector('#ad-verified-chart'), chartRecord, ticker, window._dashboardDecision?.chart_snapshot_id);
 
   // ── Show modal ────────────────────────────────────────────────────────────
   document.getElementById('stock-modal-overlay').classList.add('open');
