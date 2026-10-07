@@ -2,6 +2,7 @@
   'use strict';
   const base=root.document?.currentScript?new URL('.',root.document.currentScript.src):null;
   const cache=new Map();
+  let currentChart=null;
   function valid(record,ticker){
     return !!record&&/^[A-Z0-9][A-Z0-9.^=-]{0,19}$/.test(ticker)&&record.asset_audience==='public-no-cost'&&
       /^charts\/public\/slot-[01]\/[A-Z0-9][A-Z0-9.^=-]{0,19}\.png$/.test(record.asset_path||'')&&
@@ -15,6 +16,8 @@
     return bytes;
   }
   async function render(element,record,ticker,snapshot){
+    const identity=valid(record,ticker)?snapshot+':'+record.asset_sha256:null;
+    if(identity!==currentChart){root.closeChartLightbox?.();currentChart=identity;}
     if(!element)return;
     element.textContent='Loading verified price chart…';
     try{
@@ -36,7 +39,7 @@
       img.onload=img.onerror=()=>URL.revokeObjectURL(url);img.src=url;
       caption.textContent='Raw brain levels and technical context. Best Play above gives the canonical action and allocation. Chart snapshot '+snapshot;
       const zoom=()=>{
-        if(typeof root.openChartLightbox!=='function')return;
+        if(identity!==currentChart||typeof root.openChartLightbox!=='function')return;
         const full=URL.createObjectURL(new Blob([bytes],{type:'image/png'}));
         const target=document.getElementById('chart-lightbox-img');
         if(target)target.onload=target.onerror=()=>URL.revokeObjectURL(full);
