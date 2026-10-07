@@ -35,7 +35,18 @@
       img.alt='Verified public price chart for '+ticker;
       img.onload=img.onerror=()=>URL.revokeObjectURL(url);img.src=url;
       caption.textContent='Raw brain levels and technical context. Best Play above gives the canonical action and allocation. Chart snapshot '+snapshot;
-      element.replaceChildren(img,caption);
+      const zoom=()=>{
+        if(typeof root.openChartLightbox!=='function')return;
+        const full=URL.createObjectURL(new Blob([bytes],{type:'image/png'}));
+        const target=document.getElementById('chart-lightbox-img');
+        if(target)target.onload=target.onerror=()=>URL.revokeObjectURL(full);
+        root.openChartLightbox(full);
+      };
+      img.onclick=zoom;img.tabIndex=0;img.setAttribute('role','button');
+      img.setAttribute('aria-label','Enlarge verified chart for '+ticker);
+      img.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();zoom();}};
+      const button=document.createElement('button');button.className='sm-chart-fullbtn';button.textContent='Open full chart';button.onclick=zoom;
+      element.replaceChildren(img,button,caption);
     }catch(_){if(element.isConnected)element.textContent='Compatible public chart unavailable. Data may be refreshing; no previous image is reused.';}
   }
   return {valid,verifiedBytes,render};
