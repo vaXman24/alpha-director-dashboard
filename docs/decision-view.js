@@ -4,6 +4,7 @@
   const pct=x=>x==null?'unavailable':Number(x).toFixed(1)+'%';
   const rowFor=t=>root._dashboardDecision?.rows.find(r=>r.ticker===t);
   const overlays=new Map(),status=new Map();
+  let actionFilter='all';
   let prior=null;
   const researchBase=new URL('.',document.currentScript.src);
   let reviewedState={status:'disabled',items:[]},lastReviewedSuccess=null;
@@ -21,18 +22,60 @@
     if(d.budget.status==='unknown')return pct(r.allocation_pct)+' indicative weight · funding unavailable';
     return pct(r.allocation_pct)+' of remaining budget'+(d.audience==='private'?' · $'+r.allocation_amount.toFixed(2):'');
   }
-  function issuesHtml(issues){return issues.length?'<details class="ad-details"><summary>Review needed ('+issues.length+')</summary><ul>'+issues.map(x=>'<li>'+e(x)+'</li>').join('')+'</ul></details>':'';}
-  function banner(d){return '<div class="ad-snapshot"><strong>'+authority(d)+'</strong><span>As of '+e(d.as_of||'unavailable')+' · Chart: '+e(d.chart_status)+'</span><small>Snapshot '+e(d.snapshot_id||'unversioned')+' · '+e(d.policy_version)+'</small>'+issuesHtml(d.issues)+'</div>';}
+  function dateTime(value){
+    if(!value||!Number.isFinite(Date.parse(value)))return 'Update time unavailable';
+    return new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZoneName:'short'}).format(new Date(value));
+  }
+  function issuesHtml(issues){
+    if(!issues.length)return '';
+    // Group repeated ticker diagnostics without dropping their original text or affected tickers.
+    const groups=new Map();
+    issues.forEach(x=>{const m=String(x).match(/^([A-Z0-9.\-]{1,12}): (.+)$/),key=m?m[2]:String(x);if(!groups.has(key))groups.set(key,[]);if(m)groups.get(key).push(m[1]);});
+    return '<details class="ad-details ad-review"><summary>Review notes · '+groups.size+' '+(groups.size===1?'topic':'topics')+'</summary><ul>'+Array.from(groups,([note,tickers])=>'<li>'+e(note)+(tickers.length?'<small>Affected: '+e(tickers.join(', '))+'</small>':'')+'</li>').join('')+'</ul></details>';
+  }
+  const tone=r=>({'STRONG BUY':'buy',BUY:'buy',WATCH:'watch',WAIT:'watch',TRIM:'trim',EXIT:'exit'}[r.effective_action]||'neutral');
+  const badge=r=>'<span class="ad-action-badge ad-tone-'+tone(r)+'">'+e(r.effective_action||'Unavailable')+'</span>';
+  function budgetNote(d){
+    return d.budget.status==='unknown'?'Funding unavailable. Percentages are indicative weights, not confirmed funding.':d.budget.status==='zero'?'Remaining budget is zero. No funding is allocated; indicative weights are shown for reference.':'Percentages apply to the remaining budget.';
+  }
+  function allocation(r,d){
+    const funded=d.budget.status==='known',zero=d.budget.status==='zero',selected=!!r.selected_rank;
+    return '<div class="ad-allocation"><strong>'+(!selected||zero?'0%':pct(r.allocation_pct))+'</strong><span>'+(!selected?'DCA allocation':zero?'Funded':funded?'of remaining budget':'Indicative weight')+'</span></div>'+
+      (selected&&zero?'<small class="ad-allocation-note">'+pct(r.allocation_pct)+' indicative weight</small>':'')+
+      (selected&&funded&&d.audience==='private'?'<small class="ad-allocation-note">$'+r.allocation_amount.toFixed(2)+'</small>':'');
+  }
+  // Rank colors identify parts of one allocation, not a new conviction or risk score.
+  const rankColors=['#6ca8ff','#67d5df','#a99afa','#f0bb78','#e99cce'];
+  function allocationStory(rows,d){
+    if(!rows.length)return '';
+    const remainder=d.budget.unallocated_pct;
+    return '<section class="ad-allocation-story" aria-label="Allocation overview"><div class="ad-story-heading"><div><p class="ad-eyebrow">THE ALLOCATION AT A GLANCE</p><h3>'+rows.length+' '+(rows.length===1?'ranked candidate':'ranked candidates')+'</h3><p>Buy rank sets the order. Bar length shows the weight.</p></div><span class="ad-funding-state">'+(d.budget.status==='unknown'?'Indicative only':d.budget.status==='zero'?'No funding available':'Remaining budget')+'</span></div><div class="ad-distribution" aria-hidden="true">'+rows.map((r,i)=>'<span style="flex-basis:'+Math.max(0,Math.min(100,r.allocation_pct))+'%;background:'+rankColors[i]+'"></span>').join('')+(remainder>0?'<span class="ad-cash-segment" style="flex-basis:'+remainder+'%"></span>':'')+'</div><div class="ad-distribution-legend">'+rows.map((r,i)=>'<button data-ad-open="'+e(r.ticker)+'"><i style="background:'+rankColors[i]+'" aria-hidden="true"></i>'+e(r.ticker)+' <b>'+pct(r.allocation_pct)+'</b></button>').join('')+(remainder>0?'<span><i class="ad-cash-segment" aria-hidden="true"></i>Unallocated <b>'+pct(remainder)+'</b></span>':'')+'</div><p class="ad-story-caption ad-budget-note">'+e(budgetNote(d))+'</p></section>';
+  }
+  function filterGroup(r){return ['TRIM','EXIT'].includes(r.effective_action)?'risk':['BUY','STRONG BUY'].includes(r.effective_action)?'buy':'watch';}
+  function filterBar(d){
+    const rows=d.action_tickers.map(t=>d.rows.find(r=>r.ticker===t));
+    const choices=[['all','All actions'],['buy','Buy'],['watch','Watch / wait'],['risk','Reduce risk']];
+    if(actionFilter!=='all'&&!rows.some(r=>filterGroup(r)===actionFilter))actionFilter='all';
+    return '<div class="ad-filter-bar" aria-label="Filter operational actions">'+choices.map(([key,label])=>{
+      const count=key==='all'?rows.length:rows.filter(r=>filterGroup(r)===key).length;
+      return '<button class="ad-filter ad-filter-'+key+'" data-ad-filter="'+key+'" aria-pressed="'+(actionFilter===key)+'" '+(!count&&key!=='all'?'disabled':'')+'>'+label+' <span>'+count+'</span></button>';
+    }).join('')+'</div>';
+  }
+  function banner(d){return '<div class="ad-snapshot"><div class="ad-status-row"><span class="ad-status '+(d.authority==='validated_dashboard_decision'?'ad-status-ok':'')+'">'+authority(d)+'</span><time datetime="'+e(d.as_of||'')+'">Updated '+e(dateTime(d.as_of))+'</time></div>'+
+    (d.chart_status!=='compatible'?'<p class="ad-status-warning">Chart analysis: '+e(d.chart_status)+'. See source details before relying on this view.</p>':'')+
+    '<details class="ad-details ad-provenance"><summary>Sources &amp; validation'+(d.issues.length?' · Review needed':'')+'</summary><p>As of '+e(d.as_of||'unavailable')+'<br>Chart: '+e(d.chart_status)+'<br>Snapshot '+e(d.snapshot_id||'unversioned')+'<br>Policy '+e(d.policy_version)+'</p>'+issuesHtml(d.issues)+'</details></div>';}
   function alloc(el,d){
     if(!el||!d)return;
-    const rows=d.selected_tickers.map(t=>rowFor(t));
-    el.innerHTML=banner(d)+(rows.length?'<div class="alloc-scroll"><table class="alloc-table ad-table"><thead><tr><th>Buy rank</th><th>Ticker</th><th>Action</th><th>Canonical allocation</th></tr></thead><tbody>'+rows.map(r=>'<tr data-decision-ticker="'+e(r.ticker)+'"><td>#'+r.selected_rank+'</td><td><button class="ad-ticker" data-ad-open="'+e(r.ticker)+'">'+e(r.ticker)+'</button></td><td>'+e(r.effective_action)+'</td><td>'+e(funding(r,d))+(r.visibility_reasons.length?'<small>Action Center: '+e(r.visibility_reasons.join('; '))+'</small>':'')+'</td></tr>').join('')+'</tbody></table></div>':'<p>No eligible candidates. Prior allocations and new picks cleared.</p>')+
-      '<p class="ad-muted">Budget basis: '+e(d.budget.basis)+'. Indicative allocation '+pct(d.budget.allocated_pct)+' + unallocated '+pct(d.budget.unallocated_pct)+' = 100%.'+(d.budget.status==='known'?' Funded $'+d.budget.allocated_amount.toFixed(2)+' + cash $'+d.budget.unallocated_amount.toFixed(2)+' = $'+d.budget.amount.toFixed(2)+'. Cash includes cent rounding.':'')+'</p>';
+    el.closest('.section')?.classList.add('ad-decision-section');
+    const rows=d.selected_tickers.map(t=>d.rows.find(r=>r.ticker===t));
+    el.innerHTML=allocationStory(rows,d)+banner(d)+(rows.length?'<div class="ad-list-heading"><span>Buy rank / ticker</span><span>Allocation</span></div><ol class="ad-allocation-list" aria-label="DCA allocation in buy rank order">'+rows.map((r,i)=>'<li class="ad-allocation-row" style="--rank-color:'+rankColors[i]+'" data-decision-ticker="'+e(r.ticker)+'"><span class="ad-rank" aria-label="Buy rank '+r.selected_rank+'">#'+r.selected_rank+'</span><div class="ad-allocation-name"><button class="ad-ticker" data-ad-open="'+e(r.ticker)+'">'+e(r.ticker)+'</button>'+badge(r)+'</div><div class="ad-allocation-value">'+allocation(r,d)+'</div><div class="ad-weight-track" aria-hidden="true"><span style="width:'+Math.max(0,Math.min(100,r.allocation_pct))+'%"></span></div>'+(r.visibility_reasons.length?'<p class="ad-visibility-note">Not shown in Action Center: '+e(r.visibility_reasons.join('; '))+'</p>':'')+'</li>').join('')+'</ol>':'<p class="ad-empty">No eligible candidates. Prior allocations and new picks cleared.</p>')+
+      '<div class="ad-reconciliation"><span>Indicative allocation <b>'+pct(d.budget.allocated_pct)+'</b></span><span>Unallocated <b>'+pct(d.budget.unallocated_pct)+'</b></span></div><details class="ad-details"><summary>Budget basis &amp; reconciliation</summary><p>Budget basis: '+e(d.budget.basis)+'. Indicative allocation '+pct(d.budget.allocated_pct)+' + unallocated '+pct(d.budget.unallocated_pct)+' = 100%.'+(d.budget.status==='known'&&d.audience==='private'?' Funded $'+d.budget.allocated_amount.toFixed(2)+' + cash $'+d.budget.unallocated_amount.toFixed(2)+' = $'+d.budget.amount.toFixed(2)+'. Cash includes cent rounding.':'')+'</p></details>';
   }
   function actions(el,d){
     if(!el||!d)return;
-    el.innerHTML='<p class="ad-muted">Operational order is separate from buy rank. Funding matches DCA Allocation.</p><div class="action-grid">'+d.action_tickers.map(t=>{
-      const r=rowFor(t);return '<article class="acard ad-action" data-decision-ticker="'+e(t)+'"><div class="ad-eyebrow">'+e(r.effective_action)+(r.selected_rank?' · Buy rank #'+r.selected_rank:' · No funding rank')+'</div><button class="ad-ticker" data-ad-open="'+e(t)+'">'+e(t)+'</button><p>'+e(funding(r,d))+'</p><small>Input confidence: '+(r.confidence.value==null?'unavailable':r.confidence.value+'/10')+' · Chart-integrated: '+(r.chart_confidence.value==null?'unavailable':r.chart_confidence.value+'/100')+'</small>'+issuesHtml(r.issues)+'</article>';
+    el.closest('.section')?.classList.add('ad-decision-section');
+    el.innerHTML='<div class="ad-action-intro"><div><p class="ad-eyebrow">ACTION OVERVIEW</p><h3>Signals, in priority order.</h3></div><p class="ad-action-legend"><span class="ad-tone-buy">Buy</span><span class="ad-tone-watch">Watch / wait</span><span class="ad-tone-trim">Trim</span><span class="ad-tone-exit">Exit</span></p></div>'+filterBar(d)+'<div class="ad-action-context"><p>Operational order <span>Cards follow action priority. Buy rank shows DCA funding order. Counts cover visible cards only.</span></p><p>'+e(budgetNote(d))+'</p></div><div class="action-grid ad-action-grid">'+d.action_tickers.filter(t=>actionFilter==='all'||filterGroup(d.rows.find(r=>r.ticker===t))===actionFilter).map(t=>{
+      const r=d.rows.find(r=>r.ticker===t);return '<article class="acard ad-action ad-tone-'+tone(r)+'" data-decision-ticker="'+e(t)+'"><div class="ad-card-heading"><button class="ad-ticker" data-ad-open="'+e(t)+'">'+e(t)+'</button>'+badge(r)+'</div><p class="ad-card-rank">'+(r.selected_rank?'Buy rank <b>#'+r.selected_rank+'</b>':'Not ranked for DCA')+'</p>'+allocation(r,d)+(!r.selected_rank?'<p class="ad-exclusion">'+e(r.exclusion_reasons.join('; ')||'No DCA allocation')+'</p>':'')+'<dl class="ad-confidence"><div><dt>Input confidence</dt><dd>'+(r.confidence.value==null?'Unavailable':r.confidence.value+'<small>/10</small>')+'</dd></div><div><dt>Chart-integrated</dt><dd>'+(r.chart_confidence.value==null?'Unavailable':r.chart_confidence.value+'<small>/100</small>')+'</dd></div></dl>'+issuesHtml(r.issues)+'</article>';
     }).join('')+'</div>'+(!d.action_tickers.length?'<p>No operational cards meet the current visibility rules.</p>':'')+
       '<details class="ad-details"><summary>Non-funded and visibility explanations</summary>'+d.rows.filter(r=>!r.action_center_visible||!r.selected_rank).map(r=>'<p><button class="ad-ticker" data-ad-open="'+e(r.ticker)+'">'+e(r.ticker)+'</button> · '+e([...r.exclusion_reasons,...r.visibility_reasons].join('; ')||'Not selected for this surface')+'</p>').join('')+'</details>';
   }
@@ -100,15 +143,21 @@
     const conditions=r.entry_zone&&r.entry_zone.every(root.ADDecision.finite)?'Revisit supplied entry zone '+r.entry_zone.join(' to ')+'.':'Entry/revisit condition unavailable.';
     const invalidation=r.stop_loss!=null?'Supplied invalidation level: '+r.stop_loss+'. Trigger timing and rationale unverified.':'Invalidation unavailable.';
     const line=(label,body)=>'<div class="ad-plan-line"><span>'+label+'</span><div>'+body+'</div></div>';
-    return '<section class="ad-best" data-best-play="'+e(t)+'"><div class="ad-eyebrow">BEST PLAY · '+e(t)+'</div><h3>'+e(r.effective_action||'Action unavailable')+(r.selected_rank?' <small>Buy rank #'+r.selected_rank+'</small>':'')+'</h3><p class="ad-stance">'+e(funding(r,d))+'</p><p class="ad-muted">'+authority(d)+' · '+e(d.as_of||'as-of unavailable')+'</p>'+
+    const evidencePanels=validFacts.length?'<div class="ad-evidence-grid">'+[['supporting','What supports it','+'],['opposing','What challenges it','!']].map(([direction,label,icon])=>'<section class="ad-evidence ad-evidence-'+direction+'"><h4><span aria-hidden="true">'+icon+'</span>'+label+'</h4>'+(validFacts.filter(f=>f.direction===direction).map(f=>'<p>'+e(f.text)+'<small>'+citation({url:f.source_url,published_at:f.source_date})+'</small></p>').join('')||'<p>Evidence unavailable.</p>')+'</section>').join('')+'</div>'+validFacts.filter(f=>f.direction==='neutral').map(f=>'<p>'+e(f.text)+'<small>'+citation({url:f.source_url,published_at:f.source_date})+'</small></p>').join(''):'Supporting/opposing sourced analysis unavailable.';
+    return '<section class="ad-best ad-tone-'+tone(r)+'" data-best-play="'+e(t)+'"><div class="ad-best-hero"><div class="ad-eyebrow">BEST PLAY · '+e(t)+'</div><p class="ad-hero-label">Today’s stance</p><h3>'+e(r.effective_action||'Action unavailable')+(r.selected_rank?' <small>Buy rank #'+r.selected_rank+'</small>':'')+'</h3><p class="ad-stance">'+e(funding(r,d))+'</p><p class="ad-muted">'+authority(d)+' · '+e(dateTime(d.as_of))+'</p></div>'+
       line('Changed',e(change))+line('Setup',e(facts.join(' · ')||'Unavailable')+'<small>Source: main snapshot '+e(r.source_snapshot_id||'unversioned')+'</small>')+
-      line('Evidence',validFacts.length?validFacts.map(f=>'<p>'+e(f.direction)+': '+e(f.text)+'<small>'+citation({url:f.source_url,published_at:f.source_date})+'</small></p>').join(''):'Supporting/opposing sourced analysis unavailable.')+
+      line('Evidence',evidencePanels)+
       line('Catalysts',events.length?events.map(f=>'<p>'+e(f.title)+' · '+e(dated.includes(f)?f.date+(f.date<today?' (past)':f.date===today?' (today, UTC date)':' (upcoming)'):'date unavailable')+'<small>'+citation({url:f.source_url,published_at:f.source_date})+'</small></p>').join(''):'Event data unavailable. No claim of “no events.”')+
       line('Reassess',e(conditions+' '+invalidation))+line('Next dated check',e(next?next.date+' · '+next.title:'Unavailable'))+
       line('Data gaps',e(gaps.join('; ')||'Coverage is limited to supplied snapshot evidence.'))+
       '<details class="ad-details"><summary>Decision provenance and exclusions</summary><p>Raw: '+e(r.raw_action||'unavailable')+' · Chart: '+e(r.chart_action||'unavailable')+' · Effective: '+e(r.effective_action||'unavailable')+'</p><p>Input confidence '+(r.confidence.value==null?'unavailable':r.confidence.value+'/10')+' · Chart-integrated '+(r.chart_confidence.value==null?'unavailable':r.chart_confidence.value+'/100')+'</p><p>Held status: '+e(r.held_status)+' · Budget basis: '+e(d.budget.basis)+'</p><p>Decision '+e(r.source_snapshot_id||'unversioned')+' · Chart '+e(r.chart_snapshot_id||'unversioned')+'</p>'+issuesHtml([...r.issues,...r.exclusion_reasons,...r.visibility_reasons])+'</details>'+research(t,d,r,now)+'</section>';
   }
   document.addEventListener('click',ev=>{
+    const filter=ev.target.closest('[data-ad-filter]');if(filter){
+      if(!['all','buy','watch','risk'].includes(filter.dataset.adFilter))return;
+      actionFilter=filter.dataset.adFilter;actions(document.querySelector('#action-center'),root._dashboardDecision);
+      document.querySelector('[data-ad-filter="'+actionFilter+'"]')?.focus({preventScroll:true});return;
+    }
     const open=ev.target.closest('[data-ad-open]');if(open){root._openStockModal?.(open.dataset.adOpen);return;}
     const remove=ev.target.closest('[data-ad-remove]');if(remove){overlays.delete(remove.dataset.adRemove);status.set(remove.dataset.adRemove,{...status.get(remove.dataset.adRemove),error:'Preview removed'});root._openStockModal?.(remove.dataset.adRemove);}
   });
@@ -125,7 +174,7 @@
     }catch(err){status.set(t,{...status.get(t),error:err.message});}
     if(root._currentModalTicker===t)root._openStockModal?.(t);
   });
-  root.ADView={escape:e,alloc,actions,bestPlay,setPrior(d){prior=d;},clearResearch(){overlays.clear();reviewedLoader.cancel();},funding,
+  root.ADView={escape:e,alloc,actions,bestPlay,dateTime,setPrior(d){prior=d;},clearResearch(){overlays.clear();reviewedLoader.cancel();},funding,
     refreshResearch(){return reviewedLoader.refresh(root._dashboardDecision,root.AD_RESEARCH_CONFIG?.enabled===true);},
     expireResearch(now){let changed=false;const kept=reviewedState.items.filter(x=>Date.parse(x.doc.expires_at)>now);if(kept.length!==reviewedState.items.length){reviewedState={...reviewedState,status:'expired',items:kept};changed=true;}for(const [t,doc] of overlays){if(Date.parse(doc.expires_at)<=now){overlays.delete(t);status.set(t,{...status.get(t),error:'Research preview expired'});changed=true;}}return changed;}};
 })(globalThis);

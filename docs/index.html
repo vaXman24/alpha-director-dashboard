@@ -801,13 +801,13 @@ body.ticker-page .sm-cat-btn,body.ticker-page .sm-open-tv{
 
 <!-- DCA Allocation -->
 <div class="section" id="alloc-section">
-  <div class="sec-label">DCA Allocation — Smart Top 5 <span id="dca-budget-label" style="font-weight:400;opacity:.7;font-size:11px"></span></div>
+  <div class="sec-label">DCA Allocation · Top 5 <span id="dca-budget-label"></span></div>
   <div id="alloc-table"></div>
 </div>
 
 <!-- Action Center (Favorites, Watchlist Opportunities, Catalyst Opportunities still render as subheaders inside #action-center via buildActionCenter) -->
 <div class="section" id="action-section" style="margin-bottom:16px">
-  <div class="sec-label">Action Center <span id="action-date" style="font-weight:400;opacity:.6;font-size:11px"></span></div>
+  <div class="sec-label">Action Center <span id="action-date"></span></div>
   <div id="action-center"></div>
 </div>
 
@@ -2181,7 +2181,7 @@ function buildEarnings() {
 function buildActionCenter() {
   const d = window._dashboardDecision;
   if (!d) return;
-  if ($('action-date')) $('action-date').textContent = d.as_of || 'As-of unavailable';
+  if ($('action-date')) $('action-date').textContent = ADView.dateTime(d.as_of);
   ADView.actions($('action-center'), d);
 }
 
@@ -2198,7 +2198,7 @@ function buildAllocTable() {
     }
   }
   ADView.alloc($('alloc-table'), d);
-  if ($('dca-budget-label')) $('dca-budget-label').textContent = d.budget.status === 'zero' ? 'Remaining budget is zero' : d.budget.status === 'unknown' ? 'Indicative weights; funding unavailable' : 'Remaining-budget basis';
+  if ($('dca-budget-label')) $('dca-budget-label').textContent = d.budget.status === 'zero' ? 'No remaining budget' : d.budget.status === 'unknown' ? 'Indicative allocation' : 'Remaining-budget allocation';
 }
 
 
