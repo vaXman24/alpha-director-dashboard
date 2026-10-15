@@ -3,6 +3,7 @@
   const base=root.document?.currentScript?new URL('.',root.document.currentScript.src):null;
   const cache=new Map();
   let currentChart=null;
+  let renderSequence=0;
   function valid(record,ticker){
     return !!record&&/^[A-Z0-9][A-Z0-9.^=-]{0,19}$/.test(ticker)&&record.asset_audience==='public-no-cost'&&
       /^charts\/public\/slot-[01]\/[A-Z0-9][A-Z0-9.^=-]{0,19}\.png$/.test(record.asset_path||'')&&
@@ -16,7 +17,8 @@
     return bytes;
   }
   async function render(element,record,ticker,snapshot){
-    const identity=valid(record,ticker)?snapshot+':'+record.asset_sha256:null;
+    const sequence=++renderSequence;
+    const identity=valid(record,ticker)?ticker+':'+snapshot+':'+record.asset_sha256:null;
     if(identity!==currentChart){root.closeChartLightbox?.();currentChart=identity;}
     if(!element)return;
     element.textContent='Loading verified price chart…';
@@ -32,7 +34,7 @@
         },async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(b=>b.toString(16).padStart(2,'0')).join(''));
         if(cache.size>=12)cache.delete(cache.keys().next().value);cache.set(key,bytes);
       }
-      if(!element.isConnected)return;
+      if(!element.isConnected||sequence!==renderSequence)return;
       const img=document.createElement('img'),caption=document.createElement('small');
       const url=URL.createObjectURL(new Blob([bytes],{type:'image/png'}));
       img.alt='Verified public price chart for '+ticker;
@@ -50,7 +52,7 @@
       img.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();zoom();}};
       const button=document.createElement('button');button.className='sm-chart-fullbtn';button.textContent='Open full chart';button.onclick=zoom;
       element.replaceChildren(img,button,caption);
-    }catch(_){if(element.isConnected)element.textContent='Compatible public chart unavailable. Data may be refreshing; no previous image is reused.';}
+    }catch(_){if(element.isConnected&&sequence===renderSequence)element.textContent='Compatible public chart unavailable. Data may be refreshing; no previous image is reused.';}
   }
   return {valid,verifiedBytes,render};
 });

@@ -83,13 +83,18 @@
     try {root.ADResearch.safeURL(s.url);return '<a href="'+e(s.url)+'" target="_blank" rel="noopener noreferrer">'+e(s.title||s.id||'Source')+'</a> · '+e(s.published_at||'source date unavailable');}
     catch(_){return 'Source URL unavailable · '+e(s.published_at||'source date unavailable');}
   }
+  function catalyst(event,ticker,today,isNext=false){
+    const dated=typeof event.date==='string'&&root.ADDecision.stamp(event.date+'T00:00:00Z');
+    const timing=dated?event.date+(event.date<today?' (past)':event.date===today?' (today, UTC date)':' (upcoming)'):'date unavailable';
+    return '<details class="ad-catalyst"><summary><span class="ad-catalyst-date">'+(isNext?'Next catalyst · ':'')+e(timing)+'</span><strong>'+e(event.title)+'</strong><span class="ad-catalyst-prompt">Why it matters <span aria-hidden="true">＋</span></span></summary><div class="ad-catalyst-body"><h4>Why it matters for '+e(ticker)+'</h4><p>'+e(event.rationale||'Stock-specific rationale unavailable. The supplied snapshot lists this event but does not explain its impact on '+ticker+'.')+'</p><small>'+citation({url:event.source_url,published_at:event.source_date})+'</small><p class="ad-muted">Supplied evidence, not an independent review. This event does not change the displayed action or allocation.</p></div></details>';
+  }
   function research(t,d,r,now){
     let doc=overlays.get(t),state=status.get(t)||{};
     if(doc){try{if(d.chart_status!=='compatible')throw Error('Research preview requires current compatible chart/decision versions');root.ADResearch.validate(doc,{ticker:t,now,snapshot_id:d.snapshot_id,chart_snapshot_id:d.chart_snapshot_id});}catch(err){overlays.delete(t);state={...state,error:err.message};status.set(t,state);doc=null;}}
     const reviewed=reviewedState.items.find(x=>x.doc.ticker===t);
-    let historical=false,isReviewed=false;
+    let historical=false,isReviewed=false,automated=false;
     if(!doc&&reviewed&&root.AD_RESEARCH_CONFIG?.enabled===true&&d.chart_status==='compatible'&&Date.parse(reviewed.doc.expires_at)>now){
-      doc=reviewed.doc;isReviewed=true;
+      doc=reviewed.doc;isReviewed=true;automated=reviewed.review_mode==='automated';
       historical=doc.source_snapshot_ids.decision!==d.snapshot_id||doc.source_snapshot_ids.chart!==d.chart_snapshot_id;
     }
     let content='';
@@ -97,7 +102,7 @@
       const disagree=root.ADResearch.conflict(doc,r);
       const labels={agree:'Agree',reservations:'Agree with reservations',disagree:'Disagree',insufficient_evidence:'Insufficient evidence'};
       const refs=ids=>ids.map(id=>citation(doc.sources.find(s=>s.id===id))).join(' · ');
-      content='<div class="ad-research-content"><strong>'+(isReviewed?(historical?'Prior-snapshot research · Current decision has not been reviewed':'Reviewed research'):'Synthetic research preview')+(disagree?' · Review needed: evidence disagrees or is uncertain':'')+'</strong><p>Canonical action and allocation remain unchanged. Interpretations are research commentary.</p>'+
+      content='<div class="ad-research-content"><strong>'+(isReviewed?(historical?'Prior-snapshot research · Current decision has not been reviewed':automated?'AI research · Automated checks':'Reviewed research'):'Synthetic research preview')+(disagree?' · Review needed: evidence disagrees or is uncertain':'')+'</strong><p>Canonical action and allocation remain unchanged. Interpretations are research commentary.'+(automated?' Automated format, provenance and freshness checks do not independently verify the claims.':'')+'</p>'+
         (doc.daily_plan?'<p class="ad-daily-plan"><b>'+(historical?'Historical daily plan':'Daily plan')+'</b><br>'+e(doc.daily_plan.text)+'<small>'+refs(doc.daily_plan.source_ids)+'</small></p>':'')+
         (doc.verdict?'<p><b>'+(historical?'Historical agent verdict: ':'Agent verdict: ')+e(labels[doc.verdict.assessment])+'</b><br>'+e(doc.verdict.summary)+'<small>'+refs(doc.verdict.source_ids)+'</small></p>':'<p>Agent verdict unavailable in this legacy research version.</p>')+
         (doc.news?'<p><b>News sentiment: '+e(doc.news.sentiment.replaceAll('_',' '))+'</b> · Coverage: '+e(doc.news.coverage)+'<br>'+e(doc.news.summary)+'<small>'+refs(doc.news.source_ids)+'</small><small>News window: '+e(doc.news.window_start)+' to '+e(doc.news.window_end)+'</small></p>':'<p>News coverage unavailable in this legacy research version. No inference of no risks.</p>')+
@@ -107,7 +112,10 @@
         doc.scenarios.map(s=>'<p>Reassess if '+e(s.condition)+'. '+e(s.implication)+' Next check: '+e(s.check_at||'unavailable')+'</p>').join('')+
         '<p>Research-reported changes: '+e(doc.prior_run_id?(doc.changes_since_prior.join('; ')||'Unavailable')+' (prior run reference supplied, comparison unverified)':'Prior research comparison unavailable')+'</p></details><p>Unknowns: '+e(doc.unknowns.join('; ')||'None supplied; completeness unverified')+'</p></div>';
     }
-    return '<section class="ad-research"><div class="ad-eyebrow">Daily research</div><strong>'+e(root.AD_RESEARCH_CONFIG?.enabled===true?'Reviewed feed: '+reviewedState.status+' · Agent schedule not verified':'Disabled / not connected')+'</strong><p class="ad-muted">Last successful reviewed update: '+e(lastReviewedSuccess||'never')+'<br>Last successful fixture import: '+e(state.last_success||'never')+'<br>Research date: '+e(doc?.research_as_of||state.research_as_of||'unavailable')+' · Expiry: '+e(doc?.expires_at||state.expires_at||'unavailable')+'</p><label class="ad-import">Preview / import synthetic fixture<input type="file" accept="application/json,.json" data-ad-import="'+e(t)+'"></label> <button class="ad-button" data-ad-remove="'+e(t)+'">Remove preview</button>'+(state.error?'<p role="alert">'+e(state.error)+'</p>':'')+content+'<details class="ad-details"><summary>Research workflow</summary><p>Dot reviews the top five canonical funding candidates. Public output requires review. Research drafts and reviewed versions are separate from the brain. This page cannot schedule an agent, read a journal, approve a draft or publish research.</p></details></section>';
+    const preview=root.AD_SYNTHETIC_PREVIEW===true;
+    const dates=doc||lastReviewedSuccess?'<p class="ad-muted">Last successful research update: '+e(lastReviewedSuccess||'unavailable')+'<br>Research date: '+e(doc?.research_as_of||'unavailable')+' · Expiry: '+e(doc?.expires_at||'unavailable')+'</p>':'';
+    const previewTools=preview?'<details class="ad-details ad-research-tools"><summary>Local preview tools</summary><p class="ad-muted">Synthetic testing only. Last fixture import: '+e(state.last_success||'never')+'</p><label class="ad-import">Preview / import synthetic fixture<input type="file" accept="application/json,.json" data-ad-import="'+e(t)+'"></label> <button class="ad-button" data-ad-remove="'+e(t)+'">Remove preview</button></details>':'';
+    return '<section class="ad-research ad-research-compact"><div class="ad-research-heading"><span>Daily research</span><strong>'+e(root.AD_RESEARCH_CONFIG?.enabled===true?'Research feed: '+reviewedState.status:'Not active')+'</strong></div>'+(state.error&&preview?'<p role="alert">'+e(state.error)+'</p>':'')+dates+content+(!doc?'<details class="ad-details ad-research-about"><summary>What is this?</summary><p>Optional agent research on news, catalysts and the case for this stock. No current report is available here. Reports are checked before publication and cannot change allocation. A schedule is active only after the agent connection is verified.</p></details>':'')+previewTools+'</section>';
   }
   function bestPlay(t,now=Date.now()){
     const d=root._dashboardDecision,r=rowFor(t);
@@ -140,16 +148,27 @@
       if(JSON.stringify(old.evidence)!==JSON.stringify(r.evidence))changes.push('Supplied evidence updated');
       change=changes.join('; ')||'Action, allocation and supplied setup unchanged since '+prior.as_of;
     }
+    if(change==='Prior compatible comparison unavailable')gaps.push('Prior comparison unavailable');
+    if(!next)gaps.push('Next dated check unavailable');
+    if(!r.entry_zone)gaps.push('Entry/revisit condition unavailable');
+    if(r.stop_loss==null)gaps.push('Invalidation unavailable');
     const conditions=r.entry_zone&&r.entry_zone.every(root.ADDecision.finite)?'Revisit supplied entry zone '+r.entry_zone.join(' to ')+'.':'Entry/revisit condition unavailable.';
     const invalidation=r.stop_loss!=null?'Supplied invalidation level: '+r.stop_loss+'. Trigger timing and rationale unverified.':'Invalidation unavailable.';
     const line=(label,body)=>'<div class="ad-plan-line"><span>'+label+'</span><div>'+body+'</div></div>';
     const evidencePanels=validFacts.length?'<div class="ad-evidence-grid">'+[['supporting','What supports it','+'],['opposing','What challenges it','!']].map(([direction,label,icon])=>'<section class="ad-evidence ad-evidence-'+direction+'"><h4><span aria-hidden="true">'+icon+'</span>'+label+'</h4>'+(validFacts.filter(f=>f.direction===direction).map(f=>'<p>'+e(f.text)+'<small>'+citation({url:f.source_url,published_at:f.source_date})+'</small></p>').join('')||'<p>Evidence unavailable.</p>')+'</section>').join('')+'</div>'+validFacts.filter(f=>f.direction==='neutral').map(f=>'<p>'+e(f.text)+'<small>'+citation({url:f.source_url,published_at:f.source_date})+'</small></p>').join(''):'Supporting/opposing sourced analysis unavailable.';
-    return '<section class="ad-best ad-tone-'+tone(r)+'" data-best-play="'+e(t)+'"><div class="ad-best-hero"><div class="ad-eyebrow">BEST PLAY · '+e(t)+'</div><p class="ad-hero-label">Today’s stance</p><h3>'+e(r.effective_action||'Action unavailable')+(r.selected_rank?' <small>Buy rank #'+r.selected_rank+'</small>':'')+'</h3><p class="ad-stance">'+e(funding(r,d))+'</p><p class="ad-muted">'+authority(d)+' · '+e(dateTime(d.as_of))+'</p></div>'+
-      line('Changed',e(change))+line('Setup',e(facts.join(' · ')||'Unavailable')+'<small>Source: main snapshot '+e(r.source_snapshot_id||'unversioned')+'</small>')+
-      line('Evidence',evidencePanels)+
-      line('Catalysts',events.length?events.map(f=>'<p>'+e(f.title)+' · '+e(dated.includes(f)?f.date+(f.date<today?' (past)':f.date===today?' (today, UTC date)':' (upcoming)'):'date unavailable')+'<small>'+citation({url:f.source_url,published_at:f.source_date})+'</small></p>').join(''):'Event data unavailable. No claim of “no events.”')+
-      line('Reassess',e(conditions+' '+invalidation))+line('Next dated check',e(next?next.date+' · '+next.title:'Unavailable'))+
-      line('Data gaps',e(gaps.join('; ')||'Coverage is limited to supplied snapshot evidence.'))+
+    const brief=direction=>{
+      const f=validFacts.find(x=>x.direction===direction);
+      if(!f)return '<p>Evidence unavailable</p>';
+      const short=f.text.length>150?f.text.slice(0,147).replace(/\s+\S*$/,'')+'…':f.text;
+      let source='Source unavailable';
+      try{root.ADResearch.safeURL(f.source_url);source='<a href="'+e(f.source_url)+'" target="_blank" rel="noopener noreferrer">Source ↗</a>';}catch(_){}
+      return '<p>'+e(short)+'</p><small>'+(short!==f.text?'Excerpt · ':'')+source+'</small>';
+    };
+    return '<section class="ad-best ad-best-compact ad-tone-'+tone(r)+'" data-best-play="'+e(t)+'"><div class="ad-best-hero"><div class="ad-compact-heading"><div><div class="ad-eyebrow">BEST PLAY</div><h3>'+e(r.effective_action||'Action unavailable')+'</h3></div><div class="ad-compact-weight">'+allocation(r,d)+(r.selected_rank?'<small>Buy rank #'+r.selected_rank+'</small>':'')+'</div></div><p class="ad-muted">'+e(d.budget.status==='unknown'?'Funding unavailable · ':d.budget.status==='zero'?'Remaining budget is zero · ':'')+authority(d)+' · '+e(dateTime(d.as_of))+'</p>'+(r.issues.length?'<p class="ad-compact-warning">Review needed · '+r.issues.length+' decision '+(r.issues.length===1?'note':'notes')+'</p>':'')+'</div>'+
+      '<div data-ad-chart-slot></div><div class="ad-quick-summary"><div class="ad-brief-grid"><div class="ad-brief-support"><span>Supporting</span>'+brief('supporting')+'</div><div class="ad-brief-risk"><span>Caution</span>'+brief('opposing')+'</div></div>'+(next?catalyst(next,t,today,true):'<div class="ad-next-check"><span>Next catalyst</span><strong>Date unavailable</strong></div>')+'<div class="ad-revisit"><span>Revisit zone <b>'+e(r.entry_zone&&r.entry_zone.every(root.ADDecision.finite)?r.entry_zone.join(' – '):'Unavailable')+'</b></span><span>Invalidation <b>'+e(r.stop_loss??'Unavailable')+'</b></span></div><p class="ad-level-note">Supplied levels; timing and rationale unverified.</p></div>'+
+      '<details class="ad-details ad-best-details"><summary>Evidence &amp; catalysts <span>'+(validFacts.length?validFacts.length+' facts':'Evidence unavailable')+' · '+(events.length?events.length+' events':'Events unavailable')+'</span></summary>'+line('Evidence',evidencePanels)+
+      line('Catalysts',events.length?events.map(f=>catalyst(f,t,today)).join(''):'Event data unavailable. No claim of “no events.”')+'</details>'+
+      '<details class="ad-details ad-best-details"><summary>What changed &amp; data gaps <span>'+gaps.length+' '+(gaps.length===1?'gap':'gaps')+'</span></summary>'+line('Changed',e(change))+line('Setup',e(facts.join(' · ')||'Unavailable')+'<small>Source: main snapshot '+e(r.source_snapshot_id||'unversioned')+'</small>')+line('Reassess',e(conditions+' '+invalidation))+line('Data gaps',e(gaps.join('; ')||'Coverage is limited to supplied snapshot evidence.'))+'</details>'+
       '<details class="ad-details"><summary>Decision provenance and exclusions</summary><p>Raw: '+e(r.raw_action||'unavailable')+' · Chart: '+e(r.chart_action||'unavailable')+' · Effective: '+e(r.effective_action||'unavailable')+'</p><p>Input confidence '+(r.confidence.value==null?'unavailable':r.confidence.value+'/10')+' · Chart-integrated '+(r.chart_confidence.value==null?'unavailable':r.chart_confidence.value+'/100')+'</p><p>Held status: '+e(r.held_status)+' · Budget basis: '+e(d.budget.basis)+'</p><p>Decision '+e(r.source_snapshot_id||'unversioned')+' · Chart '+e(r.chart_snapshot_id||'unversioned')+'</p>'+issuesHtml([...r.issues,...r.exclusion_reasons,...r.visibility_reasons])+'</details>'+research(t,d,r,now)+'</section>';
   }
   document.addEventListener('click',ev=>{
@@ -163,6 +182,7 @@
   });
   document.addEventListener('change',async ev=>{
     const input=ev.target.closest('[data-ad-import]');if(!input)return;
+    if(root.AD_SYNTHETIC_PREVIEW!==true)return;
     const t=input.dataset.adImport,file=input.files[0];if(!file)return;
     overlays.delete(t);
     try{

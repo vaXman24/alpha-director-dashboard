@@ -46,7 +46,13 @@
       if (!ACTIONS.includes(raw)) errors.push('Raw action unavailable or invalid');
       if(p.above_200!=null&&typeof p.above_200!=='boolean')errors.push('Invalid MA200 flag');
       if(p._discovery!=null&&typeof p._discovery!=='boolean')errors.push('Invalid discovery flag');
-      if(p.entry_zone!=null&&(!Array.isArray(p.entry_zone)||p.entry_zone.length!==2||p.entry_zone[0]>p.entry_zone[1]))errors.push('Invalid entry zone');
+      // The producer supplies two bounds; chart_builder already renders min/max.
+      // A price below MA50 reverses those bounds without invalidating the signal.
+      let entryZone=null,entryZoneReordered=false;
+      if(p.entry_zone!=null){
+        if(!Array.isArray(p.entry_zone)||p.entry_zone.length!==2||!p.entry_zone.every(x=>finite(x)&&x>=0))errors.push('Invalid entry zone');
+        else {entryZone=[Math.min(...p.entry_zone),Math.max(...p.entry_zone)];entryZoneReordered=p.entry_zone[0]>p.entry_zone[1];}
+      }
       // The legacy producer and score consumer explicitly use /10. Never infer a scale from magnitude.
       const scale = p.confidence_scale || 'legacy_0_10';
       const knownScale = ['legacy_0_10','0_10'].includes(scale);
@@ -67,7 +73,7 @@
         upside_pct:number(p.upside_pct,'upside',errors), rsi:number(p.rsi,'RSI',errors,0,100),
         above_200:typeof p.above_200==='boolean'?p.above_200:null,
         price:number(p.price,'price',errors,0), stop_loss:number(p.stop_loss,'supplied invalidation level',errors,0),
-        entry_zone:Array.isArray(p.entry_zone) && p.entry_zone.length===2 ? p.entry_zone.map(x=>number(x,'entry zone',errors,0)) : null,
+        entry_zone:entryZone,entry_zone_reordered:entryZoneReordered,
         sma50:number(p.sma50,'MA50',errors,0), sma200:number(p.sma200,'MA200',errors,0),
         issues:errors});
     }
@@ -142,6 +148,7 @@
     if(n.yield==null)issues.push('Legacy score default: missing yield uses zero branch');
     const rows=n.rows.map(p=>{
       const local=[...p.issues], defaults=[];
+      if(p.entry_zone_reordered)local.push('Entry zone bounds displayed low to high; source endpoint order was reversed');
       if(p.backend_allocation_present)local.push('Backend allocation is a separate legacy result: raw actions, gross monthly basis, no chart factor; public allocation_pct uses a per-list denominator');
       const a=ch.records[p.ticker]?.analysis;
       let action=p.raw_action, cc=null, rec=null, evidence=null;
@@ -194,6 +201,8 @@
       if(p.selected_rank&&p.score===0)p.exclusion_reasons.push('Zero score receives zero allocation');
       if(p.selected_rank&&n.budget.status==='zero')p.exclusion_reasons.push('Remaining budget is zero');
       if(p.selected_rank&&n.budget.status==='unknown')p.exclusion_reasons.push('Funding unavailable; allocation is an indicative weight');
+      if(p.origin==='outside'&&p.selected_rank==null)p.visibility_reasons.push('Outside opportunity is not in the selected DCA top five');
+      if(p.origin==='crypto')p.visibility_reasons.push('Crypto is outside the equity Action Center');
       p.action_center_visible=!p.visibility_reasons.length&&(p.origin==='portfolio'||p.origin==='outside'&&p.selected_rank!=null);
       p.operational_order=ORDER.indexOf(p.effective_action);
       p.operational_score=(p.chart_confidence.value==null?.7:p.chart_confidence.value/100)*.6+(p.confidence.value??5)/10*.15+Math.min(p.upside_pct??0,100)/100*.25;
@@ -212,7 +221,7 @@
     if(!input||typeof input!=='object')return null;
     const text=x=>typeof x==='string'&&x.length<=1000&&!/[<>\u0000-\u0008]/.test(x)?x:null;
     return {facts:(Array.isArray(input.facts)?input.facts:[]).slice(0,12).map(f=>({text:text(f?.text),direction:['supporting','opposing','neutral'].includes(f?.direction)?f.direction:'neutral',source_url:text(f?.source_url),source_date:text(f?.source_date)})).filter(f=>f.text),
-      events:(Array.isArray(input.events)?input.events:[]).slice(0,12).map(f=>({title:text(f?.title),date:text(f?.date),source_url:text(f?.source_url),source_date:text(f?.source_date)})).filter(f=>f.title)};
+      events:(Array.isArray(input.events)?input.events:[]).slice(0,12).map(f=>({title:text(f?.title),date:text(f?.date),rationale:text(f?.rationale),source_url:text(f?.source_url),source_date:text(f?.source_date)})).filter(f=>f.title)};
   }
   return {POLICY,computeDashboardDecision,normalize,effective,percentages,finite,stamp,ticker,freeze,copy};
 });

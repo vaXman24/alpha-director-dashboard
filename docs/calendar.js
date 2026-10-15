@@ -30,6 +30,8 @@
     upcoming: { bg: 'rgba(0,230,118,.13)',   color: '#00e676', label: 'UPCOMING' },
     monitor:  { bg: 'rgba(68,138,255,.13)',  color: '#448aff', label: 'MONITOR'  },
     future:   { bg: 'rgba(100,116,139,.12)', color: '#64748b', label: 'FUTURE'   },
+    past:     { bg: 'rgba(100,116,139,.12)', color: '#64748b', label: 'PAST'     },
+    unknown:  { bg: 'rgba(100,116,139,.12)', color: '#64748b', label: 'DATE UNKNOWN' },
   };
 
   // ── Inject CSS once ────────────────────────────────────────────────────────
@@ -174,8 +176,60 @@
   document.head.appendChild(styleEl);
 
   // ── Helpers ────────────────────────────────────────────────────────────────
+  const esc = value => String(value == null ? '' : value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let _sourceEvents = [], _sourceUpdated = null, _calendarRequest = 0, _calendarFocus = null, _calendarMode = 'loading', _fallbackSnapshot = null;
+  function normalizeEvents(events) {
+    const today = new Date().toLocaleDateString('en-CA', {timeZone:'Asia/Jerusalem'});
+    const todayMs = Date.parse(today + 'T00:00:00Z');
+    return events.filter(ev => ev && typeof ev === 'object').map((ev, index) => {
+      const stamp = typeof ev.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(ev.date) ? Date.parse(ev.date + 'T00:00:00Z') : NaN;
+      const valid = Number.isFinite(stamp) && new Date(stamp).toISOString().slice(0,10) === ev.date;
+      const days = valid ? Math.round((stamp - todayMs) / 86400000) : null;
+      const confidence = typeof ev.confidence === 'number' && Number.isFinite(ev.confidence) && ev.confidence >= 0 && ev.confidence <= 10 ? ev.confidence : null;
+      return {...ev, id:'cat-' + index, date:valid ? ev.date : null, days_until:days,
+        status:days == null ? 'unknown' : days < 0 ? 'past' : days === 0 ? 'live' : days <= 7 ? 'imminent' : 'upcoming',
+        category:CAT_LABEL[ev.category] ? ev.category : 'macro', confidence,
+        name:String(ev.name || 'Unnamed event'), why:String(ev.why || ''), action:String(ev.action || ''), exit_trigger:String(ev.exit_trigger || ''), trade_type:String(ev.trade_type || ''), instruments:Array.isArray(ev.instruments) ? ev.instruments.filter(t => typeof t === 'string') : []};
+    });
+  }
+  function refreshEventDates() {
+    if (_calendarMode === 'loading') return;
+    if (_calendarMode === 'fallback' && !useSnapshotEvents()) { showUnavailable(); return; }
+    window.__catEvents__ = normalizeEvents(_sourceEvents);
+    renderEvents(window.__catEvents__);
+    if (_calendarMode === 'fallback') {
+      const summary = document.getElementById('cat-summary');
+      if (summary) summary.textContent = 'Partial calendar · snapshot events · ' + summary.textContent;
+    }
+    if (_catViewMode === 'month') renderMonthGrid(window.__catEvents__);
+  }
+  function useSnapshotEvents() {
+    const raw = typeof _rawDecisionData !== 'undefined' ? _rawDecisionData : null;
+    const generated = Date.parse(raw?.generated_at), expiry = Date.parse(raw?.expires_at);
+    if (!raw || !Number.isFinite(generated) || generated > Date.now() || !Number.isFinite(expiry) || expiry <= Date.now() || expiry <= generated || !Array.isArray(raw.upcoming_events)) return false;
+    if (_fallbackSnapshot !== raw.snapshot_id) { window.closeCatModal?.(); _fallbackSnapshot = raw.snapshot_id; }
+    _sourceEvents = raw.upcoming_events.filter(ev => ev && typeof ev.utc === 'string' && Number.isFinite(Date.parse(ev.utc))).map(ev => ({
+      name:ev.title || 'Snapshot event',date:new Date(ev.utc).toLocaleDateString('en-CA', {timeZone:'Asia/Jerusalem'}),
+      category:ev.type === 'EARNINGS' ? 'corporate' : 'macro',instruments:ev.ticker ? [String(ev.ticker)] : [],
+      why:ev.detail || '',relevance:ev.relevance || '',confidence:null,
+      provenance:'Partial calendar from the current dashboard snapshot. Dedicated catalyst feed unavailable. No independent calendar verification.'
+    }));
+    _sourceUpdated = raw.generated_at;
+    const updated = document.getElementById('cat-updated');
+    if (updated) updated.textContent = 'Partial calendar · snapshot events. Published ' + new Date(generated).toLocaleString('en-GB', {timeZone:'Asia/Jerusalem'}) + ' IL. Dedicated catalyst feed unavailable.';
+    return true;
+  }
+  function showUnavailable() {
+    _sourceEvents = []; window.__catEvents__ = [];
+    window.closeCatModal?.(); window._catPendingAlert = '';
+    const list = document.getElementById('cat-list'), summary = document.getElementById('cat-summary');
+    if (list) list.innerHTML = '<div style="color:var(--t3);font-size:12px;padding:16px 0">The event feed is unavailable. Current snapshot event coverage is also unavailable. Retrying automatically.</div>';
+    if (summary) summary.textContent = 'Unavailable';
+    for (const id of ['cat-strip','cat-month-grid']) document.getElementById(id)?.replaceChildren();
+    const updated = document.getElementById('cat-updated'); if (updated) updated.textContent = 'Current event coverage unavailable';
+  }
   function fmtDate(iso) {
-    if (!iso) return '—';
+    if (!iso) return 'Date unavailable';
     const d = new Date(iso + 'T00:00:00');
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
@@ -190,6 +244,7 @@
   }
 
   function confColor(score) {
+    if (score == null) return '#64748b';
     if (score >= 8) return '#00e676';
     if (score >= 6) return '#ffd740';
     return '#ff3d71';
@@ -224,6 +279,7 @@
         </div>
       </div>
       <div class="coll-body collapsed" id="cat-body">
+        <div id="cat-updated" style="font-size:10px;color:var(--t3);padding-top:8px"></div>
         <div id="cat-list" style="padding-top:8px">
           <div style="color:var(--t3);font-size:12px;padding:16px 0">Loading events…</div>
         </div>
@@ -246,8 +302,8 @@
     const overlay = document.createElement('div');
     overlay.id = 'cat-modal-overlay';
     overlay.innerHTML = `
-      <div id="cat-modal">
-        <button class="cat-modal-close" onclick="closeCatModal()">✕</button>
+      <div id="cat-modal" role="dialog" aria-modal="true" aria-labelledby="cat-modal-title">
+        <button class="cat-modal-close" aria-label="Close event" onclick="closeCatModal()">✕</button>
         <div id="cat-modal-content"></div>
       </div>
     `;
@@ -256,14 +312,26 @@
     overlay.addEventListener('click', e => {
       if (e.target === overlay) closeCatModal();
     });
+    document.addEventListener('keydown', e => {
+      if (!overlay.classList.contains('open')) return;
+      if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); closeCatModal(); }
+      if (e.key === 'Tab') {
+        const controls = [...overlay.querySelectorAll('button,a[href],[tabindex="0"]')];
+        const first = controls[0], last = controls[controls.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+      }
+    }, true);
   }
 
   window.closeCatModal = function () {
     const ov = document.getElementById('cat-modal-overlay');
     if (ov) ov.classList.remove('open');
+    if (_calendarFocus?.isConnected) _calendarFocus.focus();
   };
 
   window.openCatModal = function (ev) {
+    if (!ev) return;
     const ov = document.getElementById('cat-modal-overlay');
     const content = document.getElementById('cat-modal-content');
     if (!ov || !content) return;
@@ -286,8 +354,8 @@
     };
 
     content.innerHTML = `
-      <div class="cat-modal-cat" style="color:${color}">${CAT_LABEL[cat] || cat}</div>
-      <div class="cat-modal-title">${ev.name}</div>
+      <div class="cat-modal-cat" style="color:${color}">${esc(CAT_LABEL[cat] || cat)}</div>
+      <div class="cat-modal-title" id="cat-modal-title">${esc(ev.name)}</div>
       <div class="cat-modal-date">
         ${fmtDate(ev.date)}
         &nbsp;·&nbsp;
@@ -298,27 +366,29 @@
       </div>
 
       <div class="cat-modal-divider"></div>
+      ${ev.provenance ? `<div class="cat-modal-section-body" style="color:var(--t3);margin-bottom:12px">${esc(ev.provenance)}</div>` : ''}
+      ${ev.relevance ? `<div class="cat-modal-section"><div class="cat-modal-section-label">Supplied relevance</div><div class="cat-modal-section-body">${esc(ev.relevance)}</div></div>` : ''}
 
       <div class="cat-modal-section">
         <div class="cat-modal-section-label">Why it moves markets</div>
-        <div class="cat-modal-section-body">${ev.why || '—'}</div>
+        <div class="cat-modal-section-body">${esc(ev.why || '—')}</div>
       </div>
 
-      <div class="cat-modal-section">
+      ${ev.action ? `<div class="cat-modal-section">
         <div class="cat-modal-section-label">Action plan</div>
-        <div class="cat-modal-section-body">${ev.action || '—'}</div>
-      </div>
+        <div class="cat-modal-section-body">${esc(ev.action || '—')}</div>
+      </div>` : ''}
 
       ${ev.trade_type ? `
       <div class="cat-modal-section">
         <div class="cat-modal-section-label">Trade type</div>
-        <div class="cat-modal-section-body" style="color:var(--a)">${ev.trade_type}</div>
+        <div class="cat-modal-section-body" style="color:var(--a)">${esc(ev.trade_type)}</div>
       </div>` : ''}
 
       <div class="cat-modal-section">
         <div class="cat-modal-section-label">Confidence</div>
         <div class="cat-conf-display">
-          <span style="color:${confColor(ev.confidence)}">${ev.confidence}/10</span>
+          <span style="color:${confColor(ev.confidence)}">${ev.confidence == null ? 'Unavailable' : ev.confidence + '/10'}</span>
           <div class="cat-conf-track">
             <div class="cat-conf-fill" style="width:${ev.confidence * 10}%;background:${confColor(ev.confidence)}"></div>
           </div>
@@ -331,7 +401,7 @@
         <div class="cat-modal-chips">
           ${ev.instruments.map(t => {
             const owned = (window._ownedTickers && window._ownedTickers.has((t||'').toUpperCase()));
-            return `<span class="cat-modal-chip${owned?' owned':''}">${t}${owned?' ✓':''}</span>`;
+            return `<span class="cat-modal-chip${owned?' owned':''}">${esc(t)}${owned?' ✓':''}</span>`;
           }).join('')}
         </div>
       </div>` : ''}
@@ -339,7 +409,7 @@
       ${ev.exit_trigger ? `
       <div class="cat-modal-section">
         <div class="cat-modal-section-label">Exit trigger</div>
-        <div class="cat-modal-section-body" style="color:var(--t2)">${ev.exit_trigger}</div>
+        <div class="cat-modal-section-body" style="color:var(--t2)">${esc(ev.exit_trigger)}</div>
       </div>` : ''}
 
       <div class="cat-modal-divider"></div>
@@ -347,7 +417,7 @@
         <div style="font-size:9px;font-weight:800;letter-spacing:1px;color:#29b6f6;text-transform:uppercase;margin-bottom:5px">📱 Telegram Action Alert</div>
         <div style="font-size:10px;color:#64748b;margin-bottom:8px;line-height:1.5">
           Get a Telegram reminder with the action plan for this event.
-          ${ev.action ? 'Action: ' + ev.action.substring(0, 80) + (ev.action.length > 80 ? '…' : '') : ''}
+          ${ev.action ? 'Action: ' + esc(ev.action.substring(0, 80)) + (ev.action.length > 80 ? '…' : '') : ''}
         </div>
         <button onclick="window._sendCatAlert(this)"
         style="width:100%;padding:8px 12px;border-radius:7px;background:rgba(0,136,204,.15);color:#29b6f6;border:1px solid rgba(0,136,204,.3);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:.3px;transition:all .2s">
@@ -357,7 +427,9 @@
       <button onclick="closeCatModal()" style="margin-top:12px;width:100%;padding:7px;border-radius:7px;background:rgba(255,255,255,.05);color:var(--t2);border:1px solid rgba(255,255,255,.1);font-size:11px;cursor:pointer">← Back / Close</button>
     `;
 
+    if (!ov.classList.contains('open')) _calendarFocus = document.activeElement;
     ov.classList.add('open');
+    ov.querySelector('.cat-modal-close')?.focus();
   };
 
   // ── Monthly calendar view ─────────────────────────────────────────────────
@@ -425,7 +497,7 @@
               ? `openCatModal(window.__catEvents__.find(e=>e.id==='${evs[0].id}'))`
               : evs.length > 1 ? `openCatDayModal(${JSON.stringify(evs.map(e=>e.id))})` : '';
             return `<div style="background:${bg};border:${bdr};border-radius:4px;padding:2px 1px;min-height:34px;cursor:${evs.length?'pointer':'default'}"
-                         onclick="${clickFn}">
+                         ${evs.length ? 'role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click()}"' : ''} onclick="${esc(clickFn)}">
                       <div style="font-size:10px;font-weight:${isToday?800:400};color:${dayColor};line-height:1.6">${day}</div>
                       <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:1px;min-height:7px">${dots}${moreDot}</div>
                     </div>`;
@@ -447,7 +519,7 @@
     const d = new Date(events[0].date + 'T00:00:00');
     const dayLabel = d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
     content.innerHTML = `
-      <div class="cat-modal-title" style="font-size:16px;margin-bottom:12px">${dayLabel} — ${events.length} Events</div>
+      <div class="cat-modal-title" id="cat-modal-title" style="font-size:16px;margin-bottom:12px">${dayLabel} · ${events.length} Events</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         ${events.map(ev => {
           const color = CAT_COLOR[ev.category] || '#64748b';
@@ -456,7 +528,7 @@
                               background:${color}0d;cursor:pointer;transition:background .15s"
                        onmouseover="this.style.background='${color}1a'" onmouseout="this.style.background='${color}0d'">
                     <div style="font-size:9px;font-weight:700;color:${color};letter-spacing:1px;text-transform:uppercase;margin-bottom:3px">${CAT_LABEL[ev.category] || ev.category}</div>
-                    <div style="font-size:13px;font-weight:700">${ev.name}</div>
+                    <div style="font-size:13px;font-weight:700">${esc(ev.name)}</div>
                     <div style="font-size:10px;color:var(--t2);margin-top:2px">Confidence ${ev.confidence}/10 · Click to view playbook</div>
                   </div>`;
         }).join('')}
@@ -474,11 +546,12 @@
     if (!events || events.length === 0) {
       list.innerHTML = '<div style="color:var(--t3);font-size:12px;padding:16px 0">No events loaded.</div>';
       if (summary) summary.textContent = 'No events';
+      if (strip) strip.replaceChildren();
       return;
     }
 
     // 7-day events for header strip
-    const soon = events.filter(e => e.days_until >= 0 && e.days_until <= 7);
+    const soon = events.filter(e => e.days_until != null && e.days_until >= 0 && e.days_until <= 7);
 
     if (summary) {
       summary.textContent = soon.length
@@ -495,7 +568,7 @@
           return `<span class="cat-strip-pill"
                     style="background:${color}1a;color:${color};border-color:${color}33;"
                     onclick="event.stopPropagation();openCatModal(window.__catEvents__.find(e=>e.id==='${ev.id}'))"
-                  >${ev.name.split(' ')[0]}${countdownLabel(ev.days_until) ? ' · ' + countdownLabel(ev.days_until) : ''}</span>`;
+                  >${esc(ev.name.split(' ')[0])}${countdownLabel(ev.days_until) ? ' · ' + countdownLabel(ev.days_until) : ''}</span>`;
         }).join('');
       }
     }
@@ -517,27 +590,27 @@
 
       for (const ev of group) {
         const st = STATUS_STYLE[ev.status] || STATUS_STYLE.future;
-        const confW = `${(ev.confidence || 5) * 10}%`;
+        const confW = `${(ev.confidence ?? 0) * 10}%`;
         const tickers = (ev.instruments || []).slice(0, 4);
 
-        html += `<div class="cat-event-row" onclick="openCatModal(window.__catEvents__.find(e=>e.id==='${ev.id}'))">
+        html += `<div class="cat-event-row" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" onclick="openCatModal(window.__catEvents__.find(e=>e.id==='${ev.id}'))">
           <div class="cat-date-col">
             <div>${fmtDate(ev.date)}</div>
             ${countdownLabel(ev.days_until) ? `<div class="cat-countdown">${countdownLabel(ev.days_until)}</div>` : ''}
           </div>
           <div class="cat-name-col">
-            <div>${ev.name}</div>
+            <div>${esc(ev.name)}</div>
             ${tickers.length ? `<div class="cat-instruments">
               ${tickers.map(t => {
                 const owned = (window._ownedTickers && window._ownedTickers.has((t||'').toUpperCase()));
-                return `<span class="cat-tick${owned?' owned':''}">${t}${owned?' ✓':''}</span>`;
+                return `<span class="cat-tick${owned?' owned':''}">${esc(t)}${owned?' ✓':''}</span>`;
               }).join('')}
               ${(ev.instruments || []).length > 4 ? `<span class="cat-tick">+${ev.instruments.length - 4}</span>` : ''}
             </div>` : ''}
           </div>
           <div class="cat-right-col">
             <span class="cat-status-badge" style="background:${st.bg};color:${st.color}">${st.label}</span>
-            <div class="cat-conf-bar-wrap" title="Confidence ${ev.confidence}/10">
+            <div class="cat-conf-bar-wrap" title="Confidence ${ev.confidence == null ? 'unavailable' : ev.confidence + '/10'}">
               <div class="cat-conf-bar" style="width:${confW};background:${confColor(ev.confidence)}"></div>
             </div>
           </div>
@@ -552,26 +625,37 @@
   async function init() {
     buildCard();
     buildModal();
+    await loadEvents();
+    setInterval(loadEvents, 300000);
+    setInterval(refreshEventDates, 60000);
+    window.addEventListener('ad:snapshot-rendered', () => { if (_calendarMode === 'fallback') refreshEventDates(); });
+  }
 
+  async function loadEvents() {
+    const ticket = ++_calendarRequest;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
     try {
-      const res = await fetch('events.json?_=' + Date.now());
+      const res = await fetch('events.json?_=' + Date.now(), {cache:'no-store',signal:controller.signal});
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
 
       // Support both array and wrapped {events:[...]} format
-      const events = Array.isArray(data) ? data : (data.events || []);
-
-      // Expose globally so onclick handlers can look up objects
-      window.__catEvents__ = events;
-
-      renderEvents(events);
+      const events = Array.isArray(data) ? data : data?.events;
+      if (!Array.isArray(events)) throw new Error('Invalid events feed');
+      if (ticket !== _calendarRequest) return;
+      _calendarMode = 'feed';
+      _sourceEvents = events;
+      _sourceUpdated = data.generated_at || data.generated || data.updated_at || data.updated;
+      const updated = document.getElementById('cat-updated');
+      if (updated) updated.textContent = Number.isFinite(Date.parse(_sourceUpdated)) ? 'Published ' + new Date(_sourceUpdated).toLocaleString('en-GB', {timeZone:'Asia/Jerusalem'}) + ' IL. Dates compared in Israel time.' : 'Publication time unavailable. Dates compared in Israel time.';
+      refreshEventDates();
     } catch (err) {
+      if (ticket !== _calendarRequest) return;
+      _calendarMode = 'fallback';
       console.warn('[calendar.js] Could not load events.json:', err.message);
-      const list = document.getElementById('cat-list');
-      const summary = document.getElementById('cat-summary');
-      if (list) list.innerHTML = '<div style="color:var(--t3);font-size:12px;padding:16px 0">Events unavailable — run event_worker.py to publish events.json</div>';
-      if (summary) summary.textContent = 'Unavailable';
-    }
+      refreshEventDates();
+    } finally { clearTimeout(timeout); }
   }
 
   // Run after DOM ready

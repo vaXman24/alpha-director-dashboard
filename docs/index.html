@@ -784,6 +784,7 @@ body.ticker-page .sm-cat-btn,body.ticker-page .sm-open-tv{
 </div>
 
 <div class="main">
+<div id="ad-data-status" role="status" aria-live="polite" style="display:none;margin:0 0 16px;padding:12px 16px;border:1px solid var(--a);border-radius:8px;color:var(--a);background:rgba(255,215,64,.08)"></div>
 
 <!-- Bear Warning banner (shows when regime detector is not RISK-ON) -->
 <div id="bear-banner" style="display:none" class="bear-banner"></div>
@@ -811,13 +812,13 @@ body.ticker-page .sm-cat-btn,body.ticker-page .sm-open-tv{
   <div id="action-center"></div>
 </div>
 
-<!-- Top Picks Today (collapsible, collapsed by default — top-7 best-of digest across brain picks + catalyst plays) -->
+<!-- Top Picks Today mirrors the canonical DCA candidate order. -->
 <div class="coll-card" id="watchlist-section">
   <div class="coll-header" onclick="toggleCard('watchlist')">
     <div class="coll-left">
       <span class="coll-icon">🎯</span>
       <span class="coll-name">Top Picks Today</span>
-      <span class="coll-summary" id="watchlist-summary">best across brain + catalyst, ranked</span>
+      <span class="coll-summary" id="watchlist-summary">Canonical top five · same order as DCA</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <span class="coll-annotation" id="watchlist-annotation">—</span>
@@ -1085,26 +1086,26 @@ function _fmtIL(iso) {
 let D = {
   generated_at: null, regime: '', macro_warn: '',
   market: {
-    spy:  {price:null,chg_1d:0,above_50:null,above_200:null,rsi:null,vol_ratio:null,sma50:null,sma200:null},
-    qqq:  {price:null,chg_1d:0,above_50:null,above_200:null,rsi:null,vol_ratio:null,sma50:null,sma200:null},
-    vix:  {price:null,chg_1d:0,level:0,signal:'Normal'},
-    dxy:  {level:null,chg_1d:0,price:null},
-    gold: {price:null,chg_1d:0,chg:0},
-    oil:  {price:null,chg_1d:0,chg:0},
+    spy:  {price:null,chg_1d:null,above_50:null,above_200:null,rsi:null,vol_ratio:null,sma50:null,sma200:null},
+    qqq:  {price:null,chg_1d:null,above_50:null,above_200:null,rsi:null,vol_ratio:null,sma50:null,sma200:null},
+    vix:  {price:null,chg_1d:null,level:null,signal:''},
+    dxy:  {level:null,chg_1d:null,price:null},
+    gold: {price:null,chg_1d:null,chg:null},
+    oil:  {price:null,chg_1d:null,chg:null},
     t10y: {t10y:null},
     btc_regime: {}
   },
-  portfolio: {positions:[], total_cost:0, total_value:0, total_pnl:0, daily_pnl:0, daily_gain_usd:0},
+  portfolio: {positions:[], total_cost:null, total_value:null, total_pnl:null, daily_pnl:null, daily_gain_usd:null},
   sectors: [],
   outside_opps: [],
   top_movers: {gainers:[], losers:[]},
   crypto: {
-    positions: [], btc_dominance: 0,
-    fear_greed: {score:50, label:'Loading'},
+    positions: [], btc_dominance: null,
+    fear_greed: {score:null, label:'N/A'},
     btc_context: {dom_signal:''},
-    btc_price: 0, btc_chg: 0, eth_price: 0, eth_chg: 0
+    btc_price: null, btc_chg: null, eth_price: null, eth_chg: null
   },
-  fear_greed: {score:50, label:'Loading', signal:''},
+  fear_greed: {score:null, label:'N/A', signal:''},
   upcoming_events: [],
   earnings: {Mon:[], Tue:[], Wed:[], Thu:[], Fri:[]},
   insiders: [],
@@ -1123,6 +1124,14 @@ const fmtK = v => v >= 1e6 ? '$'+(v/1e6).toFixed(1)+'M' : v >= 1e3 ? '$'+(v/1e3)
 const fmtB = v => { if (!v) return '—'; if (v >= 1e12) return '$'+(v/1e12).toFixed(2)+'T'; if (v >= 1e9) return '$'+(v/1e9).toFixed(1)+'B'; if (v >= 1e6) return '$'+(v/1e6).toFixed(0)+'M'; return '$'+Math.round(v); };
 const pct = v => v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
 const col = v => v == null ? '' : (v >= 0 ? 'positive' : 'negative');
+// Missing market observations must never become an observed zero or neutral signal.
+function _marketNumber(value) {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+function _sentimentScore(value, label) {
+  const n = _marketNumber(value);
+  return n != null && n >= 0 && n <= 100 && !/^(?:N\/A|Loading)$/i.test(label || '') ? n : null;
+}
 // Null-safe catalyst days: handles null, undefined, and the string "null" from JSON
 function _safeCatDays(p) {
   const d = p.catalyst_days ?? p.days_until;
@@ -1227,7 +1236,8 @@ function buildDrawer() {
   const portSet2    = new Set(positions.map(p => (p.ticker||'').toUpperCase()));
   const watchTop    = opps
     .filter(o => !o.catalyst && o.ticker && !portSet2.has((o.ticker||'').toUpperCase()) && (o.upside_pct||0) >= 8)
-    .map(o => ({...o, _s: _allocScore(o)}))
+    .map(o => ({...o, _s: window._dashboardDecision?.rows.find(r => r.ticker === o.ticker.toUpperCase())?.score ?? null}))
+    .filter(o => o._s != null)
     .sort((a,b) => b._s - a._s)
     .slice(0, 5);
   if (watchTop.length) {
@@ -1488,24 +1498,27 @@ function buildBearBanner() {
 
 // ── Market Pulse (VIX + DXY + F&G + SPY + Regime visual strip) ────────────
 function buildPulseStrip() {
-  const mkt = D.market;
-  const vix  = mkt.vix?.level ?? mkt.vix?.price ?? 0;
-  const dxy  = mkt.dxy?.level ?? mkt.dxy?.price ?? 0;
-  const gold = mkt.gold?.price ?? 0;
-  const oil  = mkt.oil?.price ?? 0;
-  const rvol = mkt.rvol ?? mkt.spy?.vol_ratio ?? null;
+  const mkt = D.market || {};
+  const positive = value => _marketNumber(value) > 0 ? value : null;
+  const unavailable = {col:'var(--t3)', bg:'rgba(255,255,255,.04)', label:'Data unavailable'};
+  const vix  = positive(mkt.vix?.level ?? mkt.vix?.price);
+  const dxy  = positive(mkt.dxy?.level ?? mkt.dxy?.price);
+  const gold = positive(mkt.gold?.price);
+  const oil  = positive(mkt.oil?.price);
+  const rvol = _marketNumber(mkt.rvol ?? mkt.spy?.vol_ratio);
 
   // Additional data sources
-  const fgScore    = D.fear_greed?.score ?? 50;
+  const fgScore    = _sentimentScore(D.fear_greed?.score, D.fear_greed?.label);
   const fgLabel    = D.fear_greed?.label ?? '';
-  const spyChg     = mkt.spy?.chg_1d ?? mkt.spy?.change_pct ?? null;
-  const btcChg     = D.crypto?.btc_chg ?? null;
-  const btcPrice   = D.crypto?.btc_price ?? 0;
+  const spyChg     = _marketNumber(mkt.spy?.chg_1d ?? mkt.spy?.change_pct);
+  const btcChg     = _marketNumber(D.crypto?.btc_chg);
+  const btcPrice   = positive(D.crypto?.btc_price);
   const regimeInfo = D.regime_info || {};
-  const regime     = regimeInfo.regime ?? D.regime ?? '—';
+  const regime     = regimeInfo.regime || D.regime || '—';
   const sizingMult = regimeInfo.sizing_mult;
 
   function vixConfig(v) {
+    if (v == null) return unavailable;
     if (v < 15) return {col:'var(--g)',  bg:'var(--g2)',  label:'LOW — calm market', detail:'< 15: Complacency / uptrend likely'};
     if (v < 20) return {col:'var(--g)',  bg:'var(--g2)',  label:'NORMAL', detail:'15–20: Normal volatility range'};
     if (v < 28) return {col:'var(--a)',  bg:'var(--a2)',  label:'ELEVATED — caution', detail:'20–28: Caution, hedge if needed'};
@@ -1513,12 +1526,14 @@ function buildPulseStrip() {
     return       {col:'#ff1744', bg:'rgba(255,23,68,.15)', label:'EXTREME — crisis', detail:'> 35: Preserve capital, raise cash'};
   }
   function dxyConfig(v) {
+    if (v == null) return unavailable;
     if (v < 97)  return {col:'var(--g)', bg:'var(--g2)',  label:'WEAK USD — EM bullish', detail:'< 97: Good for risk assets & EM'};
     if (v < 103) return {col:'var(--t)', bg:'rgba(255,255,255,.04)', label:'NEUTRAL', detail:'97–103: Normal range'};
     if (v < 107) return {col:'var(--a)', bg:'var(--a2)', label:'STRONG — headwind', detail:'103–107: Headwind for equities'};
     return        {col:'var(--r)', bg:'var(--r2)', label:'VERY STRONG — risk-off', detail:'> 107: Pressure on risk assets'};
   }
   function fgConfig(s) {
+    if (s == null) return unavailable;
     if (s > 75) return {col:'#ff1744', bg:'rgba(255,23,68,.15)', label:'Extreme Greed — be cautious'};
     if (s > 55) return {col:'var(--r)', bg:'var(--r2)',          label:'Greed — watch for reversal'};
     if (s > 45) return {col:'var(--a)', bg:'var(--a2)',          label:'Neutral'};
@@ -1530,7 +1545,7 @@ function buildPulseStrip() {
     if (r === 'NEUTRAL')  return {col:'var(--a)', bg:'var(--a2)',            label:`Reduced · ${sizingMult != null ? Math.round(sizingMult*100)+'%' : '75%'} size`};
     if (r === 'RISK_OFF') return {col:'var(--r)', bg:'var(--r2)',            label:`Defensive · ${sizingMult != null ? Math.round(sizingMult*100)+'%' : '50%'} size`};
     if (r === 'CRISIS')   return {col:'#ff1744',  bg:'rgba(255,23,68,.15)', label:`Preserve capital · ${sizingMult != null ? Math.round(sizingMult*100)+'%' : '25%'} size`};
-    return {col:'var(--t2)', bg:'rgba(255,255,255,.04)', label:'Loading…'};
+    return unavailable;
   }
 
   const vc  = vixConfig(vix);
@@ -1544,7 +1559,7 @@ function buildPulseStrip() {
   const tiles = [
     { name:'Regime', val: regime.replace('_','-'), chg: null, cfg: rc,
       scale:'RISK_ON: 100% size  |  NEUTRAL: 75%  |  RISK_OFF: 50%  |  CRISIS: 25%' },
-    { name:'Fear & Greed', val: fgScore.toString(), chg: null, cfg: fgc,
+    { name:'Fear & Greed', val: fgScore == null ? '—' : fgScore.toString(), chg: null, cfg: fgc,
       scale:'0–25 Extreme Fear  |  25–45 Fear  |  45–55 Neutral  |  55–75 Greed  |  75–100 Extreme Greed' },
     { name:'VIX (Volatility)', val: fmt(vix,1), chg: mkt.vix?.chg_1d, cfg: vc,
       scale:'< 15 Low  |  15–20 Normal  |  20–28 Caution  |  28–35 High  |  35+ Extreme' },
@@ -1564,17 +1579,17 @@ function buildPulseStrip() {
            btcChg > -3 ? {col:'var(--r)', bg:'var(--r2)', label:'BTC dip — watch IBIT/ETHA'} :
                          {col:'var(--r)', bg:'var(--r2)', label:'BTC dropping — risk-off crypto'},
       scale:'> +3% Rally  |  0–3% Up  |  0 to -3% Dip  |  < -3% Drop — check IBIT/ETHA' },
-    { name:'RVOL (SPY)', val: rvol ? rvol.toFixed(2)+'x' : '—', chg: null,
-      cfg: rvol > 2.0  ? {col:'#ff1744',   bg:'rgba(255,23,68,.15)',   label:'EXTREME — panic/squeeze'} :
+    { name:'RVOL (SPY)', val: rvol != null ? rvol.toFixed(2)+'x' : '—', chg: null,
+      cfg: rvol == null ? unavailable : rvol > 2.0  ? {col:'#ff1744',   bg:'rgba(255,23,68,.15)',   label:'EXTREME — panic/squeeze'} :
            rvol > 1.5  ? {col:'var(--r)',   bg:'var(--r2)',             label:'HIGH ACTIVITY — strong move'} :
            rvol > 1.2  ? {col:'var(--a)',   bg:'var(--a2)',             label:'ELEVATED — watch closely'} :
            rvol > 0.8  ? {col:'var(--g)',   bg:'var(--g2)',             label:'NORMAL'} :
                          {col:'var(--t2)',  bg:'rgba(255,255,255,.03)', label:'LOW — thin / holiday'},
       scale:'< 0.8 Thin  |  0.8–1.2 Normal  |  1.2–1.5 Active  |  1.5–2.0 High  |  2.0+ Extreme' },
-    { name:'Gold', val: '$'+fmt(gold,0), chg: mkt.gold?.chg, cfg:{col: gold > 2500 ? 'var(--a)':'var(--g)', bg: gold > 2500 ? 'var(--a2)':'var(--g2)', label: gold > 2500 ? 'Elevated — risk-off bid':'Normal'},
+    { name:'Gold', val: gold == null ? '—' : '$'+fmt(gold,0), chg: mkt.gold?.chg, cfg:gold == null ? unavailable : {col: gold > 2500 ? 'var(--a)':'var(--g)', bg: gold > 2500 ? 'var(--a2)':'var(--g2)', label: gold > 2500 ? 'Elevated — risk-off bid':'Normal'},
       scale:'> $2500: Risk-off demand  |  rising = hedge signal' },
-    { name:'Oil (WTI)', val: '$'+fmt(oil,2), chg: mkt.oil?.chg,
-      cfg: oil > 100 ? {col:'var(--r)', bg:'var(--r2)', label:'HIGH — inflation risk'} :
+    { name:'Oil (WTI)', val: oil == null ? '—' : '$'+fmt(oil,2), chg: mkt.oil?.chg,
+      cfg: oil == null ? unavailable : oil > 100 ? {col:'var(--r)', bg:'var(--r2)', label:'HIGH — inflation risk'} :
            oil > 85  ? {col:'var(--a)', bg:'var(--a2)', label:'ELEVATED — watch CPI'} :
            oil > 60  ? {col:'var(--g)', bg:'var(--g2)', label:'NORMAL'} :
                        {col:'var(--b)', bg:'var(--b2)', label:'LOW — demand soft'},
@@ -1584,13 +1599,13 @@ function buildPulseStrip() {
   // Collapsible summary
   const pSumEl = $('pulse-summary'); const pAnnEl = $('pulse-annotation');
   const regimeLabel = regime !== '—' ? regime.replace('_','-') : '';
-  if (pSumEl) pSumEl.textContent = `VIX ${fmt(vix,1)} · F&G ${fgScore} · SPY ${spyChgStr} · BTC ${btcChgStr}${regimeLabel ? ' · ' + regimeLabel : ''}`;
+  if (pSumEl) pSumEl.textContent = `VIX ${fmt(vix,1)} · F&G ${fgScore == null ? '—' : fgScore} · SPY ${spyChgStr} · BTC ${btcChgStr}${regimeLabel ? ' · ' + regimeLabel : ''}`;
   if (pAnnEl) {
     pAnnEl.textContent = regime !== '—' ? regime.replace('_','-') : vc.label;
     pAnnEl.className = 'coll-annotation ' + (
       regime === 'CRISIS' || regime === 'RISK_OFF' ? 'bearish' :
       regime === 'RISK_ON' ? 'bullish' :
-      vix < 20 ? 'bullish' : vix < 28 ? 'warning' : 'bearish'
+      vix == null ? 'neutral' : vix < 20 ? 'bullish' : vix < 28 ? 'warning' : 'bearish'
     );
   }
   $('pulse-strip').innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">` +
@@ -1609,7 +1624,7 @@ function buildPulseStrip() {
 // ── Portfolio summary ──────────────────────────────────────────────────────
 function buildPortSummary() {
   const p = D.portfolio;
-  const pnl = p.total_pnl;
+  const pnl = _marketNumber(p.total_pnl ?? p.total_pnl_pct);
   $('port-summary').innerHTML = `
     ${window.PUBLIC ? '' : `
     <div class="ps-stat">
@@ -1624,7 +1639,7 @@ function buildPortSummary() {
     <div class="ps-divider"></div>`}
     <div class="ps-stat">
       <div class="ps-label">P&L</div>
-      <div class="ps-val ${col(pnl)}">${pnl >= 0 ? '+' : ''}${pnl}%${window.PUBLIC ? '' : `  ${fmtK(p.total_value - p.total_cost)}`}</div>
+      <div class="ps-val ${col(pnl)}">${pnl == null ? '—' : (pnl >= 0 ? '+' : '') + pnl + '%'}${window.PUBLIC || pnl == null ? '' : `  ${fmtK(p.total_value - p.total_cost)}`}</div>
     </div>
     <div class="ps-divider"></div>
     <div class="ps-stat">
@@ -1646,7 +1661,11 @@ function buildPortSummary() {
 
 // ── Portfolio cards ────────────────────────────────────────────────────────
 function buildPortCards() {
+  const esc = ADView.escape;
   const positions = D.portfolio.positions;
+  // Every render starts from the full snapshot; discard previously moved copies.
+  const researchGrid = document.getElementById('ad-research-grid');
+  if (researchGrid) researchGrid.replaceChildren();
   // Populate global store for modal
   (window.__portPositions__ = window.__portPositions__ || {});
   positions.forEach(p => { window.__portPositions__[p.ticker.toUpperCase()] = p; });
@@ -1746,7 +1765,7 @@ function buildPortCards() {
       <div class="sc-top">
         <div>
           <div class="sc-ticker">${p.ticker}</div>
-          <div class="sc-theme">${p.theme}</div>
+          <div class="sc-theme">${esc(p.theme)}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
           <span class="sc-class ${p.class}">${p.class.toUpperCase()}</span>
@@ -1794,7 +1813,7 @@ function buildPortCards() {
         const pctC = pct >= 80 ? 'var(--g)' : pct >= 60 ? '#a78bfa' : pct >= 40 ? 'var(--a)' : 'var(--r)';
         return `<div class="sc-bot">
           <span class="verdict-badge ${vclass}">${verdict}</span>
-          <span style="font-size:10px;color:var(--t2)">${p.reason || ''}</span>
+          <span style="font-size:10px;color:var(--t2)">${esc(p.reason || '')}</span>
           ${showAction ? `<span style="margin-left:6px;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:${c[0]};color:${c[1]}">${ea}</span>` : ''}
           ${pct != null ? `<span style="margin-left:4px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.25);color:${pctC};border:1px solid ${pctC}55">${pct}%</span>` : ''}
           ${p.risk ? `<span class="risk-badge ${p.risk==='LOW'?'low':p.risk==='MEDIUM'?'medium':p.risk==='VERY HIGH'?'very-high':'high'}" style="margin-left:4px">${p.risk}</span>` : ''}
@@ -1954,39 +1973,41 @@ function buildSectors() {
 
 // ── Crypto ────────────────────────────────────────────────────────────────
 function buildCrypto() {
-  const c = D.crypto;
+  const c = D.crypto || {};
   const cfg = c.fear_greed || {};
-  const cs = cfg.score || 0;
-  const fgZone = cs < 25 ? {label:'Extreme Fear (0–25)', col:'var(--g)'} :
+  const cs = _sentimentScore(cfg.score, cfg.label);
+  const dominance = _marketNumber(c.btc_dominance);
+  const btcChange = _marketNumber(c.btc_chg), ethChange = _marketNumber(c.eth_chg);
+  const fgZone = cs == null ? {label:'Data unavailable', col:'var(--t3)'} : cs < 25 ? {label:'Extreme Fear (0–25)', col:'var(--g)'} :
                  cs < 45 ? {label:'Fear (25–45)',         col:'var(--b)'} :
                  cs < 55 ? {label:'Neutral (45–55)',       col:'var(--a)'} :
                  cs < 75 ? {label:'Greed (55–75)',         col:'var(--r)'} :
                            {label:'Extreme Greed (75–100)',col:'#ff1744'};
-  const btcChgCol = (c.btc_chg||0) >= 0 ? 'var(--g)' : 'var(--r)';
-  const ethChgCol = (c.eth_chg||0) >= 0 ? 'var(--g)' : 'var(--r)';
+  const btcChgCol = btcChange == null ? 'var(--t3)' : btcChange >= 0 ? 'var(--g)' : 'var(--r)';
+  const ethChgCol = ethChange == null ? 'var(--t3)' : ethChange >= 0 ? 'var(--g)' : 'var(--r)';
   $('crypto-top').innerHTML = `
     <div class="btc-card">
       <div class="btc-label">BTC Dominance</div>
-      <div class="btc-price">${c.btc_dominance}%</div>
-      <div class="btc-chg" style="color:var(--t2)">${c.btc_dominance > 55 ? '🔴 BTC Season' : '🟢 Alt Season'}</div>
+      <div class="btc-price">${dominance == null ? '—' : dominance + '%'}</div>
+      <div class="btc-chg" style="color:var(--t2)">${dominance == null ? 'Data unavailable' : dominance > 55 ? '🔴 BTC Season' : '🟢 Alt Season'}</div>
     </div>
     <div class="btc-card">
       <div class="btc-label">Crypto F&amp;G</div>
-      <div class="btc-price" style="color:${fgZone.col}">${cs || '—'}<span style="font-size:12px;font-weight:600">/100</span></div>
+      <div class="btc-price" style="color:${fgZone.col}">${cs == null ? '—' : cs}<span style="font-size:12px;font-weight:600">/100</span></div>
       <div class="btc-chg" style="color:${fgZone.col};font-weight:700">${fgZone.label}</div>
       <div style="font-size:9px;color:var(--t3);margin-top:4px">0–25 EF · 25–45 F · 45–55 N · 55–75 G · 75–100 EG</div>
     </div>
     <div class="btc-card">
       <div class="btc-label">Bitcoin (BTC)</div>
-      <div class="btc-price">$${fmt(c.btc_price||0, 0)}</div>
-      <div class="btc-chg" style="color:${btcChgCol};font-weight:700">${pct(c.btc_chg||0)}</div>
+      <div class="btc-price">${_marketNumber(c.btc_price) > 0 ? '$' + fmt(c.btc_price, 0) : '—'}</div>
+      <div class="btc-chg" style="color:${btcChgCol};font-weight:700">${pct(btcChange)}</div>
       ${c.btc_mcap ? `<div style="font-size:9px;color:var(--t2);margin-top:3px">MCap: ${fmtB(c.btc_mcap)}</div>` : ''}
       ${c.btc_vol  ? `<div style="font-size:9px;color:var(--t3)">Vol: ${fmtB(c.btc_vol)}</div>` : ''}
     </div>
     <div class="btc-card">
       <div class="btc-label">Ethereum (ETH)</div>
-      <div class="btc-price">$${fmt(c.eth_price||0, 0)}</div>
-      <div class="btc-chg" style="color:${ethChgCol};font-weight:700">${pct(c.eth_chg||0)}</div>
+      <div class="btc-price">${_marketNumber(c.eth_price) > 0 ? '$' + fmt(c.eth_price, 0) : '—'}</div>
+      <div class="btc-chg" style="color:${ethChgCol};font-weight:700">${pct(ethChange)}</div>
       ${c.eth_mcap ? `<div style="font-size:9px;color:var(--t2);margin-top:3px">MCap: ${fmtB(c.eth_mcap)}</div>` : ''}
       ${c.eth_vol  ? `<div style="font-size:9px;color:var(--t3)">Vol: ${fmtB(c.eth_vol)}</div>` : ''}
     </div>
@@ -2113,8 +2134,8 @@ function buildCrypto() {
 // ── Fear & Greed ───────────────────────────────────────────────────────────
 function buildFG() {
   const fg = D.fear_greed || {};
-  const score = fg.score || 50;
-  const na = fg.label === 'N/A' || fg.label == null;
+  const score = _sentimentScore(fg.score, fg.label);
+  const na = score == null;
   const scoreCol = score > 75 ? '#ff1744' : score > 55 ? 'var(--r)' : score > 45 ? 'var(--a)' : score > 25 ? 'var(--b)' : 'var(--g)';
   const zones = [
     {lo:0,  hi:25,  label:'Extreme Fear', col:'var(--g)'},
@@ -2123,7 +2144,7 @@ function buildFG() {
     {lo:55, hi:75,  label:'Greed',        col:'var(--r)'},
     {lo:75, hi:100, label:'Extreme Greed',col:'#ff1744'},
   ];
-  const curZone = zones.find(z => score >= z.lo && score < z.hi) || zones[2];
+  const curZone = zones.find(z => score >= z.lo && (score < z.hi || score === 100 && z.hi === 100)) || zones[2];
   const delta = fg.delta ? (fg.delta >= 0 ? '+' : '') + fg.delta.toFixed(1) : '';
 
   const scaleHtml = zones.map(z => `
@@ -2137,7 +2158,7 @@ function buildFG() {
   if (sumEl) sumEl.textContent = na ? 'Data unavailable' : `CNN F&G ${score}/100 · ${curZone.label}`;
   if (annEl) {
     annEl.textContent = na ? '—' : curZone.label;
-    annEl.className = 'coll-annotation ' + (score>75?'bearish':score>55?'bearish':score>45?'neutral':score>25?'bullish':'bullish');
+    annEl.className = 'coll-annotation ' + (na?'neutral':score>75?'bearish':score>55?'bearish':score>45?'neutral':score>25?'bullish':'bullish');
   }
   $('fg-card').innerHTML = na ? `
     <div class="mc-label">CNN Fear &amp; Greed</div>
@@ -2204,6 +2225,7 @@ function buildAllocTable() {
 
 // ── Insiders & Whales ────────────────────────────────────────────────────
 function buildInsiders() {
+  const esc = ADView.escape;
   const items = D.insiders || [];
   const sumEl = $('insiders-summary'); const annEl = $('insiders-annotation');
   const buys  = items.filter(i => i.type === 'BUY');
@@ -2231,8 +2253,8 @@ function buildInsiders() {
           <div style="font-size:9px;color:var(--t3);margin-top:3px">${i.ticker}</div>
         </div>
         <div style="flex:1">
-          <div style="font-size:11px;font-weight:600;color:var(--t);line-height:1.4">${i.headline}</div>
-          <div style="font-size:9px;color:var(--t3);margin-top:2px">${i.age} · SEC EDGAR Form 4</div>
+          <div style="font-size:11px;font-weight:600;color:var(--t);line-height:1.4">${esc(i.headline)}</div>
+          <div style="font-size:9px;color:var(--t3);margin-top:2px">${esc(i.age)} · SEC EDGAR Form 4</div>
         </div>
         ${isBuy ? `<div style="font-size:9px;padding:2px 6px;border-radius:4px;background:var(--g2);color:var(--g);font-weight:700;white-space:nowrap">🐋 Insider Buy</div>` : ''}
       </div>`;
@@ -2689,15 +2711,25 @@ _updateTgBadge();
 
 // ── Social Trends ──────────────────────────────────────────────────────────
 let TR = { updated: null, trends: [] };
+let _trendsStatus = 'loading', _trendsRequest = 0;
+const _TREND_MAX_AGE_MS = 4 * 60 * 60 * 1000; // Two expected 2h publication cycles.
 
-function _loadTrends() {
-  fetch('trends.json?' + Date.now())
-    .then(r => { if (!r.ok) throw 0; return r.json(); })
-    .then(fresh => {
+async function _loadTrends() {
+  const ticket = ++_trendsRequest;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+      const response = await fetch('trends.json?' + Date.now(), {cache:'no-store', signal:controller.signal});
+      if (!response.ok) throw new Error('Trends unavailable');
+      const fresh = await response.json();
+      if (!fresh || !Array.isArray(fresh.trends)) throw new Error('Invalid trends feed');
+      if (ticket !== _trendsRequest) return;
       TR = fresh;
+      const asOf = Date.parse(TR.updated);
+      _trendsStatus = Number.isFinite(asOf) && asOf <= Date.now() + 60000 && Date.now() - asOf <= _TREND_MAX_AGE_MS ? 'ready' : 'stale';
       // Build ticker → stock-data lookup so the modal can pull action/target/upside/risk
       window.__trendStocks__ = {};
-      (TR.trends || []).forEach(function(theme) {
+      (_trendsStatus === 'ready' ? TR.trends : []).forEach(function(theme) {
         (theme.stocks || []).forEach(function(s) {
           var t = (s.ticker || '').toUpperCase();
           if (t && !window.__trendStocks__[t]) window.__trendStocks__[t] = s;
@@ -2708,23 +2740,29 @@ function _loadTrends() {
         });
       });
       buildTrends();
-    })
-    .catch(() => {});
+  } catch (error) {
+      if (ticket !== _trendsRequest) return;
+      _trendsStatus = 'unavailable';
+      TR = {updated:TR.updated, trends:[]};
+      window.__trendStocks__ = {};
+      buildTrends();
+  } finally { clearTimeout(timeout); }
 }
 _loadTrends();
 setInterval(_loadTrends, 7200000); // reload every 2h (matches VPS refresh)
+setInterval(function() {
+  if (_trendsStatus === 'ready' && Date.now() - Date.parse(TR.updated) > _TREND_MAX_AGE_MS) {
+    _trendsStatus = 'stale'; window.__trendStocks__ = {}; buildTrends();
+  }
+}, 60000);
 
 function buildTrends() {
+  const esc = ADView.escape;
   const el = $('trends-grid');
   if (!el) return;
 
   const updEl = $('trends-updated-label');
-  if (updEl && TR.updated) {
-    try {
-      const d = new Date(TR.updated);
-      updEl.textContent = _fmtIL(TR.updated);
-    } catch(e) {}
-  }
+  if (updEl) updEl.textContent = Number.isFinite(Date.parse(TR.updated)) ? 'Last published: ' + _fmtIL(TR.updated) : 'Publication time unavailable';
 
   const trends = TR.trends || [];
 
@@ -2733,14 +2771,20 @@ function buildTrends() {
   const annEl  = $('trends-annotation');
   const bullish = trends.filter(t => t.sentiment === 'bullish').length;
   const bearish = trends.filter(t => t.sentiment === 'bearish').length;
-  if (sumEl) sumEl.textContent = trends.length ? `${trends.length} themes · ${bullish}↑ ${bearish}↓` : 'Loading…';
+  if (sumEl) sumEl.textContent = _trendsStatus === 'loading' ? 'Loading…' : _trendsStatus === 'unavailable' ? 'Feed unavailable' : _trendsStatus === 'stale' ? 'Data out of date' : trends.length ? `${trends.length} themes · ${bullish}↑ ${bearish}↓` : 'No current themes';
   if (annEl) {
-    annEl.textContent = bullish > bearish ? 'Bullish lean' : bearish > bullish ? 'Bearish lean' : 'Mixed';
-    annEl.className   = 'coll-annotation ' + (bullish > bearish ? 'bullish' : bearish > bullish ? 'bearish' : 'neutral');
+    annEl.textContent = _trendsStatus !== 'ready' ? 'Unavailable' : !trends.length ? 'No data' : bullish > bearish ? 'Bullish lean' : bearish > bullish ? 'Bearish lean' : 'Mixed';
+    annEl.className   = 'coll-annotation ' + (_trendsStatus !== 'ready' ? 'neutral' : bullish > bearish ? 'bullish' : bearish > bullish ? 'bearish' : 'neutral');
+  }
+
+  if (_trendsStatus !== 'ready') {
+    const message = _trendsStatus === 'loading' ? 'Loading social trends…' : _trendsStatus === 'stale' ? 'The social feed has no verified publication within the last 4 hours. Current themes are unavailable.' : 'The social feed could not be loaded. Current themes are unavailable.';
+    el.innerHTML = '<div style="color:var(--t3);font-size:12px;padding:8px 0">' + message + ' <button type="button" onclick="_loadTrends()" style="color:var(--b);background:none;border:0;cursor:pointer">Retry</button></div>';
+    return;
   }
 
   if (!trends.length) {
-    el.innerHTML = '<div style="color:var(--t3);font-size:12px;padding:8px 0">No trend data yet — refreshes every 2 hours.</div>';
+    el.innerHTML = '<div style="color:var(--t3);font-size:12px;padding:8px 0">No themes in the latest social feed. Refreshes every 2 hours.</div>';
     return;
   }
 
@@ -2754,7 +2798,7 @@ function buildTrends() {
     const momIcon = momentumIcon(tr.momentum);
     const sources = (tr.sources || []).map(s => {
       const icons = {reddit:'👽',stocktwits:'🐦',yahoo:'💜',google:'🔵',x:'𝕏',tiktok:'🎵',discord:'💬'};
-      return `<span style="font-size:9px;opacity:.7">${icons[s]||'●'} ${s}</span>`;
+      return `<span style="font-size:9px;opacity:.7">${icons[s]||'●'} ${esc(s)}</span>`;
     }).join('');
 
     const stockRows = (tr.stocks || []).map(s => {
@@ -2769,7 +2813,7 @@ function buildTrends() {
             <span style="font-size:9px;font-weight:700;color:${ac}">${s.action}</span>
             ${s.risk ? `<span class="risk-badge ${riskCls(s.risk)}" style="font-size:7px;padding:0 3px">${s.risk}</span>` : ''}
           </div>
-          <div style="font-size:9px;color:var(--t3);line-height:1.3;margin-top:1px">${(s.why||'').substring(0,70)}</div>
+          <div style="font-size:9px;color:var(--t3);line-height:1.3;margin-top:1px">${esc((s.why||'').substring(0,70))}</div>
           ${confBar}
         </div>
         <div style="text-align:right;flex-shrink:0;margin-left:8px">
@@ -2781,7 +2825,7 @@ function buildTrends() {
     }).join('');
 
     const etfTags = (tr.etfs || []).map(e =>
-      `<span title="${e.why||''}" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(0,180,216,.1);color:#00b4d8;border:1px solid rgba(0,180,216,.2);cursor:pointer"
+      `<span title="${esc(e.why||'')}" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(0,180,216,.1);color:#00b4d8;border:1px solid rgba(0,180,216,.2);cursor:pointer"
              onclick="window._openStockModal('${e.ticker}')">${e.ticker} <span style="font-size:8px;font-weight:400;opacity:.7">${e.action||'WATCH'}</span></span>`
     ).join('');
 
@@ -2789,8 +2833,8 @@ function buildTrends() {
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
         <div>
           <div style="font-size:16px;font-weight:800;display:flex;align-items:center;gap:6px">
-            <span>${tr.emoji||'📈'}</span>
-            <span>${tr.name}</span>
+            <span>${esc(tr.emoji||'📈')}</span>
+            <span>${esc(tr.name)}</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">
             <span style="font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;background:${sentCol}22;color:${sentCol};border:1px solid ${sentCol}44">${tr.sentiment}</span>
@@ -2800,7 +2844,7 @@ function buildTrends() {
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">${sources}</div>
       </div>
-      <div style="font-size:10px;color:var(--t2);line-height:1.5;margin-bottom:10px">${tr.description||''}</div>
+      <div style="font-size:10px;color:var(--t2);line-height:1.5;margin-bottom:10px">${esc(tr.description||'')}</div>
       ${stockRows}
       ${etfTags ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px"><span style="font-size:9px;color:var(--t3);align-self:center">ETFs:</span>${etfTags}</div>` : ''}
     </div>`;
@@ -2811,63 +2855,53 @@ function buildTrends() {
 function buildWatchlist() {
   const el = $('watchlist-grid');
   if (!el) return;
-
-  const positions = D.portfolio.positions || [];
-  const outside   = D.outside_opps || [];
-  const portSet   = new Set(positions.map(p => (p.ticker||'').toUpperCase()));
-
-  // Non-portfolio entries with meaningful upside (≥8%) only
-  const cands = outside
-    .filter(p => p.ticker && !portSet.has((p.ticker||'').toUpperCase()) && (p.upside_pct||0) >= 8)
-    .map(p => ({...p, _score: _allocScore(p)}))
-    .sort((a,b) => b._score - a._score)
-    .slice(0, 7);
+  const decision = window._dashboardDecision;
+  const cands = (decision?.selected_tickers || []).map(t => decision.rows.find(r => r.ticker === t)).filter(Boolean);
+  const esc = ADView.escape;
 
   // Update collapsible header
   const sumEl = $('watchlist-summary');
   const annEl = $('watchlist-annotation');
-  if (sumEl) sumEl.textContent = cands.length ? `Top ${cands.length} · best entry setups` : 'No picks this cycle';
+  if (sumEl) sumEl.textContent = cands.length ? `Top ${cands.length} · same order as DCA` : decision ? 'No eligible DCA candidates' : 'Waiting for decision data';
   if (annEl) {
-    const topAction = cands[0]?.action || '';
-    annEl.textContent = cands.length ? `${cands.length} tracked` : 'Clear';
+    const topAction = cands[0]?.effective_action || '';
+    annEl.textContent = cands.length ? `${cands.length} ranked` : 'Unavailable';
     annEl.className = 'coll-annotation ' + (['STRONG BUY','BUY'].includes(topAction) ? 'bullish' : 'neutral');
   }
 
   if (!cands.length) {
-    el.innerHTML = '<div style="color:var(--t3);font-size:12px;padding:8px 0">No watchlist candidates this cycle.</div>';
+    el.innerHTML = '<div style="color:var(--t3);font-size:12px;padding:8px 0">'+(decision?'No candidates meet the current DCA rules. See allocation and visibility explanations above.':'Waiting for decision data.')+'</div>';
     return;
   }
 
-  el.innerHTML = cands.map((p, i) => {
-    const oc       = p.action === 'STRONG BUY' ? 'var(--g)' : p.action === 'BUY' ? '#00b4d8' : p.action === 'WATCH' ? 'var(--a)' : 'var(--t2)';
-    const upTag    = p.upside_pct ? `<span style="font-size:11px;font-weight:800;color:var(--g)">+${p.upside_pct}%</span>` : '';
-    const confTag  = p.confidence != null ? `<span style="font-size:9px;color:var(--t3)">${p.confidence}/10 conf</span>` : '';
-    const _catD    = _safeCatDays(p);
-    const catTag   = p.catalyst   ? `<div style="font-size:9px;color:var(--a);margin-top:2px">⚡ ${p.catalyst}${_catD != null ? ` · ${_catD===0?'today':_catD+'d'}` : ''}</div>` : '';
+  el.innerHTML = cands.map(p => {
+    const oc       = p.effective_action === 'STRONG BUY' ? 'var(--g)' : '#00b4d8';
+    const upTag    = p.upside_pct != null ? `<span style="font-size:11px;font-weight:800;color:var(--g)">+${esc(p.upside_pct)}%</span>` : '';
+    const confTag  = `<span style="font-size:9px;color:var(--t3)">Input confidence ${p.confidence.value == null ? 'unavailable' : esc(p.confidence.value)+'/10'}</span>`;
     const riskBadge = p.risk
-      ? `<span class="risk-badge ${p.risk==='LOW'?'low':p.risk==='MEDIUM'?'medium':p.risk==='VERY HIGH'?'very-high':'high'}" style="font-size:8px">${p.risk}</span>`
+      ? `<span class="risk-badge ${p.risk==='LOW'?'low':p.risk==='MEDIUM'?'medium':p.risk==='VERY HIGH'?'very-high':'high'}" style="font-size:8px">${esc(p.risk)}</span>`
       : '';
-    return `<div class="swing-card" onclick="window._openStockModal('${p.ticker}')">
+    return `<article class="swing-card" data-pick-ticker="${esc(p.ticker)}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
-        <div>
-          <div style="display:flex;align-items:center;gap:5px">
-            <span style="font-size:16px;font-weight:800">${p.ticker}</span>
-            <span class="swing-tag" style="background:rgba(0,180,216,.12);color:#00b4d8;border:1px solid rgba(0,180,216,.25)">WATCH</span>
+        <div style="min-width:0;flex:1">
+          <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+            <button class="ad-ticker" data-ad-open="${esc(p.ticker)}">${esc(p.ticker)}</button>
+            <span class="swing-tag" style="background:rgba(0,180,216,.12);color:#00b4d8;border:1px solid rgba(0,180,216,.25)">DCA #${p.selected_rank}</span>
             ${riskBadge}
           </div>
-          <div style="font-size:9px;color:var(--t2);margin-top:1px">${p.theme||''}</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:5px">${esc(ADView.funding(p,decision))}</div>
         </div>
         <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px">
-          <span style="font-size:9px;font-weight:700;color:${oc}">${p.action||'WATCH'}</span>
+          <span style="font-size:9px;font-weight:700;color:${oc}">${esc(p.effective_action)}</span>
           ${upTag}
         </div>
       </div>
-      ${catTag}
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:5px">
-        ${p.target ? `<span style="font-size:10px;color:var(--t3)">Target <b style="color:#ccc">$${fmt(p.target)}</b></span>` : '<span></span>'}
-        <div style="display:flex;gap:6px;align-items:center">${confTag}<span style="font-size:9px;color:var(--t3)">#${i+1}</span></div>
+      ${p.visibility_reasons.length ? `<p style="font-size:11px;color:var(--a);margin-top:6px">Pending operational visibility: ${esc(p.visibility_reasons.join('; '))}</p>` : ''}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:5px;gap:6px;flex-wrap:wrap">
+        ${p.price != null ? `<span style="font-size:10px;color:var(--t3)">Snapshot price <b style="color:#ccc">$${fmt(p.price)}</b></span>` : '<span></span>'}
+        <div style="display:flex;gap:6px;align-items:center">${confTag}</div>
       </div>
-    </div>`;
+    </article>`;
   }).join('');
 }
 
@@ -2886,12 +2920,24 @@ function _loadSidecar() { return _loadLive(); }
 // ── Init ───────────────────────────────────────────────────────────────────
 function _buildAll() {
   const safe = fn => { try { fn(); } catch(e) { console.error('[AD]', fn.name, e.message); } };
+  safe(buildDataStatus);
   safe(buildTape); safe(buildRegime); safe(buildFX); safe(buildFG); safe(buildSP500Movers);
   safe(buildEarnings); safe(buildPulseStrip); safe(buildPolymarket);
   safe(buildAllocTable); safe(buildActionCenter);
   safe(buildPortSummary); safe(buildConcentration); safe(buildPortCards); safe(buildSectors);
   safe(buildCrypto); safe(buildInsiders); safe(buildEvents); safe(buildDrawer); safe(buildFooter);
   safe(buildWatchlist); safe(buildTrends);
+  window.dispatchEvent(new Event('ad:snapshot-rendered'));
+}
+function buildDataStatus() {
+  const el = document.getElementById('ad-data-status');
+  if (!el) return;
+  const generated = Date.parse(_rawDecisionData?.generated_at), expiry = Date.parse(_rawDecisionData?.expires_at);
+  let message = '';
+  if (!_rawDecisionData) message = 'Live data unavailable. Current prices, recommendations and event coverage cannot be verified. Retrying automatically.';
+  else if (!Number.isFinite(generated) || generated > Date.now() || !Number.isFinite(expiry) || expiry <= generated) message = 'Data freshness unavailable. Displayed prices, positions and analysis are unverified snapshot values.';
+  else if (expiry <= Date.now()) message = 'Historical snapshot: ' + _fmtIL(_rawDecisionData.generated_at) + '. Data has expired. Displayed prices, positions and analysis are not current.';
+  el.textContent = message; el.style.display = message ? '' : 'none';
 }
 _buildAll();   // render immediately with empty skeleton (shows "Connecting…")
 
@@ -2975,9 +3021,9 @@ restoreCards();
 <!-- In-page lightbox for the chart "expand to full screen" action.
      Independent of the per-ticker page modal. Closes via X button,
      Esc key, or click on overlay (but not on the image itself). -->
-<div class="chart-lightbox-overlay" id="chart-lightbox-overlay" onclick="if(event.target===this)closeChartLightbox()">
+<div class="chart-lightbox-overlay" id="chart-lightbox-overlay" role="dialog" aria-modal="true" aria-label="Expanded price chart" onclick="if(event.target===this)closeChartLightbox()">
   <button class="chart-lightbox-close" onclick="closeChartLightbox()" aria-label="Close chart">✕</button>
-  <img class="chart-lightbox-img" id="chart-lightbox-img" alt="" onclick="event.stopPropagation()">
+  <img class="chart-lightbox-img" id="chart-lightbox-img" alt="Expanded price chart" onclick="event.stopPropagation()">
   <div class="chart-lightbox-hint">Click outside · press Esc · or use ✕ to close</div>
 </div>
 
@@ -3523,6 +3569,7 @@ function _applyEffectiveActions() {
       const r = index.get((p.ticker || p.symbol || '').toUpperCase());
       if (!r) continue;
       p.action = r.effective_action; p._confidence = r.chart_confidence.value;
+      p.entry_zone = r.entry_zone ? [...r.entry_zone] : null;
     }
   }
   window._ownedTickers = new Set(decision.rows.filter(r => r.held_status === 'held').map(r => r.ticker));
@@ -3535,29 +3582,39 @@ function _applyEffectiveActions() {
 // Independent of the per-ticker page modal. Esc handler runs in CAPTURE
 // phase + stopPropagation so it closes the lightbox FIRST, before any
 // other Esc handler (like the stock-modal close) gets a chance to fire.
+var chartLightboxReturnFocus = null;
 function openChartLightbox(src) {
   if (!src) return;
   var img = document.getElementById('chart-lightbox-img');
   var ov  = document.getElementById('chart-lightbox-overlay');
   if (!img || !ov) return;
+  if (!ov.classList.contains('open')) chartLightboxReturnFocus = document.activeElement;
   img.src = src;
   ov.classList.add('open');
   document.body.style.overflow = 'hidden';
+  ov.querySelector('.chart-lightbox-close')?.focus({preventScroll:true});
 }
 function closeChartLightbox() {
   var ov = document.getElementById('chart-lightbox-overlay');
   if (!ov) return;
+  var wasOpen = ov.classList.contains('open');
   ov.classList.remove('open');
   // Don't unset body.overflow if the per-ticker page modal is still open.
   var modal = document.getElementById('stock-modal-overlay');
   if (!modal || !modal.classList.contains('open')) {
     document.body.style.overflow = '';
   }
+  if (wasOpen && chartLightboxReturnFocus?.isConnected) chartLightboxReturnFocus.focus({preventScroll:true});
+  chartLightboxReturnFocus = null;
 }
 document.addEventListener('keydown', function(e) {
-  if (e.key !== 'Escape') return;
   var ov = document.getElementById('chart-lightbox-overlay');
-  if (ov && ov.classList.contains('open')) {
+  if (!ov || !ov.classList.contains('open')) return;
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    ov.querySelector('.chart-lightbox-close')?.focus({preventScroll:true});
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
     e.stopPropagation();
     closeChartLightbox();
   }
@@ -3776,14 +3833,12 @@ window._openStockModal = function(ticker) {
 
   infoHtml += ADView.bestPlay(ticker);
   var chartRecord = (window._tickerAnalysis || {})[ticker];
-  if (ADChartAssets.valid(chartRecord, ticker)) {
-    infoHtml += '<div class="sm-chart-embed" id="ad-verified-chart"></div>';
-  } else {
-    infoHtml += '<p class="ad-muted">Compatible audience-safe chart image unavailable.</p>';
-  }
+  // Keep the chart and its unavailable state in the same place above catalysts.
+  infoHtml += '<div class="sm-chart-embed" id="ad-verified-chart" role="region" aria-label="Price chart"></div>';
 
 
   // ── 2. Technical signals — dynamic grid (skip nulls) ─────────────────────
+  infoHtml += '<details class="ad-details ad-instrument-details"><summary>Technical details &amp; instrument profile</summary>';
   var _ma150v = d.above_150;
   function _maCell(lbl, flag) {
     var val = flag ? '▲ ABOVE' : '▼ BELOW';
@@ -3899,6 +3954,7 @@ window._openStockModal = function(ticker) {
   }
 
   // ── 6. Stale target warning ───────────────────────────────────────────────
+  infoHtml += '</details>';
   if (_isStaleTarget) {
     infoHtml += '<div style="padding:8px 10px;border-radius:7px;background:rgba(255,215,64,.06);border:1px solid rgba(255,215,64,.22)">' +
       '<div style="font-size:10px;font-weight:700;color:var(--a);margin-bottom:3px">⚠ Stale Price Target</div>' +
@@ -3910,6 +3966,9 @@ window._openStockModal = function(ticker) {
   // Legacy calendar prose and independent trim/size directives are deliberately not repeated.
 
   infoEl.innerHTML = infoHtml;
+  var chartSlot = infoEl.querySelector('[data-ad-chart-slot]');
+  var chartElement = infoEl.querySelector('#ad-verified-chart');
+  if (chartSlot && chartElement) chartSlot.appendChild(chartElement);
   ADChartAssets.render(infoEl.querySelector('#ad-verified-chart'), chartRecord, ticker, window._dashboardDecision?.chart_snapshot_id);
 
   // ── Show modal ────────────────────────────────────────────────────────────
@@ -5419,8 +5478,9 @@ window._openCryptoModal = function(symbol) {
         }
       }
       var countEl = document.getElementById('ad-research-count');
-      if (countEl) countEl.textContent = moved ? '· ' + moved + ' tracked' : '';
-      researchSec.style.display = moved ? '' : 'none';
+      const researchCount = researchGrid.children.length;
+      if (countEl) countEl.textContent = researchCount ? '· ' + researchCount + ' tracked' : '';
+      researchSec.style.display = researchCount ? '' : 'none';
     } finally {
       _splitInProgress = false;
     }
