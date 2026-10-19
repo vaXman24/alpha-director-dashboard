@@ -177,29 +177,37 @@
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   const esc = value => String(value == null ? '' : value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let _sourceEvents = [], _sourceUpdated = null, _calendarRequest = 0, _calendarFocus = null, _calendarMode = 'loading', _fallbackSnapshot = null;
+  let _sourceEvents = [], _sourceUpdated = null, _calendarRequest = 0, _calendarFocus = null, _calendarMode = 'loading', _fallbackSnapshot = null, _sourceExpiry = null, _sourceSnapshot = null, _sourceCoverage = null;
+  function eventInstant(ev) {
+    const value = ev?.event_at || ev?.utc;
+    return typeof value==='string' && /(?:Z|[+-]\d{2}:\d{2})$/i.test(value) ? Date.parse(value) : NaN;
+  }
   function normalizeEvents(events) {
     const today = new Date().toLocaleDateString('en-CA', {timeZone:'Asia/Jerusalem'});
     const todayMs = Date.parse(today + 'T00:00:00Z');
     return events.filter(ev => ev && typeof ev === 'object').map((ev, index) => {
-      const stamp = typeof ev.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(ev.date) ? Date.parse(ev.date + 'T00:00:00Z') : NaN;
-      const valid = Number.isFinite(stamp) && new Date(stamp).toISOString().slice(0,10) === ev.date;
+      const instant = eventInstant(ev);
+      const day = Number.isFinite(instant) ? new Date(instant).toLocaleDateString('en-CA',{timeZone:'Asia/Jerusalem'}) : ev.date;
+      const stamp = typeof day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(day) ? Date.parse(day + 'T00:00:00Z') : NaN;
+      const valid = Number.isFinite(stamp) && new Date(stamp).toISOString().slice(0,10) === day;
       const days = valid ? Math.round((stamp - todayMs) / 86400000) : null;
       const confidence = typeof ev.confidence === 'number' && Number.isFinite(ev.confidence) && ev.confidence >= 0 && ev.confidence <= 10 ? ev.confidence : null;
-      return {...ev, id:'cat-' + index, date:valid ? ev.date : null, days_until:days,
-        status:days == null ? 'unknown' : days < 0 ? 'past' : days === 0 ? 'live' : days <= 7 ? 'imminent' : 'upcoming',
+      return {...ev, id:'cat-' + index, date:valid ? day : null, days_until:days,
+        status:Number.isFinite(instant)&&instant<Date.now() ? 'past' : days == null ? 'unknown' : days < 0 ? 'past' : days === 0 ? 'live' : days <= 7 ? 'imminent' : 'upcoming',
         category:CAT_LABEL[ev.category] ? ev.category : 'macro', confidence,
         name:String(ev.name || 'Unnamed event'), why:String(ev.why || ''), action:String(ev.action || ''), exit_trigger:String(ev.exit_trigger || ''), trade_type:String(ev.trade_type || ''), instruments:Array.isArray(ev.instruments) ? ev.instruments.filter(t => typeof t === 'string') : []};
     });
   }
   function refreshEventDates() {
     if (_calendarMode === 'loading') return;
+    const raw = typeof _rawDecisionData !== 'undefined' ? _rawDecisionData : null;
+    if (_calendarMode === 'feed' && ((_sourceExpiry && (!Number.isFinite(Date.parse(_sourceExpiry)) || Date.parse(_sourceExpiry) <= Date.now())) || (_sourceSnapshot && raw?.snapshot_id && _sourceSnapshot !== raw.snapshot_id))) _calendarMode='fallback';
     if (_calendarMode === 'fallback' && !useSnapshotEvents()) { showUnavailable(); return; }
     window.__catEvents__ = normalizeEvents(_sourceEvents);
     renderEvents(window.__catEvents__);
-    if (_calendarMode === 'fallback') {
+    if (_calendarMode === 'fallback' || _sourceCoverage === 'partial') {
       const summary = document.getElementById('cat-summary');
-      if (summary) summary.textContent = 'Partial calendar · snapshot events · ' + summary.textContent;
+      if (summary) summary.textContent = (_calendarMode === 'fallback' ? 'Partial calendar · snapshot events · ' : 'Partial calendar · official sources · ') + summary.textContent;
     }
     if (_catViewMode === 'month') renderMonthGrid(window.__catEvents__);
   }
@@ -208,11 +216,13 @@
     const generated = Date.parse(raw?.generated_at), expiry = Date.parse(raw?.expires_at);
     if (!raw || !Number.isFinite(generated) || generated > Date.now() || !Number.isFinite(expiry) || expiry <= Date.now() || expiry <= generated || !Array.isArray(raw.upcoming_events)) return false;
     if (_fallbackSnapshot !== raw.snapshot_id) { window.closeCatModal?.(); _fallbackSnapshot = raw.snapshot_id; }
-    _sourceEvents = raw.upcoming_events.filter(ev => ev && typeof ev.utc === 'string' && Number.isFinite(Date.parse(ev.utc))).map(ev => ({
-      name:ev.title || 'Snapshot event',date:new Date(ev.utc).toLocaleDateString('en-CA', {timeZone:'Asia/Jerusalem'}),
-      category:ev.type === 'EARNINGS' ? 'corporate' : 'macro',instruments:ev.ticker ? [String(ev.ticker)] : [],
-      why:ev.detail || '',relevance:ev.relevance || '',confidence:null,
-      provenance:'Partial calendar from the current dashboard snapshot. Dedicated catalyst feed unavailable. No independent calendar verification.'
+    _sourceEvents = raw.upcoming_events.filter(ev => ev && (Number.isFinite(eventInstant(ev)) || (typeof ev.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(ev.date)&&Number.isFinite(Date.parse(ev.date+'T00:00:00Z'))&&new Date(ev.date+'T00:00:00Z').toISOString().slice(0,10)===ev.date))).map(ev => ({
+      name:ev.title || ev.name || 'Snapshot event',date:Number.isFinite(eventInstant(ev)) ? new Date(eventInstant(ev)).toLocaleDateString('en-CA', {timeZone:'Asia/Jerusalem'}) : ev.date,
+      event_at:Number.isFinite(eventInstant(ev)) ? new Date(eventInstant(ev)).toISOString() : null,
+      category:ev.type === 'EARNINGS' ? 'corporate' : CAT_LABEL[ev.category] ? ev.category : 'macro',instruments:Array.isArray(ev.instruments) ? ev.instruments.filter(t=>typeof t==='string') : ev.ticker ? [String(ev.ticker)] : [],
+      why:ev.detail || ev.why || '',relevance:ev.relevance || '',confidence:null,
+      source_url:ev.source_url,source_date:ev.source_date,source_status:ev.source_status,checked_at:ev.checked_at,coverage:ev.coverage || 'partial',
+      provenance:'Partial calendar from the current dashboard snapshot. Dedicated catalyst feed unavailable. See supplied source evidence; coverage is incomplete.'
     }));
     _sourceUpdated = raw.generated_at;
     const updated = document.getElementById('cat-updated');
@@ -366,6 +376,7 @@
       </div>
 
       <div class="cat-modal-divider"></div>
+      ${ev.source_url ? `<div class="cat-modal-section-body" style="color:var(--t3);margin-bottom:12px">${typeof _safeEvidenceUrl === 'function' && _safeEvidenceUrl(ev.source_url) ? `<a href="${esc(_safeEvidenceUrl(ev.source_url))}" target="_blank" rel="noopener noreferrer">Official source evidence</a>` : 'Source link unavailable'}${ev.source_date && Number.isFinite(Date.parse(ev.source_date)) ? '<br>Published '+esc(new Date(ev.source_date).toLocaleString('en-GB',{timeZone:'Asia/Jerusalem'}))+' IL' : ''}</div>` : ''}
       ${ev.provenance ? `<div class="cat-modal-section-body" style="color:var(--t3);margin-bottom:12px">${esc(ev.provenance)}</div>` : ''}
       ${ev.relevance ? `<div class="cat-modal-section"><div class="cat-modal-section-label">Supplied relevance</div><div class="cat-modal-section-body">${esc(ev.relevance)}</div></div>` : ''}
 
@@ -628,7 +639,7 @@
     await loadEvents();
     setInterval(loadEvents, 300000);
     setInterval(refreshEventDates, 60000);
-    window.addEventListener('ad:snapshot-rendered', () => { if (_calendarMode === 'fallback') refreshEventDates(); });
+    window.addEventListener('ad:snapshot-rendered', () => { if (_calendarMode !== 'loading') refreshEventDates(); });
   }
 
   async function loadEvents() {
@@ -646,6 +657,9 @@
       if (ticket !== _calendarRequest) return;
       _calendarMode = 'feed';
       _sourceEvents = events;
+      _sourceExpiry = typeof data.expires_at === 'string' ? data.expires_at : null;
+      _sourceSnapshot = typeof data.source_snapshot_id === 'string' ? data.source_snapshot_id : null;
+      _sourceCoverage = data.coverage === 'partial' ? 'partial' : null;
       _sourceUpdated = data.generated_at || data.generated || data.updated_at || data.updated;
       const updated = document.getElementById('cat-updated');
       if (updated) updated.textContent = Number.isFinite(Date.parse(_sourceUpdated)) ? 'Published ' + new Date(_sourceUpdated).toLocaleString('en-GB', {timeZone:'Asia/Jerusalem'}) + ' IL. Dates compared in Israel time.' : 'Publication time unavailable. Dates compared in Israel time.';
