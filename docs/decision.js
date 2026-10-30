@@ -4,7 +4,7 @@
   else root.ADDecision = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function() {
   'use strict';
-  const POLICY = 'dashboard-compat-v1';
+  const POLICY = 'dashboard-integrity-v2';
   const ACTIONS = ['STRONG BUY','BUY','WATCH','WAIT','TRIM','EXIT'];
   const ORDER = ['STRONG BUY','BUY','WATCH','TRIM','EXIT'];
   const finite = x => typeof x === 'number' && Number.isFinite(x);
@@ -75,7 +75,7 @@
         price:number(p.price,'price',errors,0), stop_loss:number(p.stop_loss,'supplied invalidation level',errors,0),
         entry_zone:entryZone,entry_zone_reordered:entryZoneReordered,
         sma50:number(p.sma50,'MA50',errors,0), sma200:number(p.sma200,'MA200',errors,0),
-        issues:errors});
+        decision_data_status:p.decision_data_status||null,quote_session:p.quote_session||null,issues:errors});
     }
     const budgetIssues=[];
     const remaining=number(data.monthly_remaining,'remaining budget',budgetIssues,0);
@@ -115,10 +115,10 @@
     const upside=Math.max(2,Math.min(100,p.upside_pct ?? 0));
     // Preserve legacy score defaults; their use is disclosed separately.
     const conf=p.confidence.value==null?.65:p.confidence.value/10;
-    const rsi=!p.rsi?1:p.rsi>85?.55:p.rsi>75?.8:p.rsi>65?.95:1.1;
+    const rsi=p.rsi==null?1:p.rsi>85?.55:p.rsi>75?.8:p.rsi>65?.95:1.1;
     const action=p.effective_action==='STRONG BUY'?1.3:p.effective_action==='BUY'?1:p.effective_action==='WATCH'?.55:0;
     const y=yld??0;
-    const yf=y>5?(p.risk==='LOW'?1.05:p.risk==='MEDIUM'?.90:.78):y>4.5?(p.risk==='LOW'?1.02:p.risk==='MEDIUM'?.95:.87):y>3.5?1:['HIGH','VERY HIGH'].includes(p.risk)?1.1:1;
+    const yf=y<=0?1:y>5?(p.risk==='LOW'?1.05:p.risk==='MEDIUM'?.90:.78):y>4.5?(p.risk==='LOW'?1.02:p.risk==='MEDIUM'?.95:.87):y>3.5?1:['HIGH','VERY HIGH'].includes(p.risk)?1.1:1;
     return upside**1.5*(riskW[p.risk]||.55)*conf*rsi*(p.above_200?1.2:.75)*action*yf*(p.chart_confidence.value==null?.7:p.chart_confidence.value/100);
   }
   function percentages(scored) {
@@ -145,11 +145,11 @@
     if (!stamp(data.expires_at)) issues.push('Main expiry unavailable');
     else if (Date.parse(data.expires_at)<=now) issues.push('Main snapshot expired');
     else if (!stamp(data.generated_at) || Date.parse(data.generated_at)>now || Date.parse(data.expires_at)<=Date.parse(data.generated_at)) issues.push('Invalid main timestamps');
-    if(n.yield==null)issues.push('Legacy score default: missing yield uses zero branch');
+    if(n.yield==null)issues.push('Missing yield uses neutral factor 1.0');
     const rows=n.rows.map(p=>{
       const local=[...p.issues], defaults=[];
       if(p.entry_zone_reordered)local.push('Entry zone bounds displayed low to high; source endpoint order was reversed');
-      if(p.backend_allocation_present)local.push('Backend allocation is a separate legacy result: raw actions, gross monthly basis, no chart factor; public allocation_pct uses a per-list denominator');
+      if(p.backend_allocation_present)local.push('Backend allocation is a separate legacy result: raw actions, gross monthly basis, no chart factor; public allocation basis: '+(data.allocation_basis||'legacy per-list denominator')+'');
       const a=ch.records[p.ticker]?.analysis;
       let action=p.raw_action, cc=null, rec=null, evidence=null;
       if (a && ['buy','hold','wait','skip'].includes(a.chart_rec)) {
@@ -161,9 +161,16 @@
       if(cc==null)defaults.push('chart confidence factor 0.70');
       if(p.above_200==null)defaults.push('unknown MA200 uses legacy below factor');
       if(p.rsi==null)defaults.push('missing RSI factor 1.0');
-      if(p.rsi===0)local.push('Legacy conflict: zero RSI uses dashboard factor 1.0, backend factor 1.1');
       if(!['LOW','MEDIUM','HIGH','VERY HIGH'].includes(p.risk))defaults.push('missing or unknown risk factor 0.55');
       const exclusion=[];
+      if(data.entry_policy_version==='trend-confirmed-v1'&&buys(action)&&p.above_200!==true){
+        action='WAIT';cc=null;rec=null;
+        exclusion.push('Entry withheld: existing brain policy requires price above SMA200');
+      }
+      if(p.price==null||p.price<=0||(data.market_integrity_version===1&&p.decision_data_status!=='ok')){
+        action='WAIT';cc=null;rec=null;
+        exclusion.push('Recommendation withheld: stale/missing market inputs');
+      }
       if(!buys(action))exclusion.push('Effective action '+(action||'unavailable')+' receives no DCA');
       if(p.origin==='crypto')exclusion.push('Outside existing equity DCA universe');
       if(p.upside_pct==null)exclusion.push('Upside unavailable');
@@ -179,7 +186,7 @@
       if(!ORDER.includes(action))visibility.push('Not in existing Action Center action tiers');
       if(p.discovery&&!gate&&buys(action))local.push('Legacy conflict: DCA admits discovery candidate excluded by Action Center gate');
       if(buys(action)&&p.above_200===false)local.push('Historical policy discrepancy: below-MA200 entry prohibition is not the existing DCA filter; strategy review needed');
-      if(buys(action)&&n.vix!=null&&n.vix>=28)local.push('Historical policy discrepancy: high-VIX entry restriction is not the existing DCA filter; strategy review needed');
+      if(buys(action)&&n.vix!=null&&n.vix>=28)local.push('Elevated VIX: macro-risk review required; the current brain prompt does not define an automatic entry veto at this level');
       const row={...p,effective_action:action,chart_action:rec,chart_confidence:{value:cc,scale:'0_100',source:'effective-action-table'},
         source_snapshot_id:data.snapshot_id||null,chart_snapshot_id:ch.id||null,as_of:data.generated_at||null,chart_as_of:ch.as_of||null,budget_basis:n.budget.basis,
         evidence,issues:local,score_defaults:defaults,eligibility:!exclusion.length,exclusion_reasons:exclusion,
@@ -225,3 +232,5 @@
   }
   return {POLICY,computeDashboardDecision,normalize,effective,percentages,finite,stamp,ticker,freeze,copy};
 });
+
+

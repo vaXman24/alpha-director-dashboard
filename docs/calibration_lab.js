@@ -89,7 +89,7 @@
         '<span class="cl-icon">🔬</span>' +
         '<span class="cl-label">Calibration Lab</span>' +
         '<span class="cl-sep">·</span>' +
-        '<span class="cl-phase">' + phase + ' ' + (status.phase_progress_pct || 0) + '%</span>' +
+        '<span class="cl-phase">' + phase + ' · ' + _esc(status.validation_status || 'Validation unverified') + '</span>' +
         '<span class="cl-sep">·</span>' +
         '<span class="cl-cost">' + costMonth + '/' + costBudget + '</span>' +
         '<span class="cl-sep">·</span>' +
@@ -104,7 +104,7 @@
       var statusClass = _statusColorClass(s.status);
       var icon = s.status_icon || '?';
       var weightStr = s.weight_empirical != null
-        ? s.weight_empirical.toFixed(2) + ' (emp.)'
+        ? s.weight_empirical.toFixed(2) + ' (emp.; computed ' + _fmtAge(s.empirical && s.empirical.computed_at) + ')'
         : (s.weight_prior != null ? s.weight_prior.toFixed(2) + ' (prior)' : '—');
       var baseline = s.baseline_volume_per_week
         ? ' / ~' + s.baseline_volume_per_week + '/wk'
@@ -123,7 +123,7 @@
     }).join('');
     var theses = status.theses || {};
     var warming = status.warming_up
-      ? '<div class="cl-warming">Warming up — corpus needs n ≥ 30 graded outcomes for reliable weights (currently ' +
+      ? '<div class="cl-warming">Limited outcome history; sample count alone does not establish reliable weights (currently ' +
         (theses.outcomes_with_brier || 0) + ').</div>'
       : '';
     var nextMs = status.next_milestone
@@ -135,9 +135,9 @@
       '<div class="cl-panel">' +
         '<div class="cl-panel-header">' +
           '<strong>Phase ' + _esc(status.phase) + ' — ' + _esc(status.phase_label || '') + '</strong>' +
-          '<span class="cl-progress">' + (status.phase_progress_pct || 0) + '% · started ' + _esc(status.started_at) + '</span>' +
+          '<span class="cl-progress">Validation: ' + _esc(status.validation_status || 'unverified') + ' · started ' + _esc(status.started_at) + '</span>' +
         '</div>' +
-        warming +
+        warming + '<p>' + _esc(status.validation_note || 'Historical calibration has not been independently validated.') + '</p>' +
         '<table class="cl-table">' +
           '<thead><tr>' +
             '<th></th><th>Source</th><th>Weight</th><th>Volume (7d)</th><th>Last poll</th><th>Method</th>' +
@@ -189,3 +189,5 @@
     window.buildCalibrationLab = buildCalibrationLab;
   }
 })();
+
+
